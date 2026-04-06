@@ -4,7 +4,7 @@ using NotificationProvider = DBGuardAPI.Data.Models.ServiceProviders.Notificatio
 
 namespace DBGuardAPI.Data.Models.GuardNotifications
 {
-    public class GuardNotification
+    public abstract class GuardNotification
     {
         public int Id { get; set; }
         public int GuardId { get; set; }

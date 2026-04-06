@@ -18,11 +18,10 @@ namespace DBGuardAPI.Services
         private readonly NotificationService _notificationService;
         private readonly ILogger<MonitorService> _logger;
         private readonly SemaphoreSlim _throttle = new SemaphoreSlim(5, 5);
-        public MonitorService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<MonitorService> logger, SemaphoreSlim throttle, CredentialProtector credentialProtector, NotificationService notificationService)
+        public MonitorService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<MonitorService> logger, CredentialProtector credentialProtector, NotificationService notificationService)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
-            _throttle = throttle;
             _credentialProtector = credentialProtector;
             _notificationService = notificationService;
         }

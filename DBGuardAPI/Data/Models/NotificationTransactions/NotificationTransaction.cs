@@ -2,7 +2,7 @@
 
 namespace DBGuardAPI.Data.Models.NotificationTransactions
 {
-    public class NotificationTransaction
+    public abstract class NotificationTransaction
     {
         public int Id { get; set; }
         public DateTimeOffset Timestamp { get; set; }

@@ -13,7 +13,7 @@ namespace DBGuardAPI.Data.Models
         public string? Password { get; set; }
         public DateTimeOffset CreateDate { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset LastEditedDate { get; set; } = DateTimeOffset.UtcNow;
-        public int CreatedByUserId { get; set; }
+        public required string CreatedByUserId { get; set; }
         public User? CreatedByUser { get; set; }
         public ICollection<Guard> Guards { get; set; } = [];
         public ICollection<GuardChangeTransaction> GuardChangeTransactions { get; set; } = [];

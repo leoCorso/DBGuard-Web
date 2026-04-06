@@ -7,12 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DBGuardAPI.Data.Models
 {
-    public class ApplicationDbContext: IdentityDbContext
+    public class ApplicationDbContext: IdentityDbContext<User>
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<User>(user =>
             {
+                user.HasQueryFilter(u => u.IsActive);
                 user.HasMany(u => u.Guards)
                     .WithOne(g => g.CreatedByUser)
                     .HasForeignKey(g => g.CreatedByUserId)
@@ -39,7 +43,10 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<NotificationProvider>(notificationProvider =>
             {
-                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ServiceType));
+                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ServiceType))
+                .HasValue<EmailProvider>(NotificationType.Email)
+                .HasValue<TextProvider>(NotificationType.Text);
+
 
                 notificationProvider.HasMany(sp => sp.GuardNotifications)
                     .WithOne(gn => gn.NotificationProvider)
@@ -60,7 +67,9 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<NotificationTransaction>(notificationTransactions =>
             {
-                notificationTransactions.HasDiscriminator<NotificationType>(nameof(NotificationTransaction.NotificationType));
+                notificationTransactions.HasDiscriminator<NotificationType>(nameof(NotificationTransaction.NotificationType))
+                .HasValue<EmailNotificationTransaction>(NotificationType.Email)
+                .HasValue<TextNotificationTransaction>(NotificationType.Text);
 
                 notificationTransactions.HasOne(nt => nt.GuardChangeTransaction)
                     .WithMany(gct => gct.NotificationTransactions)
@@ -69,7 +78,9 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<GuardNotification>(guardNotification =>
             {
-                guardNotification.HasDiscriminator<NotificationType>(nameof(GuardNotification.NotificationType));
+                guardNotification.HasDiscriminator<NotificationType>(nameof(GuardNotification.NotificationType))
+                .HasValue<EmailNotification>(NotificationType.Email)
+                .HasValue<TextNotification>(NotificationType.Text);
             });
             base.OnModelCreating(builder);
         }
