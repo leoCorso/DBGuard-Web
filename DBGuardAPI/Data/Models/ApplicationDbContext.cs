@@ -1,0 +1,84 @@
+﻿using DBGuardAPI.Data.Enums;
+using DBGuardAPI.Data.Models.GuardNotifications;
+using DBGuardAPI.Data.Models.NotificationTransactions;
+using DBGuardAPI.Data.Models.ServiceProviders;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace DBGuardAPI.Data.Models
+{
+    public class ApplicationDbContext: IdentityDbContext
+    {
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>(user =>
+            {
+                user.HasMany(u => u.Guards)
+                    .WithOne(g => g.CreatedByUser)
+                    .HasForeignKey(g => g.CreatedByUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+                user.HasMany(u => u.DatabaseConnections)
+                    .WithOne(dc => dc.CreatedByUser)
+                    .HasForeignKey(dc => dc.CreatedByUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+                user.HasMany(u => u.NotificationProviders)
+                    .WithOne(sp => sp.CreatedByUser)
+                    .HasForeignKey(sp => sp.CreatedByUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+            builder.Entity<DatabaseConnection>(databaseConnection =>
+            {
+                databaseConnection.HasMany(dc => dc.Guards)
+                    .WithOne(g => g.DatabaseConnection)
+                    .HasForeignKey(g => g.DatabaseConnectionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                databaseConnection.HasMany(dc => dc.GuardChangeTransactions)
+                    .WithOne(gct => gct.DatabaseConnection)
+                    .HasForeignKey(gct => gct.DatabaseConnectionId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+            builder.Entity<NotificationProvider>(notificationProvider =>
+            {
+                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ServiceType));
+
+                notificationProvider.HasMany(sp => sp.GuardNotifications)
+                    .WithOne(gn => gn.NotificationProvider)
+                    .HasForeignKey(gn => gn.ServiceProviderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<Guard>(guard =>
+            {
+                guard.HasQueryFilter(g => g.IsActive);
+                guard.HasMany(g => g.GuardNotifications)
+                    .WithOne(gn => gn.Guard)
+                    .HasForeignKey(gn => gn.GuardId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                guard.HasMany(g => g.GuardChangeTransactions)
+                    .WithOne(gct => gct.Guard)
+                    .HasForeignKey(gct => gct.GuardId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+            builder.Entity<NotificationTransaction>(notificationTransactions =>
+            {
+                notificationTransactions.HasDiscriminator<NotificationType>(nameof(NotificationTransaction.NotificationType));
+
+                notificationTransactions.HasOne(nt => nt.GuardChangeTransaction)
+                    .WithMany(gct => gct.NotificationTransactions)
+                    .HasForeignKey(nt => nt.GuardChangeTransactionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<GuardNotification>(guardNotification =>
+            {
+                guardNotification.HasDiscriminator<NotificationType>(nameof(GuardNotification.NotificationType));
+            });
+            base.OnModelCreating(builder);
+        }
+        public DbSet<Guard> Guards { get; set; }
+        public DbSet<DatabaseConnection> DatabaseConnections { get; set; }
+        public DbSet<GuardNotification> GuardNotifications { get; set; }
+        public DbSet<GuardChangeTransaction> GuardChangeTransactions { get; set; }
+        public DbSet<NotificationProvider> NotificationProviders { get; set; }
+        public DbSet<NotificationTransaction> NotificationTransactions { get; set; }
+
+    }
+}

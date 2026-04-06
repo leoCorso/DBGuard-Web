@@ -1,0 +1,6 @@
+@DBGuardAPI_HostAddress = http://localhost:5057
+
+GET {{DBGuardAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
