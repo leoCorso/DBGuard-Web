@@ -1,5 +1,6 @@
 using System.Text;
 using DBGuardAPI.Data.Models;
+using DBGuardAPI.Helpers;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -26,7 +27,7 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
     options.UseSnakeCaseNamingConvention();
 });
-builder.Services.AddIdentity<User, Role>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
@@ -60,7 +61,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
     .SetApplicationName(nameof(builder.Environment.ApplicationName));
-
+builder.Services.AddScoped<JwtService>();
 builder.Services.AddHostedService<MonitorService>();
 builder.Services.AddSingleton<CredentialProtector>();
 builder.Services.AddTransient<NotificationService>();
@@ -69,7 +70,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("Dev", builder =>
     {
-        builder.WithOrigins("http://localhost:5000", "http;//10.55.47.166")
+        builder.WithOrigins("http://localhost:5000", "http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -93,5 +94,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await DBSeeder.SeedAsync(app.Services, app.Logger);
 
 app.Run();

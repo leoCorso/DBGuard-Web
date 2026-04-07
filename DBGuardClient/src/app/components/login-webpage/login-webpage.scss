@@ -1,0 +1,13 @@
+:host {
+    margin: 2rem;
+}
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+}
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

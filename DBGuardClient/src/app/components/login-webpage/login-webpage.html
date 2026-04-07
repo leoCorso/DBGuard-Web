@@ -1,0 +1,24 @@
+<p-card header="Login">
+    <div class="header">
+        <p-image src="logo.png" width="60px"></p-image>
+        <h1>DBGuard</h1>
+    </div>
+    <form [formGroup]="loginForm" class="login-form" (ngSubmit)="loginClicked()">
+        <p-inputgroup>
+            <p-inputgroup-addon>
+                <i class="pi pi-user"></i>
+            </p-inputgroup-addon>
+            <input type="text" pInputText formControlName="username" placeholder="Username">
+        </p-inputgroup>
+        <p-inputgroup>
+            <p-inputgroup-addon>
+                <i class="pi pi-lock"></i>
+            </p-inputgroup-addon>
+            <p-password placeholder="Password" [toggleMask]="true" [feedback]="false" formControlName="password"></p-password>
+        </p-inputgroup>
+        @if (authService.loginError()) {
+            <p-message severity="error">{{ authService.loginError() }}</p-message>
+        }
+        <p-button label="Login" [rounded]="true" [disabled]="loginForm.invalid" type="submit"></p-button>
+    </form>
+</p-card>

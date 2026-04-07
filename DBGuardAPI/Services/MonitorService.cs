@@ -51,7 +51,7 @@ namespace DBGuardAPI.Services
             using var context = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
             List<Guard> guards = await context.Guards
                 .Include(guard => guard.DatabaseConnection)
-                .Where(guard => guard.LastRun == null || (guard.LastRun.Value -  DateTimeOffset.UtcNow).TotalMinutes >= guard.RunPeriodInMinutes)
+                .Where(guard => guard.LastRun == null || (DateTimeOffset.UtcNow - guard.LastRun.Value).TotalMinutes >= guard.RunPeriodInMinutes)
                 .ToListAsync(stoppingToken);
             return guards;
         }
@@ -158,7 +158,7 @@ namespace DBGuardAPI.Services
             await context.GuardChangeTransactions.AddAsync(changeTransaction);
             await context.SaveChangesAsync();
 
-            // If change type is enabled send notification
+            // If change type send notification is enabled send notification
             bool sendNotification = newState switch
             {
                 GuardState.Triggered => guard.NotifyOnTrigger,

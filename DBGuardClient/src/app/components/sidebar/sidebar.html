@@ -1,0 +1,4 @@
+@if (isMobile()) {
+    <p-button size="large" [text]="true" icon="pi pi-bars" (onClick)="menu.toggle($event)"/>
+}
+<p-menu #menu [model]="menuItems" [popup]="isMobile()"></p-menu>
