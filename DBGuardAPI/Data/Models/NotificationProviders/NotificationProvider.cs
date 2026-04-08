@@ -9,7 +9,7 @@ namespace DBGuardAPI.Data.Models.ServiceProviders
         public DateTimeOffset CreateDate { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset LastEditedDate { get; set; } = DateTimeOffset.UtcNow;
         public required string CreatedByUserId { get; set; }
-        public NotificationType ServiceType { get; set; }
+        public NotificationType NotificationType { get; set; }
         public ICollection<GuardNotification> GuardNotifications { get; set; } = [];
         public User? CreatedByUser { get; set; }
     }

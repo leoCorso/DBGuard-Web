@@ -21,7 +21,7 @@ export class Sidebar {
     {
       label: 'Guards',
       icon: 'pi pi-shield',
-      routerLink: 'guards'
+      routerLink: 'guards/view-guards'
     },
     {
       label: 'Guard history',

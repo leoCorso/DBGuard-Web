@@ -1,0 +1,21 @@
+.guard-form {
+    margin-top: 1rem;
+    padding: 1rem;
+    display: grid;
+    grid-row-gap: 1rem;
+}
+.notify-options {
+    display: flex;
+    gap: 1rem;
+}
+.notify-option {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+.control-with-btn {
+    display: flex;
+}

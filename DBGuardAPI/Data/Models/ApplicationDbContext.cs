@@ -43,14 +43,14 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<NotificationProvider>(notificationProvider =>
             {
-                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ServiceType))
+                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.NotificationType))
                 .HasValue<EmailProvider>(NotificationType.Email)
                 .HasValue<TextProvider>(NotificationType.Text);
 
 
                 notificationProvider.HasMany(sp => sp.GuardNotifications)
                     .WithOne(gn => gn.NotificationProvider)
-                    .HasForeignKey(gn => gn.ServiceProviderId)
+                    .HasForeignKey(gn => gn.NotificationProviderId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<Guard>(guard =>

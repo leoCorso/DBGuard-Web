@@ -17,6 +17,7 @@ export class GuardsToolbar {
   public createGuardClicked(): void {
     this.dialogService.open(CreateGuard, {
       header: 'Create guard',
+      maximizable: true,
       closable: true,
       draggable: true,
       resizable: true

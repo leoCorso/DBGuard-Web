@@ -9,9 +9,8 @@ import { Router, RouterOutlet } from '@angular/router';
   styleUrl: './guards-webpage.scss',
 })
 export class GuardsWebpage implements OnInit {
-  private router = inject(Router);
   
   ngOnInit(): void {
-    this.router.navigate(['/guards/view-guards']);
+    
   }
 }

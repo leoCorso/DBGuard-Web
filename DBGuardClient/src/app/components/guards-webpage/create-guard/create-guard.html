@@ -1,1 +1,83 @@
-<p>create-guard works!</p>
+<form class="guard-form" [formGroup]="guardFormGroup">
+    <div>
+        <p-floatlabel variant="on">
+            <input fluid id="guard-name" type="text" pInputText formControlName="guardName" autocomplete="off">
+            <label for="guard-name">Guard name</label>
+        </p-floatlabel>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <textarea fluid id="guard-description" pTextarea formControlName="guardDescription"></textarea>
+            <label for="guard-description">Guard description</label>
+        </p-floatlabel>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <textarea fluid id="trigger-query" pTextarea formControlName="triggerQuery"></textarea>
+            <label for="trigger-query">Trigger query</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <input fluid type="text" id="count-column" formControlName="countColumn" pInputText autocomplete="off">
+            <label for="count-column">Count column</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-select appendTo="body" fluid id="trigger-operator" [options]="enumOptions" formControlName="triggerOperator"></p-select>
+            <label for="trigger-operator">Trigger Operator</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-inputnumber fluid id="trigger-value" formControlName="triggerValue"></p-inputnumber>
+            <label for="trigger-value">Trigger value</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <div class="control-with-btn">
+            <p-inputgroup >
+                <p-floatlabel style="flex-grow: 1;" variant="on">
+                    <p-select fluid appendTo="body" id="database-connection" formControlName="databaseConnection" [options]="databaseConnections()"></p-select>
+                    <label for="database-connection">Database connection</label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    <p-button icon="pi pi-plus" [text]="true" pTooltip="Create a new database connection"></p-button>
+                </p-inputgroup-addon>
+            </p-inputgroup>
+
+        </div>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel>
+            <p-inputnumber fluid id="run-period" formControlName="runPeriodInMinutes"></p-inputnumber>
+            <label for="run-period">Run period (minutes)</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <!-- Notifications -->
+         <p-listbox emptyMessage="No notifications added"></p-listbox>
+         <app-create-notification-control [notificationProviders]="notificationProviders()"></app-create-notification-control>
+    </div>
+    <div class="notify-options">
+        <div class="notify-option">
+            <label for="notify-on-clear">Notify on clear</label>
+            <p-toggleswitch formControlName="notifyOnClear"></p-toggleswitch>
+        </div>
+        <div class="notify-option">
+            <label for="notify-on-error">Notify on error</label>
+            <p-toggleswitch formControlName="notifyOnError"></p-toggleswitch>
+        </div>
+        <div class="notify-option">
+            <label for="notify-on-trigger">Notify on trigger</label>
+            <p-toggleswitch formControlName="notifyOnTrigger"></p-toggleswitch>
+        </div>
+    </div>
+</form>
