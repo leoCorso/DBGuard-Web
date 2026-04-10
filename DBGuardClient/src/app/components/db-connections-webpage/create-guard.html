@@ -45,14 +45,7 @@
             <p-inputgroup>
                 <p-floatlabel variant="on">
                     <p-select fluid appendTo="body" id="database-connection" formControlName="databaseConnection"
-                        [options]="databaseConnections()">
-                        <ng-template #selectedItem let-selectedOption>
-                            {{ selectedOption.databaseEngine }}, {{ selectedOption.endpoint }}, {{ selectedOption.databaseName }} {{ selectedOption.username }}
-                        </ng-template>
-                        <ng-template #item let-dbConnection>
-                            {{ getEnumLabel(NotifcationType, ) dbConnection.databaseEngine }}, {{ dbConnection.endpoint }}, {{ dbConnection.databaseName }} {{ dbConnection.username }}
-                        </ng-template>
-                    </p-select>
+                        [options]="databaseConnections()"></p-select>
                     <label for="database-connection">Database connection</label>
                 </p-floatlabel>
                 <p-inputgroup-addon>

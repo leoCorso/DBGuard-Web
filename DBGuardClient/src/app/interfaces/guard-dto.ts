@@ -3,7 +3,8 @@ import { NotificationType } from "../enums/notification-type";
 import { DatabaseConnectionDTO } from "./database-connection-dto";
 import { CreateGuardNotificationDTO, EmailProviderDTO, NotificationProviderDTO, TextProviderDTO } from "./notification-dto";
 
-export interface CreateGuard {
+export interface CreateGuardDTO {
+    id?: number,
     guardName?: string,
     guardDescription?: string,
     triggerQuery: string,

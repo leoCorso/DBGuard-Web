@@ -19,3 +19,10 @@ export function enumToOptions<T extends Record<string, string | number>>(
 function formatEnumKey(key: string): string {
   return key.replace(/([A-Z])/g, ' $1').trim();
 }
+
+export function getEnumLabel<T extends Record<string, string | number>>(enumObj: T, value: number): string {
+    const key = Object.entries(enumObj)
+        .find(([, v]) => v === value)?.[0];
+    
+    return key ?? value.toString();
+}

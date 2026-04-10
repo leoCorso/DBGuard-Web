@@ -1,0 +1,38 @@
+<div class="emails-list">
+    <p-listbox [checkbox]="true" [multiple]="true" [(ngModel)]="selectedEmailAddresses" [options]="emails()"
+        emptyMessage="No emails added">
+
+    </p-listbox>
+    <p-button (onClick)="removeEmailAddresses()" label="Remove" icon="pi pi-trash" severity="danger" [text]="true"
+        pTooltip="Remove selected emails" [disabled]="selectedEmailAddresses().length === 0"></p-button>
+</div>
+<form [formGroup]="emailNotificationFormGroup" class="email-inputs">
+    <div class="email-input">
+        <form [formGroup]="emailAddressInput">
+            <p-inputgroup>
+                <p-floatlabel variant="on">
+                    <label for="emails">Email Address</label>
+                    <input id="emails" type="text" pInputText fluid formControlName="emailAddress"
+                        (keydown.enter)="addEmailAddress()">
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    <p-select [options]="['to', 'cc', 'bcc']" formControlName="emailType"></p-select>
+                </p-inputgroup-addon>
+                <p-inputgroup-addon>
+                    <p-button (onClick)="addEmailAddress()" icon="pi pi-plus" [text]="true" pTooltip="Add email"
+                        [disabled]="emailAddressInput.invalid"></p-button>
+                </p-inputgroup-addon>
+            </p-inputgroup>
+        </form>
+    </div>
+    <p-floatlabel variant="on">
+        <label for="email-subject">Email Subject</label>
+        <input id="email-subject" type="text" fluid pInputText formControlName="emailSubject" />
+    </p-floatlabel>
+    <p-floatlabel variant="on">
+        <label for="email-body">Email body</label>
+        <textarea id="email-body" pTextarea fluid formControlName="emailBody"></textarea>
+    </p-floatlabel>
+    <p-button (onClick)="addEmailNotification()" pTooltip="Add notification" label="Add" icon="pi pi-plus"
+        [rounded]="true" [outlined]="true" [disabled]="emailNotificationFormGroup.invalid"></p-button>
+</form>

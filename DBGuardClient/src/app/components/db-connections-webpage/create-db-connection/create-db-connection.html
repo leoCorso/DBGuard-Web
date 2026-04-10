@@ -1,0 +1,45 @@
+<form class="db-conn-form" [formGroup]="dbConnectionForm">
+    <div>
+        <p-floatlabel variant="on">
+            <label for="endpoint">Endpoint</label>
+            <input fluid type="text" id="endpoint" formControlName="endpoint" pInputText>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-select fluid appendTo="body" id="database-engine" [options]="databaseEngines" formControlName="databaseEngine"></p-select>
+
+            <label for="database-engine">Database engine</label>
+        </p-floatlabel>
+        <p-message size="small" severity="info" variant="simple">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <input type="text" pInputText fluid id="database-name" formControlName="databaseName">
+            <label for="database-name">Database name</label>
+        </p-floatlabel>
+        <p-message severity="info" size="small" variant="simple">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel>
+            <input type="text" pInputText fluid formControlName="username" id="username">
+            <label for="username">Username</label>
+        </p-floatlabel>
+    </div>
+    <div>
+        <p-floatlabel>
+            <p-password id="password" [toggleMask]="true" formControlName="password" fluid [feedback]="false"></p-password>
+            <label for="password">Password</label>
+        </p-floatlabel>
+    </div>
+    <div class="bottom-section">
+        <p-button (onClick)="saveConnectionForm()" icon="pi pi-save" [rounded]="true" type="submit" label="Create" [disabled]="dbConnectionForm.invalid"></p-button>
+    </div>
+        @if (loading()) {
+            <div class="loading-spinner">
+                <p-progress-spinner style="height: 30px;width: 30px;"ariaLabel="Creating connection" />
+                <p style="font-size: x-small;text-align: center;">Testing connection</p>
+            </div>
+        }
+</form>

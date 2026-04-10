@@ -1,0 +1,14 @@
+.db-conn-form {
+    display: grid;
+    padding: 1rem;
+    row-gap: 1rem;
+}
+.bottom-section {
+    display: flex;
+    justify-content: space-between;
+}
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

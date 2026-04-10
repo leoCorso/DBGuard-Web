@@ -8,7 +8,8 @@ export const requestErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      messageService.add({severity: 'error', summary: 'Error', detail: error.message, key: 'request-error', sticky: true});
+      const errorToShow = error.error.message ? error.error.message : error.message;
+      messageService.add({severity: 'error', summary: 'Error', detail: errorToShow, key: 'request-error', sticky: true});
       return throwError(() => error);
     })
   );

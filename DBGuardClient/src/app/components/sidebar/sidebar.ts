@@ -28,8 +28,9 @@ export class Sidebar {
       icon: 'pi pi-history'
     },
     {
-      label: 'DB Endpoints',
-      icon: 'pi pi-desktop'
+      label: 'DB Connections',
+      icon: 'pi pi-desktop',
+      routerLink: 'db-connections'
     },
     {
       label: 'Notification providers',

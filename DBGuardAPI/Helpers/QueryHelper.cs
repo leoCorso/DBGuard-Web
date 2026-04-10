@@ -33,6 +33,40 @@ namespace DBGuardAPI.Helpers
                 _ => throw new NotSupportedException($"Database type '{databaseEngine}' is not supported")
             };
         }
+        public static void ValidateDatabaseConnection(DatabaseEngine engine, string connectionString)
+        {
+            switch (engine)
+            {
+                case DatabaseEngine.SQLite:
+                    ValidateSQLIteConnection(connectionString);
+                    break;
+                default:
+                    ValidateRemoteConnection(engine, connectionString);
+                    break;
+            }
+        }
+        private static void ValidateSQLIteConnection(string connectionString)
+        {
+            var builder = new SqliteConnectionStringBuilder(connectionString);
+            var dataSource = builder.DataSource;
+            if (string.IsNullOrEmpty(dataSource))
+            {
+                throw new InvalidOperationException("SQLite connection string must specify a data source");
+            }
+            if (!File.Exists(dataSource))
+            {
+                throw new FileNotFoundException($"SQLite database file not found: {dataSource}");
+            }
+            // Try opening to verify it's a valid SQLite file, not just any file
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+        }
+
+        private static void ValidateRemoteConnection(DatabaseEngine engine, string connectionString)
+        {
+            using var connection = QueryHelper.GetDatabaseConnection(engine, connectionString);
+            connection.Open();
+        }
     }
 
 }

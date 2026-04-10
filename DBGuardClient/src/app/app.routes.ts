@@ -6,6 +6,7 @@ import { notLoggedInGuard } from './guards/not-logged-in-guard';
 import { GuardsWebpage } from './components/guards-webpage/guards-webpage';
 import { ViewGuards } from './components/guards-webpage/view-guards/view-guards';
 import { GuardDetail } from './components/guards-webpage/guard-detail/guard-detail';
+import { DbConnectionsWebpage } from './components/db-connections-webpage/db-connections-webpage';
 
 export const routes: Routes = [
     {
@@ -32,5 +33,10 @@ export const routes: Routes = [
                 component: GuardDetail
             }
         ]
+    },
+    {
+        path: 'db-connections',
+        component: DbConnectionsWebpage,
+        canActivate: [loggedInGuard]
     }
 ];

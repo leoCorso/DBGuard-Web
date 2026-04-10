@@ -1,13 +1,14 @@
 ﻿using DBGuardAPI.Data.Enums;
 
-namespace DBGuardAPI.Data.DTOs
+namespace DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs
 {
-    public class DatabaseConnectionDTO
+    public class CreateDatabaseConnectionDTO
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public required string Endpoint { get; set; }
         public DatabaseEngine DatabaseEngine { get; set; }
         public required string DatabaseName { get; set; }
         public string? Username { get; set; }
+        public string? Password { get; set; }
     }
 }

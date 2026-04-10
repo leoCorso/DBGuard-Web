@@ -14,15 +14,19 @@ export interface TextProviderDTO extends NotificationProviderDTO {
     phoneNumber: string
 }
 export interface CreateGuardNotificationDTO {
+    id?: number,
     notificationType: NotificationType
     notificationProvider: NotificationProviderDTO,
 }
 export interface CreateEmailGuardNotificationDTO extends CreateGuardNotificationDTO {
     emailSubject: string,
     emailBody: string,
-    toEmails: string[],
-    ccEmails: string[],
-    bccEmails: string[]
+    emails: string[], // [type:email;type:email]
+}
+export interface EmailMessage {
+    emailSubject: string,
+    emailBody: string,
+    emails: string[], // [type:email;type:email]
 }
 export interface CreateTextGuardNotificationDTO extends CreateEmailGuardNotificationDTO {
     phoneNumbers: string[],

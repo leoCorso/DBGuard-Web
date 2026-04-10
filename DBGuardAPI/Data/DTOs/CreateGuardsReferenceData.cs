@@ -1,4 +1,5 @@
-﻿using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+﻿using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
+using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
 
 namespace DBGuardAPI.Data.DTOs
 {
