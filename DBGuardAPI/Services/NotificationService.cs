@@ -31,11 +31,11 @@ namespace DBGuardAPI.Services
         }
         private async Task SendEmailNotification(EmailNotification notification, string? message = null)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Mock Sending Email");
         }
         private async Task SendTextNotification(TextNotification notification, string? message = null)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Mock Sending Text");
         }
     }
 }

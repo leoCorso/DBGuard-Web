@@ -1,6 +1,7 @@
 using System.Text;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Helpers;
+using DBGuardAPI.JsonConverters;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -75,7 +76,11 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new CreateNotificationDTOConverter());
+    options.JsonSerializerOptions.Converters.Add(new CreateNotificationProviderDTOConverter());
+});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

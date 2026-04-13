@@ -43,7 +43,7 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<NotificationProvider>(notificationProvider =>
             {
-                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.NotificationType))
+                notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ProviderType))
                 .HasValue<EmailProvider>(NotificationType.Email)
                 .HasValue<TextProvider>(NotificationType.Text);
 
@@ -65,6 +65,11 @@ namespace DBGuardAPI.Data.Models
                     .HasForeignKey(gct => gct.GuardId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
+            builder.Entity<GuardView>(guardView =>
+            {
+                guardView.HasKey(g => g.Id);
+                guardView.ToView("guard_view");
+            });
             builder.Entity<NotificationTransaction>(notificationTransactions =>
             {
                 notificationTransactions.HasDiscriminator<NotificationType>(nameof(NotificationTransaction.NotificationType))
@@ -85,6 +90,7 @@ namespace DBGuardAPI.Data.Models
             base.OnModelCreating(builder);
         }
         public DbSet<Guard> Guards { get; set; }
+        public DbSet<GuardView> GuardView { get; set; }
         public DbSet<DatabaseConnection> DatabaseConnections { get; set; }
         public DbSet<GuardNotification> GuardNotifications { get; set; }
         public DbSet<GuardChangeTransaction> GuardChangeTransactions { get; set; }

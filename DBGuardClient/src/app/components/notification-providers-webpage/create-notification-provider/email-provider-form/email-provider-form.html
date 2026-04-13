@@ -1,0 +1,30 @@
+<form [formGroup]="emailProviderForm" class="email-form">
+    <div>
+        <p-floatlabel variant="on">
+            <input type="text" pInputText fluid id="smtp-server" formControlName="smtpServer">
+            <label for="smtp-server">SMTP Server</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-inputnumber formControlName="port" fluid id="port" [useGrouping]="false"></p-inputnumber>
+            <label for="port">Port</label>
+        </p-floatlabel>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <input pInputText type="text" fluid id="username" formControlName="username">
+            <label for="username">Username</label>
+        </p-floatlabel>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-password id="password" fluid formControlName="password" [feedback]="false" [toggleMask]="true"></p-password>
+            <label for="password">Password</label>
+        </p-floatlabel>
+    </div>
+    <div>
+        <p-button (onClick)="addEmailProvider()" [label]="emailProviderToEdit() ? 'Save' : 'Add'" icon="pi pi-plus" [rounded]="true" [disabled]="emailProviderForm.invalid"></p-button>
+    </div>
+</form>

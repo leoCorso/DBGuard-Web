@@ -18,11 +18,20 @@ export class AuthService {
   public loggingIn = signal<boolean>(false);
 
   private accessTokenKey = 'access_token';
+  private userRoles = signal<string[]>([]);
+  private tokenExpiration = signal<number | null>(null);
+  private token = signal<string | null>(null);
+  private rolesKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
 
   public initUser(): void {
     const token = localStorage.getItem(this.accessTokenKey);
-    if(token && AuthService.tokenValid(token)){
+    if(token){
+      this.token.set(token);
+      this.decodeToken(token);
+    }
+    if(token && this.tokenValid()){
       this.loggedIn.set(true);
+    
     }
   }
   public login(username: string, password: string): void {
@@ -68,15 +77,18 @@ export class AuthService {
     }
     this.router.navigate(['login']);
   }
-  private static tokenValid(token: string): boolean {
-    const tokenClaims = AuthService.decodeToken(token);
-    const tokenExpiration = new Date(tokenClaims['exp'] * 1000);
+  private tokenValid(): boolean {
+    if(!this.token || !this.tokenExpiration()){
+      return false;
+    }
+
+    const tokenExpiration = new Date(this.tokenExpiration()! * 1000);
       if (tokenExpiration == null || tokenExpiration.getTime() < Date.now()) {
         return false;
       }
       return true;
   }
-  private static decodeToken(token: string): any {
+  private decodeToken(token: string): void {
     try {
       // Split the token into parts
       const parts = token.split('.');
@@ -87,11 +99,21 @@ export class AuthService {
       // Decode the payload (second part)
       const payload = parts[1];
       const decoded = JSON.parse(atob(payload));
-      return decoded;
+      
+      this.tokenExpiration.set(decoded['exp']);
+      this.userRoles.set(decoded[this.rolesKey]);
     }
     catch (error) {
       console.error('Error decoding JWT:', error);
-      return null;
+    }
+  }
+  public hasRoles(roles: string[]): boolean {
+    const missingRoles = roles.filter(role => !this.userRoles().includes(role));
+    if(missingRoles.length !== 0){
+      return false;
+    }
+    else {
+      return true;
     }
   }
 }

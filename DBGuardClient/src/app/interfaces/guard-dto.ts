@@ -1,7 +1,8 @@
 import { GuardOperator } from "../enums/guard-operator";
 import { NotificationType } from "../enums/notification-type";
 import { DatabaseConnectionDTO } from "./database-connection-dto";
-import { CreateGuardNotificationDTO, EmailProviderDTO, NotificationProviderDTO, TextProviderDTO } from "./notification-dto";
+import { CreateGuardNotificationDTO } from "./notification-dto";
+import { NotificationProviderDTO } from "./notification-provider-dto";
 
 export interface CreateGuardDTO {
     id?: number,
@@ -22,4 +23,10 @@ export interface CreateGuardDTO {
 export interface CreateGuardReferenceData {
     databaseConnections: DatabaseConnectionDTO[],
     notificationProviders: NotificationProviderDTO[]
+}
+
+export interface GuardDTO {
+    id: number,
+    guardName?: string,
+    guardDescriptio?: string
 }

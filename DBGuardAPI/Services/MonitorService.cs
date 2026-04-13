@@ -35,7 +35,7 @@ namespace DBGuardAPI.Services
 
                 do
                 {
-                    List<Guard> guardsToProcess = await GetGuardsToProcessAsync(stoppingToken);
+                    List<int> guardsToProcess = await GetGuardsToProcessAsync(stoppingToken);
                     if (guardsToProcess.Any())
                     {
                         IEnumerable<Task> tasks = guardsToProcess.Select(g => ProcessGuardWithThrottleAsync(g, stoppingToken));
@@ -46,17 +46,21 @@ namespace DBGuardAPI.Services
 
             }
         }
-        private async Task<List<Guard>> GetGuardsToProcessAsync(CancellationToken stoppingToken)
+        private async Task<List<int>> GetGuardsToProcessAsync(CancellationToken stoppingToken)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
-            List<Guard> guards = await context.Guards
-                .Include(guard => guard.DatabaseConnection)
+            List<int> guardIds = await context.Guards
                 .Where(guard => guard.LastRun == null || (DateTimeOffset.UtcNow - guard.LastRun.Value).TotalMinutes >= guard.RunPeriodInMinutes)
+                .Select(guard => guard.Id)
                 .ToListAsync(stoppingToken);
-            return guards;
+            return guardIds;
         }
-        private async Task ProcessGuardWithThrottleAsync(Guard guard, CancellationToken stoppingToken) 
+        private async Task ProcessGuardWithThrottleAsync(int guardId, CancellationToken stoppingToken) 
         {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            Guard guard = (await context.Guards.Include(guard => guard.DatabaseConnection)
+                .FirstOrDefaultAsync(guard => guard.Id == guardId))!;
+
             await _throttle.WaitAsync(stoppingToken); // Processes 5 guards concurrently
             try
             {
@@ -78,7 +82,7 @@ namespace DBGuardAPI.Services
                     if(guard.GuardState != GuardState.Error)
                     {
                         // Update guard state to error
-                        await ProcessGuardChange(guard.Id, GuardState.Error, $"Count column '{countColumn}' not found in query result");
+                        ProcessGuardChange(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' not found in query result");
                     }   
                 }
                 if(!int.TryParse(resultSet[countColumn].ToString(), out int count))
@@ -87,7 +91,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Error)
                     {
                         // Update guard state to error
-                        await ProcessGuardChange(guard.Id, GuardState.Error, $"Count column '{countColumn}' value is not an integer");
+                        ProcessGuardChange(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' value is not an integer");
                     }
                 }
                 if(TriggerHelper.EvaluateTriggerCondition(count, guard.TriggerValue, guard.TriggerOperator))
@@ -95,7 +99,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Triggered)
                     {
                         // Update guard state to triggered
-                        await ProcessGuardChange(guard.Id, GuardState.Triggered);
+                        ProcessGuardChange(guard.Id, guard.GuardState, GuardState.Triggered, null, count);
                     }
                 }
                 else
@@ -104,7 +108,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Clear)
                     {
                         // Update guard state to error
-                        await ProcessGuardChange(guard.Id, GuardState.Clear);
+                        ProcessGuardChange(guard.Id, guard.GuardState, GuardState.Clear, null, count);
                     }
                 }
             }
@@ -115,7 +119,7 @@ namespace DBGuardAPI.Services
                 if (guard.GuardState != GuardState.Error)
                 {
                     // Update guard state to error
-                    await ProcessGuardChange(guard.Id, GuardState.Error, $"Failed to connect endpoint {guard.DatabaseConnection.EndPoint}");
+                    ProcessGuardChange(guard.Id, guard.GuardState, GuardState.Error, $"Failed to connect endpoint {guard.DatabaseConnection.EndPoint}");
                 }
             }
             catch (OperationCanceledException)
@@ -125,15 +129,17 @@ namespace DBGuardAPI.Services
                 if (guard.GuardState != GuardState.Error)
                 {
                     // Update guard state to error
-                    await ProcessGuardChange(guard.Id, GuardState.Error, $"Connection to {guard.DatabaseConnection.EndPoint} timed out");
+                    ProcessGuardChange(guard.Id, guard.GuardState, GuardState.Error, $"Connection to {guard.DatabaseConnection.EndPoint} timed out");
                 }
             }
             finally
             {
                 _throttle.Release();
+                guard.LastRun = DateTime.UtcNow;
+                await context.SaveChangesAsync();
             }
         }
-        private async Task ProcessGuardChange(int guardId, GuardState newState, string? message = null)
+        private async Task ProcessGuardChange(int guardId, GuardState previousState, GuardState newState, string? message = null, int? actualCount = null)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             Guard guard = await  context.Guards
@@ -147,15 +153,26 @@ namespace DBGuardAPI.Services
             {
                 GuardId = guard.Id,
                 GuardState = newState,
+                PreviousGuardState = previousState,
                 GuardQuery = guard.TriggerQuery,
                 GuardOperator = guard.TriggerOperator,
                 GuardValue = guard.TriggerValue,
+                ResultValue = actualCount,
                 DatabaseConnectionId = guard.DatabaseConnectionId,
                 DatabaseConnectionEndPoint = guard.DatabaseConnection!.EndPoint,
                 DatabaseConnectionEngine = guard.DatabaseConnection.DatabaseEngine,
                 DatabaseConnectionUsername = guard.DatabaseConnection.Username!
             };
             await context.GuardChangeTransactions.AddAsync(changeTransaction);
+            switch(newState)
+            {
+                case GuardState.Triggered:
+                    guard.TotalTriggers += 1;
+                    break;
+                case GuardState.Error:
+                    guard.TotalErrors += 1;
+                    break;
+            }
             await context.SaveChangesAsync();
 
             // If change type send notification is enabled send notification

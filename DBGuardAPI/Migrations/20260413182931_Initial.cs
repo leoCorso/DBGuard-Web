@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -192,7 +193,7 @@ namespace DBGuardAPI.Migrations
                     create_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_edited_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     created_by_user_id = table.Column<string>(type: "text", nullable: false),
-                    service_type = table.Column<int>(type: "integer", nullable: false),
+                    notification_type = table.Column<int>(type: "integer", nullable: false),
                     smtp_server = table.Column<string>(type: "text", nullable: true),
                     username = table.Column<string>(type: "text", nullable: true),
                     password = table.Column<string>(type: "text", nullable: true),
@@ -293,13 +294,13 @@ namespace DBGuardAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     guard_id = table.Column<int>(type: "integer", nullable: false),
                     notification_type = table.Column<int>(type: "integer", nullable: false),
-                    service_provider_id = table.Column<int>(type: "integer", nullable: false),
+                    notification_provider_id = table.Column<int>(type: "integer", nullable: false),
                     email_subject = table.Column<string>(type: "text", nullable: true),
                     email_body = table.Column<string>(type: "text", nullable: true),
-                    to_emails = table.Column<string>(type: "text", nullable: true),
-                    cc_emails = table.Column<string>(type: "text", nullable: true),
-                    bcc_emails = table.Column<string>(type: "text", nullable: true),
-                    phone_numbers = table.Column<string>(type: "text", nullable: true),
+                    to_emails = table.Column<List<string>>(type: "text[]", nullable: true),
+                    cc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
+                    bcc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
+                    phone_numbers = table.Column<List<string>>(type: "text[]", nullable: true),
                     text_message = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -312,8 +313,8 @@ namespace DBGuardAPI.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_guard_notifications_notification_providers_service_provider",
-                        column: x => x.service_provider_id,
+                        name: "fk_guard_notifications_notification_providers_notification_pro",
+                        column: x => x.notification_provider_id,
                         principalTable: "notification_providers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -406,9 +407,9 @@ namespace DBGuardAPI.Migrations
                 column: "guard_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_guard_notifications_service_provider_id",
+                name: "ix_guard_notifications_notification_provider_id",
                 table: "guard_notifications",
-                column: "service_provider_id");
+                column: "notification_provider_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_guards_created_by_user_id",

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DBGuardAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DBGuardAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413182931_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,14 +227,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("guard_value");
 
-                    b.Property<int>("PreviousGuardState")
-                        .HasColumnType("integer")
-                        .HasColumnName("previous_guard_state");
-
-                    b.Property<int?>("ResultValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("result_value");
-
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
@@ -345,9 +340,9 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_edited_date");
 
-                    b.Property<int>("ProviderType")
+                    b.Property<int>("NotificationType")
                         .HasColumnType("integer")
-                        .HasColumnName("provider_type");
+                        .HasColumnName("notification_type");
 
                     b.HasKey("Id")
                         .HasName("pk_notification_providers");
@@ -357,7 +352,7 @@ namespace DBGuardAPI.Migrations
 
                     b.ToTable("notification_providers", (string)null);
 
-                    b.HasDiscriminator<int>("ProviderType");
+                    b.HasDiscriminator<int>("NotificationType");
 
                     b.UseTphMappingStrategy();
                 });

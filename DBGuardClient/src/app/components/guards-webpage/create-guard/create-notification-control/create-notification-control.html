@@ -24,10 +24,10 @@
     </div>
     <p-inputgroup style="margin-bottom: 1rem;">
         <p-floatlabel variant="on">
-            <p-select fluid id="notification-provider" [options]="notificationProviders()"
+            <p-select fluid id="notification-provider" [options]="currentProviders()"
                 [formControl]="notificationProvider" appendTo="body">
                 <ng-template #selectedItem let-selectedOption>
-                                        @if(isEmailProvider(selectedOption)){
+                    @if(isEmailProvider(selectedOption)){
                     <div class="provider-item">
                         <p-tag style="margin-bottom: 1rem;" value="Email provider" [rounded]="true"
                             severity="info"></p-tag>
@@ -81,14 +81,14 @@
             <label for="notification-provider">Notification provider</label>
         </p-floatlabel>
         <p-inputgroup-addon>
-            <p-button pTooltip="Create notification provider" icon="pi pi-plus" [text]="true"></p-button>
+            <p-button (onClick)="addNotificationProvider()" pTooltip="Create notification provider" icon="pi pi-plus" [text]="true"></p-button>
         </p-inputgroup-addon>
     </p-inputgroup>
 </div>
 <div>
     @if (notificationProvider.value) {
     <!-- Email -->
-    @if (notificationProvider.value.notificationType === 0) {
+    @if (notificationProvider.value.providerType === 0) {
     <app-email-form (emailMessage)="addEmailNotification($event)"></app-email-form>
     }
     <!-- Text -->

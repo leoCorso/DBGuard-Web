@@ -1,9 +1,10 @@
 import { NotificationType } from "../enums/notification-type";
-import { EmailProviderDTO, NotificationProviderDTO, TextProviderDTO } from "../interfaces/notification-dto";
+import { NotificationProviderDTO, EmailProviderDTO, TextProviderDTO } from "../interfaces/notification-provider-dto";
 
 export function isEmailProvider(n: NotificationProviderDTO): n is EmailProviderDTO {
-    return n.notificationType === NotificationType.Email;
+    return n.providerType === NotificationType.Email;
 }
+
 export function isTextProvider(n: NotificationProviderDTO): n is TextProviderDTO {
-    return n.notificationType === NotificationType.Text;
+    return n.providerType === NotificationType.Text;
 }

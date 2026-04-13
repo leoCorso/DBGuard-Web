@@ -9,9 +9,11 @@ namespace DBGuardAPI.Data.Models
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
         public int? GuardId { get; set; }
         public GuardState GuardState { get; set; }
+        public GuardState PreviousGuardState { get; set; }
         public required string GuardQuery { get; set; }
         public GuardOperator GuardOperator { get; set; }
         public int GuardValue { get; set; }
+        public int? ResultValue { get; set; } // The value of result set which triggered or untriggered query
         public int? DatabaseConnectionId { get; set; }
         public required string DatabaseConnectionEndPoint { get; set; }
         public DatabaseEngine DatabaseConnectionEngine { get; set; }

@@ -40,17 +40,36 @@
         </p-floatlabel>
         <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
-    <div>
+    <div >
         <div class="control-with-btn">
             <p-inputgroup>
                 <p-floatlabel variant="on">
                     <p-select fluid appendTo="body" id="database-connection" formControlName="databaseConnection"
-                        [options]="databaseConnections()">
+                        [options]="databaseConnections()" emptyMessage="No databases configured" >
                         <ng-template #selectedItem let-selectedOption>
-                            {{ selectedOption.databaseEngine }}, {{ selectedOption.endpoint }}, {{ selectedOption.databaseName }} {{ selectedOption.username }}
+                            @if (selectedOption) {
+                                <ul>
+                                    <li><strong>Provider type: </strong>{{ getEnumLabel(databaseEngine, selectedOption.databaseEngine) }}</li>
+                                    <li><strong>Endpoint: </strong>{{ selectedOption.endpoint }}</li>
+                                    <li><strong>Database name: </strong>{{ selectedOption.databaseName }}</li>
+                                    @if (selectedOption.username) {
+                                        <li><strong>Username: </strong>{{ selectedOption.username }}</li>
+                                    }
+                                </ul>
+                            }
+     
                         </ng-template>
                         <ng-template #item let-dbConnection>
-                            {{ getEnumLabel(NotifcationType, ) dbConnection.databaseEngine }}, {{ dbConnection.endpoint }}, {{ dbConnection.databaseName }} {{ dbConnection.username }}
+                            @if (item) {
+                                <ul>
+                                    <li><strong>Provider type: </strong>{{ getEnumLabel(databaseEngine, dbConnection.databaseEngine) }}</li>
+                                    <li><strong>Endpoint: </strong>{{ dbConnection.endpoint }}</li>
+                                    <li><strong>Database name: </strong>{{ dbConnection.databaseName }}</li>
+                                    @if (dbConnection.username) {
+                                        <li><strong>Username: </strong>{{ dbConnection.username }}</li>
+                                    }
+                                </ul>
+                            }
                         </ng-template>
                     </p-select>
                     <label for="database-connection">Database connection</label>
@@ -64,8 +83,8 @@
         <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
     <div>
-        <p-floatlabel>
-            <p-inputnumber fluid id="run-period" formControlName="runPeriodInMinutes"></p-inputnumber>
+        <p-floatlabel variant="on">
+            <p-inputnumber fluid id="run-period" formControlName="runPeriodInMinutes" [showButtons]="true"></p-inputnumber>
             <label for="run-period">Run period (minutes)</label>
         </p-floatlabel>
         <p-message variant="simple" size="small" severity="info">Required</p-message>
@@ -89,6 +108,6 @@
         </div>
     </div>
     <div class="bottom-btns">
-        <p-button label="Add" icon="pi pi-save" [rounded]="true" [disabled]="guardFormGroup.invalid"></p-button>
+        <p-button (onClick)="addGuard()" [label]="guardToEdit() ? 'Save' : 'Add'" icon="pi pi-save" [rounded]="true" [disabled]="guardFormGroup.invalid"></p-button>
     </div>
 </form>

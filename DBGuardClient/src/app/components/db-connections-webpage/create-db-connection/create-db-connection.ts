@@ -13,6 +13,7 @@ import { environment } from '../../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Data } from '@angular/router';
 
 @Component({
   selector: 'app-create-db-connection',
@@ -47,15 +48,11 @@ export class CreateDbConnection {
       password: formValues.password ?? undefined
     };
     const url = [environment.api.uri, 'DatabaseConnection'];
-    if(this.dbConnectionToEdit()){ // Editing a connection
-      newConnection.id = this.dbConnectionToEdit()!.id
-      url.push('PutDatabaseConnection');
-    }
-    else { // Creating a connection
-      url.push('PostDatabaseConnection');
-    }
+    
+    this.dbConnectionToEdit() ? url.push("PutDatabaseConnection") : url.push('PostDatabaseConnection');
     const urlString = url.join('/');
-    this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection).subscribe({
+    const request = this.dbConnectionToEdit() ? this.httpClient.put<DatabaseConnectionDTO>(urlString, newConnection) : this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection);
+    request.subscribe({
       next: (newConnection: DatabaseConnectionDTO) => {
         this.dialogRef.close(newConnection);
         this.loading.set(false);
@@ -65,5 +62,4 @@ export class CreateDbConnection {
       }
     });
   }
-
 }

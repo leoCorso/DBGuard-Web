@@ -1,4 +1,4 @@
-import { Component, inject, input, model, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, input, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
@@ -17,15 +17,16 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { CreateNotificationControl } from './create-notification-control/create-notification-control';
-import { CreateGuardNotificationDTO, NotificationProviderDTO } from '../../../interfaces/notification-dto';
-import { CreateGuardDTO, CreateGuardReferenceData } from '../../../interfaces/guard-dto';
-import { Listbox, ListboxClickEvent } from 'primeng/listbox';
+import { CreateGuardNotificationDTO } from '../../../interfaces/notification-dto';
+import { CreateGuardDTO, CreateGuardReferenceData, GuardDTO } from '../../../interfaces/guard-dto';
+import { Listbox } from 'primeng/listbox';
 import { Tag } from 'primeng/tag';
 import { Card } from 'primeng/card';
-import { Dialog } from 'primeng/dialog';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateDbConnection } from '../../db-connections-webpage/create-db-connection/create-db-connection';
 import { Subject, takeUntil } from 'rxjs';
+import { DatabaseEngine } from '../../../enums/database-engines';
+import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 
 @Component({
   selector: 'app-create-guard',
@@ -43,8 +44,10 @@ export class CreateGuard implements OnInit, OnDestroy {
   private httpClient = inject(HttpClient);
   public enumOptions = enumToOptions(GuardOperator);
   public getEnumLabel = getEnumLabel;
+  public databaseEngine = DatabaseEngine;
   private dialogService = inject(DialogService);
   private createDbConnectionRef?: DynamicDialogRef<CreateDbConnection> | null;
+
   private destroy = new Subject<void>();
 
   public guardFormGroup = new FormGroup({
@@ -61,6 +64,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     runPeriodInMinutes: new FormControl<number>(5, [Validators.required, Validators.min(1)]),
     notifications: new FormControl<CreateGuardNotificationDTO[]>([])
   });
+
 
   ngOnInit(): void {
     this.getCreateGuardReferenceData();
@@ -104,8 +108,42 @@ export class CreateGuard implements OnInit, OnDestroy {
       draggable: true,
       maximizable: true
     });
-    this.createDbConnectionRef?.onClose.pipe(takeUntil(this.destroy)).subscribe(newConnection => {
-      this.databaseConnections.update(conns => [...conns, newConnection]);
+    this.createDbConnectionRef?.onClose.pipe(takeUntil(this.destroy)).subscribe({
+      next: (newConnection: DatabaseConnectionDTO | undefined) => {
+        if(newConnection){
+          this.databaseConnections.update(conns => [...conns, newConnection]);
+        }
+      }
+    });
+  }
+  public addGuard(): void {
+    const values = this.guardFormGroup.value;
+    if(!values){
+      return;
+    }
+    let guard: CreateGuardDTO = {
+      guardName: values.guardName ?? undefined,
+      guardDescription: values.guardDescription ?? undefined,
+      triggerQuery: values.triggerQuery!,
+      countColumn: values.countColumn!,
+      triggerOperator: values.triggerOperator!,
+      triggerValue: values.triggerValue!,
+      databaseConnection: values.databaseConnection!,
+      notifyOnClear: values.notifyOnClear!,
+      notifyOnError: values.notifyOnError!,
+      notifyOnTrigger: values.notifyOnTrigger!,
+      runPeriodInMinutes: values.runPeriodInMinutes!,
+      notifications: values.notifications!
+    };
+    guard.id = this.guardToEdit() ? guard.id : undefined; 
+    const url = [environment.api.uri, 'Guards'];
+    this.guardToEdit() ? url.push('PutGuard') : url.push('PostGuard');
+    const urlString = url.join('/');
+    const request = this.guardToEdit() ? this.httpClient.put<GuardDTO>(urlString, guard) : this.httpClient.post<GuardDTO>(urlString, guard);
+    request.subscribe({
+      next: (newGuard: GuardDTO) => {
+        console.log(`Guard: ${JSON.stringify(newGuard)}`);
+      }
     });
   }
 }

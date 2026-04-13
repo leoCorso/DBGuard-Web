@@ -4,6 +4,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { Toolbar } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { CreateGuard } from '../create-guard/create-guard';
+import { AuthService } from '../../../services/auth-service';
 
 @Component({
   selector: 'app-guards-toolbar',
@@ -13,7 +14,7 @@ import { CreateGuard } from '../create-guard/create-guard';
 })
 export class GuardsToolbar {
   private dialogService = inject(DialogService);
-
+  public authService = inject(AuthService);
   public createGuardClicked(): void {
     this.dialogService.open(CreateGuard, {
       header: 'Create guard',

@@ -1,5 +1,7 @@
-<p-toolbar>
-    <ng-template #start>
-        <p-button icon="pi pi-plus" [text]="true" severity="secondary" pTooltip="Create new guard" (onClick)="createGuardClicked()"></p-button>
-    </ng-template>
-</p-toolbar>
+@if (authService.hasRoles(['Admin'])) {
+    <p-toolbar>
+        <ng-template #start>
+            <p-button icon="pi pi-plus" [text]="true" severity="secondary" pTooltip="Create new guard" (onClick)="createGuardClicked()"></p-button>
+        </ng-template>
+    </p-toolbar>
+}

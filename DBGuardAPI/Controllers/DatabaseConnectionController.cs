@@ -3,6 +3,7 @@ using System.Net;
 using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
 using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models;
+using DBGuardAPI.Data.StaticData;
 using DBGuardAPI.Helpers;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -29,9 +30,28 @@ namespace DBGuardAPI.Controllers
             _credentialProtector = credentialProtector;
             _userManager = userManager;
         }
+        [HttpGet(nameof(GetDatabaseConnection) + "/{id}")]
+        public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnection(int id)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            DatabaseConnection? connection = await context.DatabaseConnections.FindAsync(id);
+            if(connection is null)
+            {
+                return NotFound();
+            }
+            return new DatabaseConnectionDTO
+            {
+                Id = connection.Id,
+                Endpoint = connection.EndPoint,
+                DatabaseName = connection.DatabaseName,
+                Username = connection.Username,
+                DatabaseEngine = connection.DatabaseEngine
 
+            };
+        }
         [HttpPost(nameof(PostDatabaseConnection))]
-        public async Task<ActionResult<DatabaseConnectionDTO>> PostDatabaseConnection(CreateDatabaseConnectionDTO newConnection)
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult> PostDatabaseConnection(CreateDatabaseConnectionDTO newConnection)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             User? user = await _userManager.GetUserAsync(User);
@@ -63,14 +83,14 @@ namespace DBGuardAPI.Controllers
             };
             await context.DatabaseConnections.AddAsync(newConnObject);
             await context.SaveChangesAsync();
-            return new DatabaseConnectionDTO
+            return CreatedAtAction(nameof(GetDatabaseConnection), new { id = newConnObject.Id }, new DatabaseConnectionDTO
             {
                 Id = newConnObject.Id,
                 Endpoint = newConnObject.EndPoint,
                 DatabaseName = newConnObject.DatabaseName,
                 Username = newConnObject.Username,
                 DatabaseEngine = newConnObject.DatabaseEngine
-            };
+            });
         }
     }
 
