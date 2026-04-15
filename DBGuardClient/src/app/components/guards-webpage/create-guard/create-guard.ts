@@ -46,6 +46,7 @@ export class CreateGuard implements OnInit, OnDestroy {
   public getEnumLabel = getEnumLabel;
   public databaseEngine = DatabaseEngine;
   private dialogService = inject(DialogService);
+  private dialogRef = inject(DynamicDialogRef);
   private createDbConnectionRef?: DynamicDialogRef<CreateDbConnection> | null;
 
   private destroy = new Subject<void>();
@@ -142,7 +143,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     const request = this.guardToEdit() ? this.httpClient.put<GuardDTO>(urlString, guard) : this.httpClient.post<GuardDTO>(urlString, guard);
     request.subscribe({
       next: (newGuard: GuardDTO) => {
-        console.log(`Guard: ${JSON.stringify(newGuard)}`);
+        this.dialogRef.close(newGuard);
       }
     });
   }

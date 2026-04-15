@@ -1,0 +1,49 @@
+<p-card>
+    <div class="view-item">
+        <div class="first-pane">
+            <div class="first-top">
+                <a class="guard-link" href="">{{ guardData().guardName ?? 'Un-named' }}</a>
+                <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getTriggerSeverity()"></p-tag>
+            </div>
+            <div class="first-mid">
+                <div class="info">
+                    <label for="created"><strong>Created:</strong></label>
+                    <p id="created">{{ guardData().createDate | date: 'MM/dd/yyy hh:mm a' }}</p>
+                </div>
+                <div class="info">
+                    <label for="last-run"><strong>Last ran:</strong></label>
+                    <p id="last-ran">{{ guardData().lastRun | date: 'MM/dd/yyyy hh:mm a'}}</p>
+                </div>
+                <div class="info">
+                    <label for="total-triggers"><strong>Total triggers:</strong></label>
+                    <p-badge [value]="guardData().totalTriggers" severity="warn"></p-badge>
+                </div>
+                <div class="info">
+                    <label for="total-errors"><strong>Total errors:</strong></label>
+                    <p-badge [value]="guardData().totalErrors" severity="danger"></p-badge>
+                </div>
+            </div>
+            <div class="first-bottom">
+                <div class="info">
+                    <label for="created-by"><strong>Created by:</strong></label>
+                    <a href="#">{{ guardData().userName }}</a>
+                </div>
+            </div>
+        </div>
+        <div class="second-pane">
+            <label class="query-sample" for="query-sample">{{ guardData().countColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</label>
+        </div>
+        <div class="third-pane">
+            <div class="third-top">
+                <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
+            </div>
+            <div class="third-bottom">
+                <ul class="inline-list">
+                    <li><strong>Database engine: </strong><p>{{ getEnumLabel(databaseEngine, guardData().databaseEngine) }}</p></li>
+                    <li><strong>Database endpoint: </strong><p>{{ guardData().endPoint }}</p></li>
+                    <li><strong>Database name: </strong><p>{{ guardData().databaseName }}</p></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</p-card>

@@ -1,6 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { GuardsToolbar } from './guards-toolbar/guards-toolbar';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { DialogService } from 'primeng/dynamicdialog';
+import { CreateGuard } from './create-guard/create-guard';
 
 @Component({
   selector: 'app-guards-webpage',
@@ -8,9 +10,17 @@ import { Router, RouterOutlet } from '@angular/router';
   templateUrl: './guards-webpage.html',
   styleUrl: './guards-webpage.scss',
 })
-export class GuardsWebpage implements OnInit {
+export class GuardsWebpage {
   
-  ngOnInit(): void {
-    
+  private dialogService = inject(DialogService);
+
+  public createGuardClicked(): void {
+    this.dialogService.open(CreateGuard, {
+      header: 'Create guard',
+      maximizable: true,
+      closable: true,
+      draggable: true,
+      resizable: true
+    });
   }
 }

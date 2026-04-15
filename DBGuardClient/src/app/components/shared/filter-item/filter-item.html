@@ -1,0 +1,107 @@
+<div class="filter-container card">
+    @switch (filterConfig().type) {
+        <!-- Render text input and operator selection for text filters -->
+         @case ('text') {
+            <div [ngClass]="this.filterConfig().isTableFilter ? 'table-text-select' : 'non-table-text-select'">
+                <!-- Operator dropdown -->
+                <div pTooltip="Changes the string operator"
+                    class="text-input-header">
+                    @if (!filterConfig().isTableFilter) {
+                        <label for="text-operator" style="text-wrap: nowrap;">{{ filterConfig().label }}</label>
+                    }
+                    <p-select id="text-operator" fluid appendTo="body"
+                        [options]="textFilterOperators" [formControl]="selectedFilterOperator" optionLabel="operatorLabel" placeholder="Select operator"/> 
+
+                </div>
+                <input fluid class="text-input" pInputText type="text" [formControl]="formControl" [placeholder]="filterConfig().placeholder ?? ''">
+            </div>
+         }
+         <!-- Numeric filter -->
+          @case ('numeric') {
+            <div [ngClass]="this.filterConfig().isTableFilter ? 'table-text-select' : 'non-table-text-select'">
+                <!-- Operator dropdown -->
+                <div pTooltip="Changes the string operator"
+                    class="text-input-header">
+                    @if (!filterConfig().isTableFilter) {
+                        <label for="text-operator" style="text-wrap: nowrap;">{{ filterConfig().label }}</label>
+                    }
+                    <p-select id="text-operator" fluid appendTo="body"
+                        [options]="numberFilterOperators" [formControl]="selectedFilterOperator" optionLabel="operatorLabel" placeholder="Select operator"/> 
+
+                </div>
+                <input class="w-full text-input" pInputText type="number" [formControl]="formControl" [placeholder]="filterConfig().placeholder ?? ''">
+            </div>
+          }
+        <!-- Select filter -->
+        @case('select'){
+            <div class="select-filter">
+                @if (!filterConfig().isTableFilter) {
+                    <label for="select-filter" style="text-wrap: nowrap;" style="margin-bottom: 1rem;">{{ filterConfig().label }}</label>
+                }
+                <p-select [autofocusFilter]="false" appendTo="body" id="select-filter" [options]="filterConfig().options!" [formControl]="formControl"
+                    optionLabel="operatorLabel" [placeholder]="filterConfig().placeholder" [fluid]="true" filterPlaceholder="Search" [showClear]="true" />
+            </div>
+        }
+
+        <!-- Multi Select filter -->
+         @case ('multi-select') {
+            <div class="multi-select-filter">
+                @if (!filterConfig().isTableFilter) {
+                    <label for="multi-select-filter" style="text-wrap: nowrap;margin-bottom: 1rem;">{{ filterConfig().label }}</label>
+                }
+                <p-multiSelect [pt]="multiSelectPt" appendTo="body" fluid id="multi-select-filter" [options]="filterConfig().options!" [formControl]="formControl"
+                    optionLabel="label" [placeholder]="filterConfig().placeholder" [showClear]="true" />
+            </div>
+         }
+
+        <!-- Date range filter -->
+         @case ('daterange') {
+            <div class="daterange-filter">
+                @if (!filterConfig().isTableFilter) {
+                    <label for="daterange-filter" style="text-wrap: nowrap;margin-bottom: 1rem;">{{ filterConfig().label }}</label>
+                }
+                <p-datepicker [readonlyInput]="true" appendTo="body" id="daterange-filter" [formControl]="formControl" selectionMode="range" [readonlyInput]="true"
+                    [placeholder]="filterConfig().placeholder" [fluid]="true" [showButtonBar]="true" [showIcon]="true" [showWeek]="true" />
+            </div>
+        }
+        <!-- Datetime -->
+         @case ('datetime') {
+            <div class="datetime-picker-filter" [ngClass]="this.filterConfig().isTableFilter ? 'table-text-select' : 'non-table-text-select'">
+                @if (!filterConfig().isTableFilter) {
+                    <label for="datetime-filter" style="text-wrap: nowrap;margin-bottom: 1rem;">{{ filterConfig().label }}</label>
+                }
+                <p-select id="number-operator" appendTo="body"
+                    [options]="numberFilterOperators" [formControl]="selectedFilterOperator" optionLabel="operatorLabel" placeholder="Select operator"/> 
+                <p-datepicker [readonlyInput]="" appendTo="body" id="datetime-filter" [formControl]="formControl" [showTime]="true" hourFormat="24" [readonlyInput]="true"
+                    [placeholder]="filterConfig().placeholder" [fluid]="true" [showButtonBar]="true" [showIcon]="true" [showWeek]="true"/>
+            </div>
+         }
+        <!-- Value Range -->
+        @case ('range') {
+            <div class="range-filter">
+                @if (!filterConfig().isTableFilter) {
+                    <label for="value-range-filter" style="text-wrap: nowrap;margin-bottom: 1rem;">{{ filterConfig().label }}</label>
+                }
+                <div id="value-range-filter" style="display: flex;flex-direction: column;justify-content: center;padding: 3rem;">
+                    <div style="display: flex;justify-content: space-between;">
+                        <p>{{formControl.value[0] ?? this.filterConfig().valueRange?.startValue}}</p>
+                        <p>{{formControl.value[1] ?? this.filterConfig().valueRange?.endValue}}</p>
+                    </div>
+                    <p-slider [formControl]="formControl" [min]="filterConfig().valueRange?.startValue"
+                        [max]="filterConfig().valueRange?.endValue" [range]="true" />
+                </div>
+            </div>
+        }
+
+        <!-- Trivalue filter -->
+        @case ('trivalue') {
+            <div class="trivalue-filter">
+                @if (!filterConfig().isTableFilter) {
+                    <label for="tri-value-filter" style="text-wrap: nowrap;margin-bottom: 1rem;">{{ filterConfig().label }}</label>
+                }
+                <p-selectbutton [formControl]="formControl" [options]="filterConfig().options" optionLabel="label" optionValue="value"></p-selectbutton>
+            </div>
+        }
+
+    }
+</div>

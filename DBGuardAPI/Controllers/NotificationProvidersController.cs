@@ -34,7 +34,7 @@ namespace DBGuardAPI.Controllers
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostNotificationProvider))]
-        public async Task<ActionResult> PostNotificationProvider(CreateNotificationProviderDTO newProvider)
+        public async Task<ActionResult<NotificationProviderDTO>> PostNotificationProvider(CreateNotificationProviderDTO newProvider)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             User user = (await _userManager.GetUserAsync(User))!;
@@ -56,7 +56,7 @@ namespace DBGuardAPI.Controllers
             }
             await context.AddAsync(provider);
             await context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetNotificationProvider), new { Id = provider.Id }, NotificationProviderHelper.MapToDTO(provider));
+            return NotificationProviderHelper.MapToDTO(provider);
         }
     }
 }

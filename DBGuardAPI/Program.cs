@@ -1,6 +1,7 @@
 using System.Text;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Helpers;
+using DBGuardAPI.Helpers.CustomFilters;
 using DBGuardAPI.JsonConverters;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
+using Sieve.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -66,7 +68,10 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddHostedService<MonitorService>();
 builder.Services.AddSingleton<CredentialProtector>();
 builder.Services.AddTransient<NotificationService>();
+builder.Services.AddScoped<SieveProcessor>();
+builder.Services.AddScoped<ISieveCustomFilterMethods, GuardFilters>();
 
+builder.Services.AddScoped<EntityViewGetter>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Dev", builder =>

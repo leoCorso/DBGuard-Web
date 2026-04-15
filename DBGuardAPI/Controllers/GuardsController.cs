@@ -5,11 +5,13 @@ using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
 using DBGuardAPI.Data.DTOs.GuardDTOs;
 using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
 using DBGuardAPI.Data.DTOs.NotificationsDTOs;
+using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.Models.GuardNotifications;
 using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Data.StaticData;
+using DBGuardAPI.Data.Views;
 using DBGuardAPI.Helpers;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +19,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 using ZstdSharp.Unsafe;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -31,12 +35,14 @@ namespace DBGuardAPI.Controllers
         private readonly ILogger<GuardsController> _logger;
         private readonly CredentialProtector _credentialProtector;
         private readonly UserManager<User> _userManager;
-        public GuardsController(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<GuardsController> logger, CredentialProtector credentialProtector, UserManager<User> user)
+        private readonly EntityViewGetter _entityViewGetter;
+        public GuardsController(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<GuardsController> logger, CredentialProtector credentialProtector, UserManager<User> user, EntityViewGetter entityViewGetter)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
             _credentialProtector = credentialProtector;
             _userManager = user;
+            _entityViewGetter = entityViewGetter;
         }
 
         [HttpGet(nameof(GetCreateGuardsReferenceData))]
@@ -68,6 +74,17 @@ namespace DBGuardAPI.Controllers
         public async Task<ActionResult<GuardDTO>> GetGuard()
         {
             throw new NotImplementedException();
+        }
+        [HttpGet(nameof(GetGuardsView))]
+        public async Task<ActionResult<PagedResponseDTO<GuardView>>> GetGuardsView([FromQuery] SieveModel sieveParams)
+        {
+            if (sieveParams.PageSize == null || sieveParams.Page == null)
+            {
+                return BadRequest();
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            IQueryable<GuardView> query = context.GuardView.AsNoTracking().AsQueryable();
+            return await _entityViewGetter.GetPagedResponseAsync<GuardView>(sieveParams, query);
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostGuard))]

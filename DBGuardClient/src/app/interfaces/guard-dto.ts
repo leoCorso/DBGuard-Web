@@ -1,4 +1,6 @@
+import { DatabaseEngine } from "../enums/database-engines";
 import { GuardOperator } from "../enums/guard-operator";
+import { GuardState } from "../enums/guard-state";
 import { NotificationType } from "../enums/notification-type";
 import { DatabaseConnectionDTO } from "./database-connection-dto";
 import { CreateGuardNotificationDTO } from "./notification-dto";
@@ -29,4 +31,24 @@ export interface GuardDTO {
     id: number,
     guardName?: string,
     guardDescriptio?: string
+}
+export interface GuardView {
+    id: number,
+    guardName?: string,
+    createDate: Date,
+    lastRun: Date,
+    createdByUserId: string,
+    userName: string,
+    countColumn: string,
+    triggerOperator: GuardOperator,
+    triggerValue: number,
+    databaseConnectionId: number,
+    endPoint: string,
+    databaseEngine: DatabaseEngine,
+    databaseName: string,
+    guardState: GuardState,
+    isActive: boolean,
+    totalErrors: number,
+    totalTriggers: number,
+    runPeriodInMinutes: number
 }

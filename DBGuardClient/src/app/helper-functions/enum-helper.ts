@@ -1,7 +1,4 @@
-export interface SelectOption<T = number> {
-  label: string;
-  value: T;
-}
+import { SelectOption } from "../interfaces/filters";
 
 export function enumToOptions<T extends Record<string, string | number>>(
   enumObj: T,
@@ -16,7 +13,7 @@ export function enumToOptions<T extends Record<string, string | number>>(
 }
 
 // Converts "GreaterThanOrEqualTo" → "Greater Than Or Equal To"
-function formatEnumKey(key: string): string {
+export function formatEnumKey(key: string): string {
   return key.replace(/([A-Z])/g, ' $1').trim();
 }
 

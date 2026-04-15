@@ -77,7 +77,7 @@ namespace DBGuardAPI.Helpers
         {
             using var context = await dbContextFactory.CreateDbContextAsync();
             await context.Database.ExecuteSqlRawAsync(@"
-                CREATE VIEW guard_view AS
+                CREATE OR REPLACE VIEW guard_view AS
                 SELECT g.id, g.guard_name, g.create_date, g.last_run, 
                     g.created_by_user_id, u.user_name, g.count_column, 
                     g.trigger_operator, g.trigger_value, g.database_connection_id, d.end_point, d.database_engine, d.database_name, g.guard_state, g.is_active, g.total_errors, g.total_triggers, g.run_period_in_minutes 

@@ -1,0 +1,51 @@
+:host {
+    width: 100%;
+}
+.text-input {
+    flex-grow: 1;
+}
+.table-text-select {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    justify-content: space-between;
+}
+.non-table-text-select {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    justify-content: space-between;
+}
+.text-input-header {
+    display: flex ;
+    justify-content: space-between ;
+    align-items: center;
+    gap: .3rem;
+}
+.select-filter{
+    display: flex;
+    flex-direction: column;
+}
+.multi-select-filter {
+    display: flex;
+    flex-direction: column;
+}
+.daterange-filter {
+    display: flex;
+    flex-direction: column;
+}
+.datetime-picker-filter{
+    display: flex;
+    flex-direction: column;
+}
+.range-filter {
+    display: flex;
+    flex-direction: column;
+}
+.trivalue-filter{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}

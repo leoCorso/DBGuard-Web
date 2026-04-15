@@ -1,0 +1,7 @@
+<div class="sort-control">
+    <p-floatlabel variant="on">
+        <p-select id="sort-select" [options]="sortOptions()" [(ngModel)]="sortField"></p-select>
+        <label for="sort-select">Sort by</label>
+    </p-floatlabel>
+    <p-button [link]="true" (onClick)="toggleSortDirection()" [icon]="getIcon()"></p-button>
+</div>

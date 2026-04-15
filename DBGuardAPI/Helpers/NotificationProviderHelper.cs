@@ -12,7 +12,6 @@ namespace DBGuardAPI.Helpers
                 EmailProvider email => new EmailProviderDTO
                 {
                     Id = email.Id,
-                    ProviderType = NotificationType.Email,
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
                     Port = email.Port
@@ -20,7 +19,6 @@ namespace DBGuardAPI.Helpers
                 TextProvider text => new TextProviderDTO
                 {
                     Id = text.Id,
-                    ProviderType = NotificationType.Text,
                     PhoneNumber = text.PhoneNumber
                 },
                 _ => throw new InvalidOperationException()

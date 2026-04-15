@@ -2,6 +2,7 @@
 using DBGuardAPI.Data.Models.GuardNotifications;
 using DBGuardAPI.Data.Models.NotificationTransactions;
 using DBGuardAPI.Data.Models.ServiceProviders;
+using DBGuardAPI.Data.Views;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

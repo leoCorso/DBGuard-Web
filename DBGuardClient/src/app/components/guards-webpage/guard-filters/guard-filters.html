@@ -1,0 +1,5 @@
+<div class="guard-filters">
+    @for(filter of filtersConfig; track $index){
+        <app-filter-item (filterValueChanged)="onFilterValueChanged($event)" [filterConfig]="filter"></app-filter-item>
+    }
+</div>
