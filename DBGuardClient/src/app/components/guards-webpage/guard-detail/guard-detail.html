@@ -1,1 +1,52 @@
-<p>guard-detail works!</p>
+<p-card>
+    <ng-template #header>
+        <div class="header">
+            <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
+            <p-buttongroup>
+                <p-button label="Edit guard" icon="pi pi-pencil" [rounded]="true"  [text]="true"></p-button>
+                <p-button label="Delete guard" icon="pi pi-trash" severity="danger" [rounded]="true" [text]="true"></p-button>
+
+            </p-buttongroup>
+        </div>
+    </ng-template>
+    <div class="guard-info">
+        <span class="guard-key">Id:</span>
+        <span class="guard-value">{{ guardDetail()?.id }}</span>
+        <span class="guard-key">Guard name: </span>
+        <span class="guard-value">{{ guardDetail()?.guardName ?? 'Unnamed' }}</span>
+        <span class="guard-key">Guard description:</span>
+        <span class="guard-value">{{ guardDetail()?.guardDescription }}</span>
+        <span class="guard-key">Create date:</span>
+        <span class="guard-value">{{ guardDetail()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+        <span class="guard-key">Last run:</span>
+        <span class="guard-value">{{ guardDetail()?.lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+        <span class="guard-key">Last edited:</span>
+        <span class="guard-value">{{ guardDetail()?.lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+        <span class="guard-key">Query:</span>
+        <span class="guard-value">{{ guardDetail()?.triggerQuery }}</span>
+        <span class="guard-key">Count column:</span>
+        <span class="guard-value">{{ guardDetail()?.countColumn }}</span>
+        <span class="guard-key">Trigger operator:</span>
+        <span class="guard-value">{{ formatEnum(getEnumLabel(guardOperator, guardDetail()!.triggerOperator)) }}</span>
+        <span class="guard-key">Trigger value:</span>
+        <span class="guard-value">{{ guardDetail()?.triggerValue }}</span>
+        <span class="guard-key">Guard state:</span>
+        <span class="guard-value">{{ formatEnum(getEnumLabel(guardState, guardDetail()!.guardState)) }}</span>
+        <span class="guard-key">Is active:</span>
+        <span class="guard-value">{{ guardDetail()?.isActive ? 'yes' : 'no' }}</span>
+        <span class="guard-key">Notify on clear:</span>
+        <span class="guard-value">{{ guardDetail()?.notifyOnClear ? 'yes' : 'no' }}</span>
+        <span class="guard-key">Notify on error:</span>
+        <span class="guard-value">{{ guardDetail()?.notifyOnError ? 'yes' : 'no' }}</span>
+        <span class="guard-key">Notify on trigger:</span>
+        <span class="guard-value">{{ guardDetail()?.notifyOnTrigger ? 'yes' : 'no' }}</span>
+        <span class="guard-key">Total errors:</span>
+        <span class="guard-value">{{ guardDetail()?.totalErrors }}</span>
+        <span class="guard-key">Total triggers:</span>
+        <span class="guard-value">{{ guardDetail()?.totalTriggers }}</span>
+        <span class="guard-key">Created by:</span>
+        <a class="guard-value" href="">{{ guardDetail()?.userName }}</a>
+
+    </div>
+</p-card>
+<app-guard-transaction-preview [guardDetail]="guardDetail()!"></app-guard-transaction-preview>

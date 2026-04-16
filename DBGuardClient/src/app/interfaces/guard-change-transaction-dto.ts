@@ -1,0 +1,20 @@
+import { DatabaseEngine } from "../enums/database-engines";
+import { GuardOperator } from "../enums/guard-operator";
+import { GuardState } from "../enums/guard-state";
+
+export interface GuardChangeTransactionPreviewDTO {
+    id: number,
+    timestamp: Date,
+    guardId?: number,
+    guardState: GuardState,
+    previousGuardState: GuardState,
+    guardQuery: string,
+    guardOperator: GuardOperator,
+    guardValue: number,
+    databaseConnectionId?: number,
+    databaseConnectionEndPoint: string,
+    databaseName: string,
+    databaseConnectionEngine: DatabaseEngine,
+    databaseConnectionUsername: string,
+    resultValue?: number
+}

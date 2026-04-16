@@ -15,38 +15,73 @@ export class Sidebar {
   public menuItems: MenuItem[] = [
     {
       label: 'Home',
-      icon: 'pi pi-home',
-      routerLink: '/'
+      items: [
+        {
+          label: 'Dashboard',
+          icon: 'pi pi-home',
+          routerLink: '/'
+        }
+      ]
     },
     {
       label: 'Guards',
-      icon: 'pi pi-shield',
-      routerLink: 'guards/view-guards'
-    },
-    {
-      label: 'Guard history',
-      icon: 'pi pi-history'
+      items: [
+        {
+          label: 'View guards',
+        icon: 'pi pi-shield',
+          routerLink: 'guards/view-guards'
+        },
+        {
+          label: 'Guard history',
+          icon: 'pi pi-history',
+          routerLink: 'guards/guards-history'
+        },
+        {
+          label: 'Notifications transactions',
+          icon: 'pi pi-envelope'
+        },
+        {
+          label: 'Configured notifications',
+          icon: 'pi pi-file'
+        }
+      ]
     },
     {
       label: 'DB Connections',
-      icon: 'pi pi-desktop',
-      routerLink: 'db-connections'
+      items: [
+        {
+          label: 'View connections',
+          icon: 'pi pi-database',
+          routerLink: 'db-connections'
+        }
+      ]
     },
     {
       label: 'Notification providers',
-      icon: 'pi pi-send'
+      items: [
+        {
+          label: 'View providers',
+          icon: 'pi pi-send'
+        }
+      ]
     },
     {
-      label: 'Users',
-      icon: 'pi pi-users'
+      label: 'Misc',
+      items: [
+        {
+          label: 'Users',
+          icon: 'pi pi-users'
+        },
+        {
+          label: 'Settings',
+          icon: 'pi pi-cog'
+        }
+      ]
     },
-    {
-      label: 'Settings',
-      icon: 'pi pi-cog'
-    }
+
   ];
   private bpObserver = inject(BreakpointObserver);
-  private bpResult = toSignal(this.bpObserver.observe([Breakpoints.Handset]));
+  private bpResult = toSignal(this.bpObserver.observe([Breakpoints.Handset, Breakpoints.Small]));
   public isMobile = computed(() => this.bpResult()?.matches ?? false);
   @ViewChild('menu') public sidebarMenu?: Menu;
 

@@ -7,10 +7,11 @@ import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardState } from '../../../enums/guard-state';
 import { FilterPane } from '../../shared/filter-pane/filter-pane';
 import { Button } from 'primeng/button';
+import { Tooltip, TooltipModule } from "primeng/tooltip";
 
 @Component({
   selector: 'app-guard-filters',
-  imports: [FilterItem, Button],
+  imports: [FilterItem, Button, TooltipModule],
   templateUrl: './guard-filters.html',
   styleUrl: './guard-filters.scss',
 })
@@ -35,8 +36,8 @@ export class GuardFilters extends FilterPane {
     { field: 'databaseName', label: 'Database name', type: 'text', isTableFilter: false, placeholder: 'Filter by database name'},
     { field: 'guardState', label: 'Guard state', type: 'multi-select', customOperator: 'HasGuardState', isTableFilter: false, placeholder: 'Guard state', options: this.guardStates },
     { field: 'isActive', label: 'Is active', type: 'trivalue', isTableFilter: false, placeholder: 'Filter by status', options: this.isActiveOptions },
-    { field: 'totalErrors', label: 'Total errors', type: 'text', isTableFilter: false, placeholder: 'Filter by error count' },
-    { field: 'totalTriggers', label: 'Total triggers', type: 'text', isTableFilter: false, placeholder: 'Filter by trigger count' },
+    { field: 'totalErrors', label: 'Total errors', type: 'numeric', isTableFilter: false, placeholder: 'Filter by error count' },
+    { field: 'totalTriggers', label: 'Total triggers', type: 'numeric', isTableFilter: false, placeholder: 'Filter by trigger count' },
     { field: 'runPeriodInMinutes', label: 'Run period (minutes)', isTableFilter: false, placeholder: 'Filter by run period', type: 'numeric'}
   ];
 }

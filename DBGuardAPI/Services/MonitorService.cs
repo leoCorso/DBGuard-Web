@@ -160,6 +160,7 @@ namespace DBGuardAPI.Services
                 ResultValue = actualCount,
                 DatabaseConnectionId = guard.DatabaseConnectionId,
                 DatabaseConnectionEndPoint = guard.DatabaseConnection!.EndPoint,
+                DatabaseName = guard.DatabaseConnection!.DatabaseName,
                 DatabaseConnectionEngine = guard.DatabaseConnection.DatabaseEngine,
                 DatabaseConnectionUsername = guard.DatabaseConnection.Username!
             };

@@ -2,7 +2,7 @@
     <div class="view-item">
         <div class="first-pane">
             <div class="first-top">
-                <a class="guard-link" href="">{{ guardData().guardName ?? 'Un-named' }}</a>
+                <a [routerLink]="'/guards/guard-detail/' + guardData().id" class="guard-link" href="">{{ guardData().guardName ?? 'Un-named' }}</a>
                 <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getTriggerSeverity()"></p-tag>
             </div>
             <div class="first-mid">
@@ -35,7 +35,13 @@
         </div>
         <div class="third-pane">
             <div class="third-top">
-                <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
+                <div style="display: flex;justify-content: end;">
+                    <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
+                </div>
+                <div style="justify-content: end;" class="info">
+                    <label for="run-period">Run period:</label>
+                    <p-tag [value]="guardData().runPeriodInMinutes | formatRunPeriod" severity="contrast"></p-tag>
+                </div>
             </div>
             <div class="third-bottom">
                 <ul class="inline-list">

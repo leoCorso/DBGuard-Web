@@ -1,9 +1,9 @@
-import { Component, Signal, signal, ViewChild } from '@angular/core';
-import { SortOption, SortValue } from '../../../interfaces/sorting';
+import { Component, inject, OnDestroy, Signal, signal } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { SortOption } from '../../../interfaces/sorting';
+import { HttpClient } from '@angular/common/http';
 import { FilterValue } from '../../../interfaces/filters';
-import { FormControl } from '@angular/forms';
-import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
-import { Subject } from 'rxjs';
+import { ViewParamsBuilder } from '../../../services/view-params-builder';
 
 @Component({
   selector: 'app-paginated-view',
@@ -11,22 +11,23 @@ import { Subject } from 'rxjs';
   template: '',
   styles: '',
 })
-export abstract class PaginatedView<ViewType> {
-  public abstract loadDataPage(event: DataViewLazyLoadEvent): void;
+export abstract class PaginatedView<ViewType> implements OnDestroy {
   public dataItems = signal<ViewType[]>([]);
   public pageSize = signal<number>(5);
   public page = signal<number>(0);
   public totalItems = signal<number>(0);
   public totalPages = signal<number>(0);
   public pageSizeOptions = [5, 30, 50, 100];
-  public loading = signal<boolean>(false);
-  public abstract sortControl: FormControl<SortValue | null>;
-  public abstract filters: Signal<Map<string, FilterValue>>;
-  public abstract sortOptions: SortOption[];
+  public loadingEvent = new BehaviorSubject<boolean>(false);
+  public showSpinner = signal<boolean>(false);
+  public errorState = signal<boolean>(false);
   protected destroy = new Subject<void>();
-  @ViewChild('dataView') public dataView!: DataView;
-  public filtersChanged(): void {
-    const lazyLoadEvent = this.dataView.createLazyLoadMetadata();
-    this.loadDataPage(lazyLoadEvent);
+  public abstract filters: Signal<Map<string, FilterValue> | undefined>;
+  protected httpClient= inject(HttpClient);
+  protected paramsBuilder = inject(ViewParamsBuilder);
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

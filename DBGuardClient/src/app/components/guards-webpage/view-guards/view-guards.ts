@@ -1,12 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, effect, ElementRef, inject, input, model, OnInit, Signal, signal, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, input, model, OnInit, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { FilterValue } from '../../../interfaces/filters';
 import { Drawer } from 'primeng/drawer';
 import { GuardFilters } from '../guard-filters/guard-filters';
 import { Button } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { PaginatedView } from '../../shared/paginated-view/paginated-view';
+import { PaginatedDataView } from '../../shared/paginated-data-view/paginated-data-view';
 import { GuardView } from '../../../interfaces/guard-dto';
 import { SortOption, SortValue } from '../../../interfaces/sorting';
 import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
@@ -16,18 +16,16 @@ import { takeUntil } from 'rxjs';
 import { ViewParamsBuilder } from '../../../services/view-params-builder';
 import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { ViewGuardItem } from './view-guard-item/view-guard-item';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-view-guards',
-  imports: [Drawer,GuardFilters, Button, TooltipModule, DataView, SortSelectControl, ReactiveFormsModule, ViewGuardItem],
+  imports: [Drawer,GuardFilters, Button, TooltipModule, DataView, SortSelectControl, ReactiveFormsModule, ViewGuardItem, ProgressSpinner],
   templateUrl: './view-guards.html',
   styleUrl: './view-guards.scss',
 })
-export class ViewGuards extends PaginatedView<GuardView> implements OnInit {
+export class ViewGuards extends PaginatedDataView<GuardView> implements OnInit {
   public filterVisible = false;
-  private httpClient = inject(HttpClient);
-  private paramsBuilder = inject(ViewParamsBuilder);
-
   public override filters = signal<Map<string, FilterValue>>(new Map([]));
 
   public override sortOptions: SortOption[] = [
@@ -42,7 +40,8 @@ export class ViewGuards extends PaginatedView<GuardView> implements OnInit {
   ];
   public override sortControl = new FormControl<SortValue>({field: 'createDate', order: -1});
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
     this.sortControl.valueChanges.pipe(takeUntil(this.destroy)).subscribe(() => {
       const loadEvent = this.dataView.createLazyLoadMetadata();
       this.loadDataPage(loadEvent);
@@ -52,7 +51,7 @@ export class ViewGuards extends PaginatedView<GuardView> implements OnInit {
     this.filterVisible = !this.filterVisible;
   }
   public loadDataPage(event: DataViewLazyLoadEvent): void {
-    this.loading.set(true);
+    this.loadingEvent.next(true);
     const url = [environment.api.uri, 'Guards', 'GetGuardsView'].join('/');
     this.page.update(() => Math.floor(event.first / event.rows) + 1);
     const sort = this.sortControl.value;
@@ -81,10 +80,12 @@ export class ViewGuards extends PaginatedView<GuardView> implements OnInit {
         this.totalPages.set(pagedResponse.totalPages);
         this.totalItems.set(pagedResponse.totalItems);
         this.pageSize.set(pagedResponse.pageSize);
-        this.loading.set(false);
+        this.loadingEvent.next(false);
+        this.errorState.set(false);
       },
       error: () => {
-        this.loading.set(false);
+        this.loadingEvent.next(false);
+        this.errorState.set(true);
       }
     });
   }

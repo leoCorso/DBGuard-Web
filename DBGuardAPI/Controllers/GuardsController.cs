@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Threading.Channels;
 using Dapper;
 using DBGuardAPI.Data.DTOs;
 using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
@@ -14,6 +15,7 @@ using DBGuardAPI.Data.StaticData;
 using DBGuardAPI.Data.Views;
 using DBGuardAPI.Helpers;
 using DBGuardAPI.Services;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -70,10 +72,43 @@ namespace DBGuardAPI.Controllers
                 NotificationProviders = notificationProviders.Select(NotificationProviderHelper.MapToDTO).ToList()
             };
         }
-        [HttpGet(nameof(GetGuard) + "/{id}")]
-        public async Task<ActionResult<GuardDTO>> GetGuard()
+        [HttpGet(nameof(GetGuardDetail) + "/{id}")]
+        public async Task<ActionResult<GuardDetailDTO>> GetGuardDetail(int id)
         {
-            throw new NotImplementedException();
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            GuardDetailDTO? guardDetail = await context.Guards
+                .Include(guard => guard.CreatedByUser)
+                .Select(guard => new GuardDetailDTO
+                {
+                    Id = guard.Id,
+                    GuardName = guard.GuardName,
+                    GuardDescription = guard.GuardDescription,
+                    CreateDate = guard.CreateDate,
+                    LastRun = guard.LastRun,
+                    LastEditedDate = guard.LastEditedDate,
+                    CreatedByUserId = guard.CreatedByUserId,
+                    UserName = guard.CreatedByUser!.UserName!,
+                    TriggerQuery = guard.TriggerQuery,
+                    CountColumn = guard.CountColumn,
+                    TriggerOperator = guard.TriggerOperator,
+                    TriggerValue = guard.TriggerValue,
+                    GuardState = guard.GuardState,
+                    IsActive = guard.IsActive,
+                    NotifyOnClear = guard.NotifyOnClear,
+                    NotifyOnError = guard.NotifyOnError,
+                    NotifyOnTrigger = guard.NotifyOnTrigger,
+                    TotalErrors = guard.TotalErrors,
+                    TotalTriggers = guard.TotalTriggers,
+                    RunPeriodInMinutes = guard.RunPeriodInMinutes
+                })
+            .Where(guard => guard.Id == id)
+            .FirstOrDefaultAsync();
+            if(guardDetail is null)
+            {
+                _logger.LogWarning("A guard detail was requested for a non-existing guard {GuardId}", id);
+                return NotFound(new { Message = "No guard exists for the specified id" });
+            }
+            return guardDetail;
         }
         [HttpGet(nameof(GetGuardsView))]
         public async Task<ActionResult<PagedResponseDTO<GuardView>>> GetGuardsView([FromQuery] SieveModel sieveParams)
@@ -86,6 +121,37 @@ namespace DBGuardAPI.Controllers
             IQueryable<GuardView> query = context.GuardView.AsNoTracking().AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardView>(sieveParams, query);
         }
+        [HttpGet(nameof(GetGuardTransactionsPreview))]
+        public async Task<ActionResult<PagedResponseDTO<GuardChangeTransactionDTO>>> GetGuardTransactionsPreview([FromQuery] SieveModel sieveParams)
+        {
+            if (sieveParams.PageSize == null || sieveParams.Page == null)
+            {
+                return BadRequest();
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            IQueryable<GuardChangeTransactionDTO> query = context.GuardChangeTransactions
+                .AsNoTracking()
+                .Select(change => new GuardChangeTransactionDTO
+                {
+                    Id = change.Id,
+                    Timestamp = change.Timestamp,
+                    GuardId = change.GuardId,
+                    GuardState = change.GuardState,
+                    PreviousGuardState = change.PreviousGuardState,
+                    GuardQuery = change.GuardQuery,
+                    GuardOperator = change.GuardOperator,
+                    GuardValue = change.GuardValue,
+                    DatabaseConnectionId = change.DatabaseConnectionId,
+                    DatabaseConnectionEndpoint = change.DatabaseConnectionEndPoint,
+                    DatabaseName = change.DatabaseName,
+                    DatabaseConnectionEngine = change.DatabaseConnectionEngine,
+                    DatabaseConnectionUsername = change.DatabaseConnectionUsername,
+                    ResultValue = change.ResultValue
+                    })
+                .AsQueryable();
+            return (await _entityViewGetter.GetPagedResponseAsync<GuardChangeTransactionDTO>(sieveParams, query));
+        }
+
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostGuard))]
         public async Task<ActionResult> PostGuard(CreateGuardDTO newGuard)
@@ -141,7 +207,7 @@ namespace DBGuardAPI.Controllers
                 };
                 await context.Guards.AddAsync(guard);
                 await context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetGuard), new { id = guard.Id }, new GuardDTO
+                return CreatedAtAction(nameof(GetGuardDetail), new { id = guard.Id }, new GuardDTO
                 {
                     Id = guard.Id,
                     GuardName = guard.GuardName,

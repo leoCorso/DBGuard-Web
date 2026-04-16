@@ -17,6 +17,7 @@ namespace DBGuardAPI.Data.Models
         public int? DatabaseConnectionId { get; set; }
         public required string DatabaseConnectionEndPoint { get; set; }
         public DatabaseEngine DatabaseConnectionEngine { get; set; }
+        public required string DatabaseName { get; set; }
         public required string DatabaseConnectionUsername { get; set; }
         public Guard? Guard { get; set; }
         public DatabaseConnection? DatabaseConnection { get; set; }

@@ -52,3 +52,26 @@ export interface GuardView {
     totalTriggers: number,
     runPeriodInMinutes: number
 }
+
+export interface GuardDetailDTO {
+    id: number,
+    guardName?: string,
+    guardDescription?: string,
+    createDate: Date,
+    lastRun?: Date,
+    lastEditedDate: Date,
+    createdByUserId: string,
+    userName: string,
+    triggerQuery: string,
+    countColumn: string,
+    triggerOperator: GuardOperator,
+    triggerValue: number,
+    guardState: GuardState,
+    isActive: boolean,
+    notifyOnClear: boolean,
+    notifyOnError: boolean,
+    notifyOnTrigger: boolean,
+    totalErrors: number,
+    totalTriggers: number,
+    runPeriodInMinutes: number
+}

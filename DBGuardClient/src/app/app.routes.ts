@@ -7,6 +7,7 @@ import { GuardsWebpage } from './components/guards-webpage/guards-webpage';
 import { ViewGuards } from './components/guards-webpage/view-guards/view-guards';
 import { GuardDetail } from './components/guards-webpage/guard-detail/guard-detail';
 import { DbConnectionsWebpage } from './components/db-connections-webpage/db-connections-webpage';
+import { GuardsHistory } from './components/guards-webpage/guards-history/guards-history';
 
 export const routes: Routes = [
     {
@@ -31,6 +32,10 @@ export const routes: Routes = [
             {
                 path: 'guard-detail/:id',
                 component: GuardDetail
+            },
+            {
+                path: 'guards-history',
+                component: GuardsHistory
             }
         ]
     },

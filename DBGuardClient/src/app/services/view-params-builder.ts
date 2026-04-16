@@ -46,7 +46,7 @@ export class ViewParamsBuilder {
         case 'multi-select':
           filterValue = filterValue as SelectOption[];
           filterValue = filterValue.map((val: SelectOption) => val.value).join('|');
-          filterQueryStrings.push(`${filterOperator}==${filterValue}`);
+          filterQueryStrings.push(`${field}==${filterValue}`);
           break;
         case 'trivalue':
           filterValue = filterValue as boolean;

@@ -4,28 +4,48 @@
 </p-drawer>
 
 
-<p-dataview 
-    #dataView
-    [value]="dataItems()" 
-    [lazy]="true" 
-    [lazyLoadOnInit]="true" 
-    [paginator]="true"
-    [rows]="pageSize()"
-    emptyMessage="No guards created"
-    [first]=""
-    [rowsPerPageOptions]="pageSizeOptions"
-    [sortField]="sortControl.get('sortField')?.value"
-    [sortOrder]="sortControl.get('sortOrder')?.value"
-    (onLazyLoad)="loadDataPage($event)">
-    <ng-template #header>
-        <div class="view-header">
-            <p-button label="Filter" icon="pi pi-filter" [text]="true" severity="secondary" pTooltip="Filter guard view" (onClick)="toggleFilterVisibility()"></p-button>
-            <app-sort-select-control [formControl]="sortControl" [sortOptions]="sortOptions"></app-sort-select-control>
-        </div>
-    </ng-template>
-    <ng-template #list let-items>
-        @for(item of items; track $index){
-            <app-view-guard-item [guardData]="item"></app-view-guard-item>
-        }
-    </ng-template>
-</p-dataview>
+    <p-dataview 
+        class="guards-dataview"
+        #dataView
+        [value]="dataItems()" 
+        [lazy]="true" 
+        [lazyLoadOnInit]="true" 
+        [paginator]="true"
+        [rows]="pageSize()"
+        emptyMessage="No guards created"
+        [totalRecords]="totalItems()"
+        [rowsPerPageOptions]="pageSizeOptions"
+        [sortField]="sortControl.get('sortField')?.value"
+        [sortOrder]="sortControl.get('sortOrder')?.value"
+        (onLazyLoad)="loadDataPage($event)"
+        [showCurrentPageReport]="true"
+        
+        currentPageReportTemplate="{totalRecords} records across {totalPages} pages">
+        <ng-template #header>
+            <div class="view-header">
+                <p-button label="Filter" icon="pi pi-filter" [text]="true" severity="secondary" pTooltip="Filter guard view" (onClick)="toggleFilterVisibility()"></p-button>
+                <app-sort-select-control [formControl]="sortControl" [sortOptions]="sortOptions"></app-sort-select-control>
+            </div>
+        </ng-template>
+        <ng-template #list let-items>
+            @if (showSpinner()) {
+                <div class="loading-container">
+                    <p-progress-spinner>
+
+                    </p-progress-spinner>
+                    <p>Fetching data</p>
+                </div>
+            }
+            @else if(errorState()){
+                <div class="loading-container">
+                    <em>Error fetching data. Try refreshing the page.</em>
+                </div>
+            }
+            @else {
+                @for(item of items; track $index){
+                    <app-view-guard-item [guardData]="item"></app-view-guard-item>
+                }
+            }
+
+        </ng-template>
+    </p-dataview>

@@ -11,8 +11,16 @@
 .below-navbar {
     flex-grow: 1;
     display: flex;
+    gap: 1rem;
 }
 .content {
     flex-grow: 1;
-    margin: 2rem;
+}
+@media(max-width: 959px){
+    .below-navbar {
+        flex-grow: 1;
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+    }
 }

@@ -10,3 +10,8 @@ html, body {
   height: 100%;
   font-family: var(--font-family);
 }
+
+.guards-dataview .p-dataview-content {
+    height: 100%;
+    flex-grow: 1;
+}

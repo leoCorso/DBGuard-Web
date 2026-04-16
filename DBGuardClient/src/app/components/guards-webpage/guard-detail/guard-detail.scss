@@ -1,0 +1,29 @@
+.guard-info {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+}
+.full-span {
+    grid-column: 1 / -1;
+
+}
+.guard-key {
+    justify-self: end;
+    font-weight: bold;
+}
+.guard-value {
+    justify-self: start;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 3rem;
+    padding-bottom: 0;
+}
+@media(max-width: 992px){
+    .guard-info {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 1rem;
+    }   
+}

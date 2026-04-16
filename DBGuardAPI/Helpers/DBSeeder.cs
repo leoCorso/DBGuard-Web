@@ -85,6 +85,17 @@ namespace DBGuardAPI.Helpers
                 JOIN ""AspNetUsers"" u ON g.created_by_user_id = u.id
                 JOIN database_connections d ON g.database_connection_id = d.id
             ");
+            await context.Database.ExecuteSqlRawAsync(@"
+                CREATE OR REPLACE VIEW guard_detail AS
+                SELECT g.id, g.guard_name, g.guard_description g.create_date, g.last_run, g.last_edited_date,
+	                g.created_by_user_id, u.user_name, g.trigger_query, g.count_column, 
+	                g.trigger_operator, g.trigger_value, g.guard_state, g.is_active, g.notify_on_clear,
+	                g.notify_on_error, g.notify_on_trigger
+	                g.total_errors, g.total_triggers, g.run_period_in_minutes 
+                FROM guards g 
+                JOIN ""AspNetUsers"" u ON g.created_by_user_id = u.id
+                JOIN database_connections d ON g.database_connection_id = d.id
+            ");
         }
     }
 }

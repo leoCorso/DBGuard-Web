@@ -4,16 +4,16 @@ import { Tag } from 'primeng/tag';
 import { DatePipe } from '@angular/common';
 import { formatEnumKey, getEnumLabel } from '../../../../helper-functions/enum-helper';
 import { GuardState } from '../../../../enums/guard-state';
-import { IftaLabel } from 'primeng/iftalabel';
 import { Badge } from 'primeng/badge';
 import { GuardOperator } from '../../../../enums/guard-operator';
 import { Card } from 'primeng/card';
 import { DatabaseEngine } from '../../../../enums/database-engines';
-import { Button } from 'primeng/button';
+import { FormatRunPeriodPipe } from '../../../../pipes/format-run-period-pipe';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-view-guard-item',
-  imports: [Tag, DatePipe, IftaLabel, Badge, Card, Button],
+  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink],
   templateUrl: './view-guard-item.html',
   styleUrl: './view-guard-item.scss',
 })
