@@ -12,9 +12,11 @@
     flex-grow: 1;
     display: flex;
     gap: 1rem;
+    overflow: hidden;
 }
 .content {
     flex-grow: 1;
+    overflow: auto;
 }
 @media(max-width: 959px){
     .below-navbar {

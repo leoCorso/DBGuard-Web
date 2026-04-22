@@ -12,20 +12,14 @@ import { PaginatedView } from '../paginated-view/paginated-view';
   template: '',
   styles: '',
 })
-export abstract class PaginatedDataView<ViewType> extends PaginatedView<ViewType> implements OnInit {
+export abstract class PaginatedDataView<ViewType> extends PaginatedView<ViewType> {
   public abstract loadDataPage(event: DataViewLazyLoadEvent): void;
 
   public abstract sortControl: FormControl<SortValue | null>;
   public abstract sortOptions: SortOption[];
 
   @ViewChild('dataView') public dataView!: DataView;
-  ngOnInit(): void {
-    this.loadingEvent.pipe(takeUntil(this.destroy), debounceTime(500)).subscribe({
-      next: (showSpinner: boolean) => {
-        this.showSpinner.set(showSpinner);
-      }
-    });
-  }
+
   public filtersChanged(): void {
     const lazyLoadEvent = this.dataView.createLazyLoadMetadata();
     this.loadDataPage(lazyLoadEvent);

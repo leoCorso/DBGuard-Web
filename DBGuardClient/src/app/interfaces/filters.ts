@@ -5,7 +5,7 @@ export interface FilterOperator { // Used for displaying filter selection type f
 }
 export interface FilterConfig { // The config passed to filter component to generate filter
     field: string, // Key used to identify filter
-    label: string, // Human readable label to display
+    label?: string, // Human readable label to display
     type: FilterType, // Type used to render input elements
     customOperator?: string, // Used when filter needs to use a custom filter on backend
     options?: any[], // Options list for select filters

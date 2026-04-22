@@ -3,7 +3,7 @@
         <div class="first-pane">
             <div class="first-top">
                 <a [routerLink]="'/guards/guard-detail/' + guardData().id" class="guard-link" href="">{{ guardData().guardName ?? 'Un-named' }}</a>
-                <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getTriggerSeverity()"></p-tag>
+                <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getGuardStateSeverity(guardData().guardState)"></p-tag>
             </div>
             <div class="first-mid">
                 <div class="info">

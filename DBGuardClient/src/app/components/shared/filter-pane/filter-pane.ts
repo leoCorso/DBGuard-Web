@@ -11,7 +11,7 @@ import { FilterItem } from '../filter-item/filter-item';
 export abstract class FilterPane {
   public abstract filtersConfig: FilterConfig[];
   public filters = model<Map<string, FilterValue>>();
-  public filterChanged = output<void>();
+  public filterChanged = output<Map<string, FilterValue> | undefined>();
   @ViewChildren(FilterItem) protected filterItems!: QueryList<FilterItem>;
 
   public onFilterValueChanged(filter: FilterValue): void {
@@ -29,11 +29,11 @@ export abstract class FilterPane {
         return next;
       });
     }
-    this.filterChanged.emit();
+    this.filterChanged.emit(this.filters());
   }
   public clearFilters(): void {
     this.filters()?.clear();
     this.filterItems.forEach(filter => filter.initFilters());
-    this.filterChanged.emit();
+    this.filterChanged.emit(undefined);
   }
 }

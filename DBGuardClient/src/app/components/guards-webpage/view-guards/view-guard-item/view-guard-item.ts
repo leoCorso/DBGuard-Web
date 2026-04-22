@@ -10,6 +10,7 @@ import { Card } from 'primeng/card';
 import { DatabaseEngine } from '../../../../enums/database-engines';
 import { FormatRunPeriodPipe } from '../../../../pipes/format-run-period-pipe';
 import { RouterLink } from '@angular/router';
+import { getGuardStateSeverity } from '../../../../helper-functions/guard-state-helper';
 
 @Component({
   selector: 'app-view-guard-item',
@@ -25,16 +26,5 @@ export class ViewGuardItem {
   public guardOperator = GuardOperator;
   public databaseEngine = DatabaseEngine;
   
-  public getTriggerSeverity(): 'success' | 'info' | 'danger' | 'warn' {
-    switch(this.guardData().guardState){
-      case GuardState.Triggered:
-        return 'warn'
-      case GuardState.Clear:
-        return 'success'
-      case GuardState.Error:
-        return 'danger'
-      case GuardState.Unknown:
-        return 'info';
-    }
-  }
+  public getGuardStateSeverity = getGuardStateSeverity;
 }

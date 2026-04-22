@@ -1,6 +1,6 @@
 <div class="notifications-list">
     <!-- Notifications -->
-    <p-listbox [(ngModel)]="selectedNotifications" [checkbox]="true" [multiple]="true" dataKey="__index"
+    <p-listbox [(ngModel)]="selectedNotifications" [checkbox]="true" [multiple]="true" dataKey="index"
         emptyMessage="No notifications added"
         [options]="indexedNotifications()">
         <ng-template #item let-notification>
@@ -17,14 +17,13 @@
         </ng-template>
     </p-listbox>
     <div>
-        <p-button (onClick)="viewNotificationDetail()" icon="pi pi-eye" pTooltip="View notification detail" severity="info" [outlined]="true"
-            [disabled]="selectedNotifications.length === 0 || selectedNotifications.length > 1"></p-button>
+        <p-button (onClick)="editGuardNotification()" icon="pi pi-pencil" pTooltip="Edit select notification" [outlined]="true" [disabled]="selectedNotifications().length !== 1"></p-button>
         <p-button (onClick)="removeNotification()" icon="pi pi-trash" pTooltip="Remove notification" [outlined]="true" severity="danger"
-            [disabled]="selectedNotifications.length === 0"></p-button>
+            [disabled]="selectedNotifications().length === 0"></p-button>
     </div>
     <p-inputgroup style="margin-bottom: 1rem;">
         <p-floatlabel variant="on">
-            <p-select fluid id="notification-provider" [options]="currentProviders()"
+            <p-select fluid id="notification-provider" [options]="currentProviders()" [showClear]="true"
                 [formControl]="notificationProvider" appendTo="body">
                 <ng-template #selectedItem let-selectedOption>
                     @if(isEmailProvider(selectedOption)){
@@ -87,14 +86,14 @@
 </div>
 <div>
     @if (notificationProvider.value) {
-    <!-- Email -->
-    @if (notificationProvider.value.providerType === 0) {
-    <app-email-form (emailMessage)="addEmailNotification($event)"></app-email-form>
-    }
-    <!-- Text -->
-    @else if (notificationProvider.value) {
-    <p>Phone number</p>
-    <p>Text</p>
-    }
+        <!-- Email -->
+        @if (notificationProvider.value.providerType === 0) {
+        <app-email-form [formControl]="notificationForm" (emailMessage)="addEmailNotification($event)" (cancelForm)="cancelFormChanges()"></app-email-form>
+        }
+        <!-- Text -->
+        @else if (notificationProvider.value) {
+        <p>Phone number</p>
+        <p>Text</p>
+        }
     }
 </div>

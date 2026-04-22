@@ -65,6 +65,10 @@ namespace DBGuardAPI.Data.Models
                     .WithOne(gct => gct.Guard)
                     .HasForeignKey(gct => gct.GuardId)
                     .OnDelete(DeleteBehavior.SetNull);
+                guard.HasMany(g => g.NotificationTransactions)
+                    .WithOne(gnt => gnt.Guard)
+                    .HasForeignKey(gnt => gnt.GuardId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
             builder.Entity<GuardView>(guardView =>
             {
@@ -87,6 +91,11 @@ namespace DBGuardAPI.Data.Models
                 guardNotification.HasDiscriminator<NotificationType>(nameof(GuardNotification.NotificationType))
                 .HasValue<EmailNotification>(NotificationType.Email)
                 .HasValue<TextNotification>(NotificationType.Text);
+                guardNotification
+                .HasMany(gn => gn.NotificationTransactions)
+                .WithOne(nt => nt.GuardNotification)
+                .HasForeignKey(nt => nt.GuardNotificationId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
             });
             base.OnModelCreating(builder);
         }

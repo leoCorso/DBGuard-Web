@@ -1,5 +1,7 @@
-﻿using DBGuardAPI.Data.DTOs.NotificationsDTOs;
+﻿using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+using DBGuardAPI.Data.DTOs.NotificationsDTOs;
 using DBGuardAPI.Data.Models.GuardNotifications;
+using DBGuardAPI.Data.Models.ServiceProviders;
 
 namespace DBGuardAPI.Helpers
 {
@@ -25,6 +27,29 @@ namespace DBGuardAPI.Helpers
                     TextMessage = textNotification.TextMessage
                 },
                 _ => throw new NotSupportedException($"Type {newNotification.NotificationType} is not yet supported")
+            };
+        }
+
+        public static CreateNotificationDTO MapToCreateDTO(GuardNotification guardNotification) // Maps a generic notification to correct notification dto
+        {
+            return guardNotification switch
+            {
+                EmailNotification email => new CreateEmailNotificationDTO
+                {
+                    Id = email.Id,
+                    EmailSubject = email.EmailSubject,
+                    EmailBody = email.EmailBody,
+                    Emails = GuardNotificationHelper.StringifyEmailContacts(email.ToEmails, email.CCEmails, email.BCCEmails),
+                    NotificationProvider = NotificationProviderHelper.MapToDTO(email.NotificationProvider!)
+                },
+                TextNotification text => new CreateTextGuardNotificationDTO
+                {
+                    Id = text.Id,
+                    PhoneNumbers = text.PhoneNumbers,
+                    TextMessage = text.TextMessage,
+                    NotificationProvider = NotificationProviderHelper.MapToDTO(text.NotificationProvider!)
+                },
+                _ => throw new InvalidOperationException()
             };
         }
         private static List<EmailContact> ParseEmailContacts(List<string> emails)
@@ -56,6 +81,30 @@ namespace DBGuardAPI.Helpers
                 }
             }
             return contacts;
+        }
+        private static List<string> StringifyEmailContacts(List<string> toEmails, List<string> ccEmails, List<string> bccEmails)
+        {
+            return toEmails.Select(to => $"to:{to}")
+                .Concat(ccEmails.Select(cc => $"cc:{cc}"))
+                .Concat(bccEmails.Select(bcc => $"bcc:{bcc}"))
+                .ToList();
+        }
+        public static void EditNotificationValues(GuardNotification notificationToEdit, CreateNotificationDTO newNotificationValues) // Takes two notifications and edits the value. Used to edit EF core entity items
+        {
+            switch (notificationToEdit)
+            {
+                case EmailNotification emailNotification when newNotificationValues is CreateEmailNotificationDTO editedEmail: // When 
+                    
+                    emailNotification.EmailSubject = editedEmail.EmailSubject;
+                    emailNotification.EmailBody = editedEmail.EmailBody;
+                    emailNotification.ToEmails = GuardNotificationHelper.ParseEmailContacts(editedEmail.Emails).Where(email => email.Type == "to").Select(email => email.EmaiLAddress).ToList();
+                    emailNotification.CCEmails = GuardNotificationHelper.ParseEmailContacts(editedEmail.Emails).Where(email => email.Type == "cc").Select(email => email.EmaiLAddress).ToList();
+                    emailNotification.BCCEmails = GuardNotificationHelper.ParseEmailContacts(editedEmail.Emails).Where(email => email.Type == "bcc").Select(email => email.EmaiLAddress).ToList();
+                    break;
+                // Handle other types
+                default:
+                    throw new NotSupportedException($"Notification type {newNotificationValues.NotificationType} is not supported");
+            }
         }
     }
 }

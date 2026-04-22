@@ -42,7 +42,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     //options.Lockout.MaxFailedAccessAttempts = 3;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddTokenProvider<RefreshTokenProvider>("RefreshTokenProvider");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

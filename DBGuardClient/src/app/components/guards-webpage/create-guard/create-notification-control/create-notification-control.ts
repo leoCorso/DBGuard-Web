@@ -1,4 +1,4 @@
-import { Component, computed, forwardRef, inject, input, inputBinding, linkedSignal, OnDestroy, OnInit, signal, Type } from '@angular/core';
+import { Component, computed, forwardRef, inject, input, inputBinding, linkedSignal, model, OnDestroy, OnInit, signal, Type } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { enumToOptions } from '../../../../helper-functions/enum-helper';
 import { NotificationType } from '../../../../enums/notification-type';
@@ -6,7 +6,7 @@ import { Card } from 'primeng/card';
 import { Select } from 'primeng/select';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Subject, takeUntil } from 'rxjs';
-import { CreateEmailGuardNotificationDTO, CreateGuardNotificationDTO, EmailMessage } from '../../../../interfaces/notification-dto';
+import { CreateEmailGuardNotificationDTO, CreateEmailGuardNotificationDTOWIndex, CreateGuardNotificationDTO, CreateGuardNotificationDTOWIndex, EmailNotificationFormInfo, NotificationFormItem } from '../../../../interfaces/notification-dto';
 import { isEmailProvider, isTextProvider } from '../../../../helper-functions/type-guards';
 import { Tag } from 'primeng/tag';
 import { InputGroup } from 'primeng/inputgroup';
@@ -20,7 +20,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { isValidEmail } from '../../../../helper-functions/email-helper';
 import { EmailForm } from './email-form/email-form';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { ViewEmailNotificationDetail } from './view-email-notification-detail/view-email-notification-detail';
 import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 import { CreateNotificationProvider } from '../../../notification-providers-webpage/create-notification-provider/create-notification-provider';
 
@@ -41,11 +40,11 @@ export class CreateNotificationControl implements ControlValueAccessor, OnInit, 
   public notificationProviders = input.required<NotificationProviderDTO[]>();
   public currentProviders = linkedSignal<NotificationProviderDTO[]>(() => this.notificationProviders());
 
-  public notifications = signal<CreateGuardNotificationDTO[]>([]);
-  public selectedNotifications: any[] = [];
+  public notifications = signal<CreateGuardNotificationDTO[]>([]); // The value of the notifications control
+  public selectedNotifications = model<CreateGuardNotificationDTOWIndex[]>([]); // The items selected from indexedNotifications
 
-  public indexedNotifications = computed(() =>
-    this.notifications().map((n, index) => ({ ...n, __index: index }))
+  public indexedNotifications = computed<CreateGuardNotificationDTOWIndex[]>(() => // Copy of notifications but with an index key
+    this.notifications().map((n, index) => ({ ...n, index: index }))
   );
   public disabled = signal<boolean>(false);
   private destroy = new Subject<void>();
@@ -53,6 +52,8 @@ export class CreateNotificationControl implements ControlValueAccessor, OnInit, 
   public isTextProvider = isTextProvider;
 
   public notificationProvider = new FormControl<NotificationProviderDTO | null>(null, [Validators.required]);
+  public notificationForm = new FormControl();
+
   private onChange: (value: CreateGuardNotificationDTO[]) => void = () => { };
   private onTouched: () => void = () => { };
   private dialogService = inject(DialogService);
@@ -84,56 +85,46 @@ export class CreateNotificationControl implements ControlValueAccessor, OnInit, 
   public createNotificationProvider(): void {
     return;
   }
-  public addEmailNotification(emailMessage: EmailMessage): void {
+  public addEmailNotification(emailMessage: EmailNotificationFormInfo): void {
     const notificationProvider = this.notificationProvider.value!;
     const newNotification: CreateEmailGuardNotificationDTO = {
+      id: emailMessage.id,
       emails: emailMessage.emails,
       emailSubject: emailMessage.emailSubject,
       emailBody: emailMessage.emailBody,
       notificationProvider: notificationProvider,
       notificationType: NotificationType.Email
     };
-    this.notifications.update(values => [...values, newNotification]);
+    this.notifications.update(values => {
+      const newValues = [...values];
+      if(emailMessage.index != undefined){
+        newValues[emailMessage.index] = newNotification;
+      }
+      else {
+        newValues.push(newNotification);
+      }
+      this.selectedNotifications.set([]);
+      return newValues;
+    });
     this.notificationProvider.reset();
     this.onChange(this.notifications());
+    this.notificationForm.reset();
+  }
+  public cancelFormChanges(): void {
+    this.notificationProvider.reset();
+    this.notificationForm.reset();
   }
   public removeNotification(): void {
     if (this.selectedNotifications.length !== 1) {
       return;
     }
-    const selectedIndices = this.selectedNotifications.map(n => n.__index);
+    const selectedIndices = this.selectedNotifications().map(n => n.index);
     const updated = this.notifications().filter((_, i) =>
       !selectedIndices.includes(i)
     );
     this.notifications.set(updated);
     this.onChange(this.notifications());
-    this.selectedNotifications = [];
-  }
-  public viewNotificationDetail(): void {
-    if (this.selectedNotifications.length !== 1) {
-      return;
-    }
-    let component: Type<unknown>;
-    let header: string;
-    const notifcationToView = this.selectedNotifications[0] as CreateGuardNotificationDTO;
-    switch (notifcationToView.notificationType) {
-      case NotificationType.Email:
-        component = ViewEmailNotificationDetail;
-        header = 'Email detail';
-        break;
-      case NotificationType.Text:
-        break;
-    }
-    this.dialogService.open(component!, {
-      header: header!,
-      inputValues: {
-        emailDetail: notifcationToView
-      },
-      draggable: true,
-      resizable: true,
-      maximizable: true,
-      closable: true
-    });
+    this.selectedNotifications.set([]);
   }
   public addNotificationProvider(): void {
     this.createProviderRef = this.dialogService.open(CreateNotificationProvider, {
@@ -150,5 +141,32 @@ export class CreateNotificationControl implements ControlValueAccessor, OnInit, 
         }
       }
     })
+  }
+  public editGuardNotification(): void {
+    if(this.selectedNotifications().length !== 1) {
+      return;
+    }
+    // Edit notification provider
+    const notificationToEdit = this.selectedNotifications()[0];
+    const notificationProvider = notificationToEdit.notificationProvider;
+    this.notificationProvider.patchValue(notificationProvider);
+    // Patch notification form depending on type
+    switch(notificationToEdit.notificationType){
+      case NotificationType.Email:
+        const emailNotification = notificationToEdit as CreateEmailGuardNotificationDTOWIndex;
+        this.patchEmailControl(emailNotification);
+        break;
+    }
+
+  }
+  private patchEmailControl(emailNotificationToEdit: CreateEmailGuardNotificationDTOWIndex): void {
+    const emailMessage: EmailNotificationFormInfo = {
+      id: emailNotificationToEdit.id,
+      index: emailNotificationToEdit.index,
+      emails: emailNotificationToEdit.emails,
+      emailSubject: emailNotificationToEdit.emailSubject,
+      emailBody: emailNotificationToEdit.emailBody
+    };
+    this.notificationForm.patchValue(emailMessage);
   }
 }

@@ -1,6 +1,9 @@
-.data-table {
-    height: 100%;
-    width: 100%;
+:host {
+    padding: 1rem;
     max-width: 100%;
-    overflow: hidden;
+    overflow: auto;
+}
+.preview-table {
+    padding: 2rem;
+    padding-top: 1rem;
 }

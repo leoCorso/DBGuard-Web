@@ -77,3 +77,11 @@
   content: "•";
   margin: 0 8px;
 }
+@media(max-width: 768px){
+    .view-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        gap: 2rem;
+    }
+}

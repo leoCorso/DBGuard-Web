@@ -6,18 +6,39 @@ export interface CreateGuardNotificationDTO {
     notificationType: NotificationType
     notificationProvider: NotificationProviderDTO,
 }
+export interface CreateGuardNotificationDTOWIndex extends CreateGuardNotificationDTO { // WIndex includes index for ui edit to work
+    index: number
+}
 export interface CreateEmailGuardNotificationDTO extends CreateGuardNotificationDTO {
     emailSubject: string,
     emailBody: string,
     emails: string[], // [type:email;type:email]
+}
+export interface CreateEmailGuardNotificationDTOWIndex extends CreateEmailGuardNotificationDTO {
+    index: number
 }
 
 export interface CreateTextGuardNotificationDTO extends CreateGuardNotificationDTO {
     phoneNumbers: string[],
     textMessage: string
 }
-export interface EmailMessage {
+export interface CreateTextGuardNotificationDTOWIndex {
+    index: number
+}
+export interface NotificationFormItem {
+    id?: number,
+    index?: number
+}
+export interface EmailNotificationFormInfo extends NotificationFormItem {
     emailSubject: string,
     emailBody: string,
     emails: string[], // [type:email;type:email]
+}
+export interface NotificationTransactionDTO {
+    id: number,
+    timestamp: Date,
+    guardId?: number,
+    guardNotificationId?: number,
+    notificationType: NotificationType,
+    guardChangeTransactionId: number
 }

@@ -106,7 +106,7 @@ namespace DBGuardAPI.Controllers
             if(guardDetail is null)
             {
                 _logger.LogWarning("A guard detail was requested for a non-existing guard {GuardId}", id);
-                return NotFound(new { Message = "No guard exists for the specified id" });
+                return NotFound(new { Message = $"No guard exists for the id {id}" });
             }
             return guardDetail;
         }
@@ -151,7 +151,45 @@ namespace DBGuardAPI.Controllers
                 .AsQueryable();
             return (await _entityViewGetter.GetPagedResponseAsync<GuardChangeTransactionDTO>(sieveParams, query));
         }
-
+        [HttpGet(nameof(GetGuardToEdit))]
+        public async Task<ActionResult<CreateGuardDTO>> GetGuardToEdit([FromQuery] int guardId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            CreateGuardDTO? guardToEdit = await context.Guards.AsNoTracking()
+                .Include(guard => guard.DatabaseConnection)
+                .Include(guard => guard.GuardNotifications)
+                .ThenInclude(notification => notification.NotificationProvider)
+                .Select(guard => new CreateGuardDTO
+                {
+                    Id = guard.Id,
+                    GuardName = guard.GuardName,
+                    GuardDescription = guard.GuardDescription,
+                    TriggerQuery = guard.TriggerQuery,
+                    CountColumn = guard.CountColumn,
+                    TriggerOperator = guard.TriggerOperator,
+                    TriggerValue = guard.TriggerValue,
+                    NotifyOnClear = guard.NotifyOnClear,
+                    NotifyOnError = guard.NotifyOnError,
+                    NotifyOnTrigger = guard.NotifyOnTrigger,
+                    RunPeriodInMinutes = guard.RunPeriodInMinutes,
+                    DatabaseConnection = new DatabaseConnectionDTO
+                    {
+                        Id = guard.DatabaseConnection!.Id,
+                        Endpoint = guard.DatabaseConnection.EndPoint,
+                        DatabaseEngine = guard.DatabaseConnection.DatabaseEngine,
+                        DatabaseName = guard.DatabaseConnection.DatabaseName,
+                        Username = guard.DatabaseConnection.Username
+                    },
+                    Notifications = guard.GuardNotifications.Select(notification => GuardNotificationHelper.MapToCreateDTO(notification)).ToList()
+                })
+                .Where(guard => guard.Id == guardId)
+                .FirstOrDefaultAsync();
+            if(guardToEdit is null)
+            {
+                return NotFound();
+            }
+            return guardToEdit;
+        }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostGuard))]
         public async Task<ActionResult> PostGuard(CreateGuardDTO newGuard)
@@ -199,6 +237,7 @@ namespace DBGuardAPI.Controllers
                     TriggerOperator = newGuard.TriggerOperator,
                     TriggerValue = newGuard.TriggerValue,
                     DatabaseConnectionId = dbConnection.Id,
+                    IsActive = newGuard.IsActive,
                     NotifyOnClear = newGuard.NotifyOnClear,
                     NotifyOnError = newGuard.NotifyOnError,
                     NotifyOnTrigger = newGuard.NotifyOnTrigger,
@@ -219,5 +258,80 @@ namespace DBGuardAPI.Controllers
                 return BadRequest(new { ex.Message });
             }
         }
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpPut(nameof(PutGuard))]
+        public async Task<ActionResult> PutGuard(CreateGuardDTO guardEdits)
+        {
+            if(guardEdits.Id is null)
+            {
+                _logger.LogError("A guard edit was attempted with no guardId");
+                return BadRequest();
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            // Update guard properties
+            Guard? guard = await context.Guards
+                .Where(guard => guard.Id == guardEdits.Id)
+                .Include(guard => guard.GuardNotifications)
+                .FirstOrDefaultAsync();
+            if(guard is null)
+            {
+                _logger.LogError("A guard edit was attempted with non-existing guard id {GuardId}", guardEdits.Id);
+                return NotFound();
+            }
+            guard.GuardName = guardEdits.GuardName;
+            guard.GuardDescription = guardEdits.GuardDescription;
+            guard.LastEditedDate = DateTimeOffset.UtcNow;
+            guard.TriggerQuery = guardEdits.TriggerQuery;
+            guard.CountColumn = guardEdits.CountColumn;
+            guard.TriggerOperator = guardEdits.TriggerOperator;
+            guard.TriggerValue = guardEdits.TriggerValue;
+            guard.DatabaseConnectionId = guardEdits.DatabaseConnection.Id;
+            guard.IsActive = guardEdits.IsActive;
+            guard.NotifyOnClear = guardEdits.NotifyOnClear;
+            guard.NotifyOnError = guardEdits.NotifyOnError;
+            guard.NotifyOnTrigger = guardEdits.NotifyOnTrigger;
+            guard.RunPeriodInMinutes = guardEdits.RunPeriodInMinutes;
+
+            // Add new notifications
+            List<GuardNotification> newNotifications = guardEdits.Notifications.Where(notification => notification.Id is null).Select(GuardNotificationHelper.MapToEntity).ToList();
+            foreach(GuardNotification notification in newNotifications)
+            {
+                guard.GuardNotifications.Add(notification);
+            }
+            //Update edited notifications
+            List<CreateNotificationDTO> editedNotifications = guardEdits.Notifications.Where(notification => notification.Id is not null).ToList();
+            List<GuardNotification> notificationsToEdit = guard.GuardNotifications.Where(notifications => editedNotifications.Select(edited => edited.Id!.Value).ToHashSet().Contains(notifications.Id)).ToList();
+
+            foreach(CreateNotificationDTO editedNotification in editedNotifications)
+            {
+                GuardNotification notificationToEdit = notificationsToEdit.Where(noti => noti.Id == editedNotification.Id!.Value).First();
+                GuardNotificationHelper.EditNotificationValues(notificationToEdit, editedNotification);
+                notificationToEdit.LastEdited = DateTime.UtcNow;
+            }
+            await context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetGuardDetail), new { id = guard.Id }, new GuardDTO
+            {
+                Id = guard.Id,
+                GuardName = guard.GuardName,
+                GuardDescription = guard.GuardDescription
+            });
+        }
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpDelete(nameof(DeleteGuard))]
+        public async Task<ActionResult> DeleteGuard([FromQuery] int guardId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            Guard? guardToDelete = await context.Guards.FindAsync(guardId);
+            if(guardToDelete is null)
+            {
+                _logger.LogError("A guard deletion was attempted on a non-existing guard {GuardId}", guardId);
+                return NotFound();
+            }
+            context.Guards.Remove(guardToDelete);
+            await context.SaveChangesAsync();
+            _logger.LogInformation("Delete a guard {GuardId}", guardId);
+            return NoContent();
+        }
     }
+
 }

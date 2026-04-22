@@ -1,5 +1,6 @@
 ﻿using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models.GuardNotifications;
+using DBGuardAPI.Data.Models.NotificationTransactions;
 
 namespace DBGuardAPI.Data.Models
 {
@@ -27,6 +28,7 @@ namespace DBGuardAPI.Data.Models
         public double RunPeriodInMinutes { get; set; } = 1;
         public User? CreatedByUser { get; set; }
         public DatabaseConnection? DatabaseConnection { get; set; }
+        public ICollection<NotificationTransaction> NotificationTransactions { get; set; } = [];
         public ICollection<GuardNotification> GuardNotifications { get; set; } = [];
         public ICollection<GuardChangeTransaction> GuardChangeTransactions { get; set; } = [];
     }

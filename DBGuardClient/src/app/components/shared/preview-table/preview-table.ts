@@ -5,6 +5,7 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { SortValue } from '../../../interfaces/sorting';
 import { LazyLoadEvent } from 'primeng/api';
 import { PagedResponse } from '../../../interfaces/request-response-dto';
+import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 
 @Component({
   selector: 'app-preview-table',
@@ -16,11 +17,29 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
   public abstract columns: Column[];
   public abstract defaultSort: SortValue[];
   @ViewChild('previewTable') viewItemsTable!: Table;
-  public abstract loadPreviewData(event: LazyLoadEvent): void;
   public abstract fetchUrl: string;
+  public abstract filtersConfig: FilterConfig[];
+  public filtersChanged(filter: FilterValue): void {
+    const event = this.viewItemsTable.createLazyLoadMetadata();
+    if(filter.value === '' || filter.value === null || filter.value.length === 0) {
+      this.filters.update(filters => {
+        const next = new Map(filters);
+        next.delete(filter.field);
+        return next;
+      });
+    }
+    else {
+      this.filters.update(filters => {
+        const next = new Map(filters);
+        next?.set(filter.field, filter);
+        return next;
+      });
+    }
+    this.loadPreviewData(event);
+  }
 
-  public loadTableData(event: TableLazyLoadEvent): void {
-      // this.loading.set(true);
+  public loadPreviewData(event: TableLazyLoadEvent): void {
+      this.loadingEvent.next(true);
       // Gather values
       this.page.update(() => {
         return Math.floor(event.first! / event.rows!) + 1;
@@ -54,11 +73,11 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
           this.dataItems.set(pagedResponse.dataItems);
           this.totalPages.set(pagedResponse.totalPages);
           this.pageSize.set(pagedResponse.pageSize);
-          // this.loading.set(false);
           this.totalItems.set(pagedResponse.totalItems);
+          this.loadingEvent.next(false);
         },
         error: () => {
-          // this.loading.set(false);
+          this.loadingEvent.next(false);
         }
       }
       );

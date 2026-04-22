@@ -6,7 +6,7 @@ import { providePrimeNG } from 'primeng/config';
 import Material from '@primeuix/themes/material';
 import { DialogService } from 'primeng/dynamicdialog';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { requestErrorInterceptor } from './interceptors/request-error-interceptor';
 import { tokenInterceptor } from './interceptors/token-interceptor';
 
@@ -21,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     }),
     DialogService,
     MessageService,
+    ConfirmationService,
     provideHttpClient(withInterceptors([requestErrorInterceptor, tokenInterceptor]))
   ]
 };

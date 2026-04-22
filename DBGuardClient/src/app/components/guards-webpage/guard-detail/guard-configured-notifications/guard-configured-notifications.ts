@@ -1,9 +1,75 @@
-import { Component } from '@angular/core';
+import { Component, inject, input, OnInit, signal, WritableSignal } from '@angular/core';
+import { PreviewTable } from '../../../shared/preview-table/preview-table';
+import { GuardNotificationDTO } from '../../../../interfaces/guard-notification-dto';
+import { Column } from '../../../../interfaces/table-items';
+import { SortValue } from '../../../../interfaces/sorting';
+import { environment } from '../../../../../environments/environment.development';
+import { FilterConfig, FilterValue } from '../../../../interfaces/filters';
+import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../../helper-functions/enum-helper';
+import { NotificationType } from '../../../../enums/notification-type';
+import { GuardDetailDTO } from '../../../../interfaces/guard-dto';
+import { TableModule } from 'primeng/table';
+import { FilterItem } from '../../../shared/filter-item/filter-item';
+import { DatePipe } from '@angular/common';
+import { GuardService } from '../../../../services/guard-service';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-guard-configured-notifications',
-  imports: [],
+  imports: [TableModule, FilterItem, DatePipe],
   templateUrl: './guard-configured-notifications.html',
   styleUrl: './guard-configured-notifications.scss',
 })
-export class GuardConfiguredNotifications {}
+export class GuardConfiguredNotifications extends PreviewTable<GuardNotificationDTO> implements OnInit {
+  public notificationTypes = enumToOptions(NotificationType);
+  private guardService = inject(GuardService);
+  public notificationType = NotificationType;
+  public formatEnumKey = formatEnumKey;
+  public getEnumLabels = getEnumLabel;
+  public override columns: Column[] = [
+    {field: 'id', header: 'Id', sortable: true},
+    {field: 'guardId', header: 'GuardId', sortable: false},
+    {field: 'notificationType', header: 'Type', sortable: true},
+    {field: 'createDate', header: 'Date created', sortable: true},
+    {field: 'lastEdited', header: 'Last edited', sortable: true},
+    {field: 'notificationProviderId', header: 'Notification provider', sortable: true}
+  ];
+  public override defaultSort: SortValue[] = [
+    {field: 'lastEdited', order: -1}
+  ];
+  public override fetchUrl: string = [environment.api.uri, 'Notifications', 'GetGuardNotifications'].join('/');
+  public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
+  public guardId = input.required<number>();
+  public override filtersConfig: FilterConfig[] = [
+    {field: 'id', type: 'numeric', placeholder: 'Filter by id', isTableFilter: true},
+    {field:' guardId', type: 'empty', isTableFilter: true},
+    {field: 'notificationType', type: 'multi-select', isTableFilter: true, options: this.notificationTypes, placeholder: 'Filter by notification type'},
+    {field: 'createDate', type: 'datetime', isTableFilter: true, placeholder: 'Filter by create date'},
+    {field: 'lastEdited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by last edited'},
+    {field: 'notificationProviderId', type: 'numeric', isTableFilter: true, placeholder: 'Filter by notification provider id'}
+  ];
+
+  override ngOnInit(): void {
+    super.ngOnInit();
+    const filter: FilterValue = {
+      field: 'guardId',
+      value: this.guardId(),
+      operator: '==',
+      type: 'numeric'
+    };
+    this.filters.update(filters => {
+      const newFilter = new Map(filters);
+      newFilter.set('guardId', filter);
+      return newFilter;
+    });
+    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
+      next: (guardId: number) => {
+        if(this.guardId() == guardId){
+          const event = this.viewItemsTable.createLazyLoadMetadata();
+          this.loadPreviewData(event);
+        }
+      }
+    });
+  }
+
+}

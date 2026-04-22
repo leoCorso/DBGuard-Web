@@ -33,6 +33,10 @@
         <label for="email-body">Email body</label>
         <textarea id="email-body" pTextarea fluid formControlName="emailBody"></textarea>
     </p-floatlabel>
-    <p-button (onClick)="addEmailNotification()" pTooltip="Add notification" label="Add" icon="pi pi-plus"
-        [rounded]="true" [outlined]="true" [disabled]="emailNotificationFormGroup.invalid"></p-button>
+    <div style="display: flex; gap: .5rem;">
+        <p-button (onClick)="addEmailNotification()" pTooltip="Add notification" [label]="editIndex() !== undefined ? 'Save' : 'Add'" icon="pi pi-plus"
+            [rounded]="true" [outlined]="true" [disabled]="emailNotificationFormGroup.invalid"></p-button>
+        <p-button (onClick)="cancelForm.emit()" label="Cancel" severity="danger" [rounded]="true" pTooltip="Cancel form changes"></p-button>
+    </div>
+
 </form>

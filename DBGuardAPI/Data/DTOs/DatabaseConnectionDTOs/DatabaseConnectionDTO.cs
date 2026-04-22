@@ -9,5 +9,6 @@ namespace DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs
         public DatabaseEngine DatabaseEngine { get; set; }
         public required string DatabaseName { get; set; }
         public string? Username { get; set; }
+        public string? Password { get; set; }
     }
 }

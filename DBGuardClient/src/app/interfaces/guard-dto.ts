@@ -15,6 +15,7 @@ export interface CreateGuardDTO {
     triggerOperator: GuardOperator
     triggerValue: number,
     databaseConnection: DatabaseConnectionDTO,
+    isActive: boolean,
     notifyOnClear: boolean,
     notifyOnError: boolean,
     notifyOnTrigger: boolean,

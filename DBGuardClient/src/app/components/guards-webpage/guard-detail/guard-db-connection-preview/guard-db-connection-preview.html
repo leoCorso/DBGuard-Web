@@ -1,1 +1,28 @@
-<p>guard-db-connection-preview works!</p>
+<h2>Guard Database info</h2>
+@if (showLoadingUi()) {
+    <div class="loading-spinner">
+        <p-progressspinner></p-progressspinner>
+        <span>Loading database info</span>
+    </div>
+}
+@else {
+    <div class="database-info">
+        <span class="connection-key"><strong>Id:</strong></span>
+        <span class="connection-value">{{ databaseConnectionInfo()?.id }}</span>
+        <span class="connection-key"><strong>Endpoint:</strong></span>
+        <span class="connection-value">{{ databaseConnectionInfo()?.endpoint }}</span>
+        <span class="connection-key"><strong>Database engine:</strong></span>
+        <span class="connection-value">{{ getEnumLabel(databaseEngines, databaseConnectionInfo()!.databaseEngine) }}</span>
+        <span class="connection-key"><strong>Database name:</strong></span>
+        <span class="connection-value">{{ databaseConnectionInfo()?.databaseName }}</span>
+        <span class="connection-key"><strong>Username:</strong></span>
+        <span class="connection-value">{{ databaseConnectionInfo()?.username }}</span>
+        @if (authService.hasRoles(['Admin']) && databaseConnectionInfo()?.password) {
+            <span class="connection-key"><strong>Password: </strong></span>
+            <div class="connection-value">
+                <span>{{ viewPassword() ? databaseConnectionInfo()!.password : '********' }}</span>
+                <p-button (onClick)="viewPassword.set(!viewPassword())" [link]="true" [icon]="viewPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" pTooltip="View password"></p-button>
+            </div>
+        }
+    </div>
+}

@@ -1,4 +1,10 @@
 <form class="guard-form" [formGroup]="guardFormGroup">
+    <div class="activation-status">
+        <div class="notify-option">
+            <label for="is-active">Is active</label>
+            <p-toggleswitch formControlName="isActive"></p-toggleswitch>
+        </div>
+    </div>
     <div>
         <p-floatlabel variant="on">
             <input fluid id="guard-name" type="text" pInputText formControlName="guardName" autocomplete="off">

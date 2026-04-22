@@ -1,13 +1,9 @@
-﻿using System.Data;
-using System.Net;
-using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
-using DBGuardAPI.Data.Enums;
+﻿using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.StaticData;
 using DBGuardAPI.Helpers;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +12,6 @@ namespace DBGuardAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class DatabaseConnectionController: ControllerBase
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
@@ -30,12 +25,42 @@ namespace DBGuardAPI.Controllers
             _credentialProtector = credentialProtector;
             _userManager = userManager;
         }
+
+        [Authorize]
+        [HttpGet(nameof(GetGuardDatabaseConnection))]
+        public async Task<ActionResult<DatabaseConnectionDTO>> GetGuardDatabaseConnection([FromQuery] int guardId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            Guard? guard = await context.Guards.FindAsync(guardId);
+            if(guard is null)
+            {
+                _logger.LogWarning("Database connection requested for invalid guard {GuardId}", guardId);
+                return NotFound(new { Message = $"No guard exists for guard id {guardId}"});
+            }
+            DatabaseConnectionDTO? databaseConnection = await context.DatabaseConnections.AsNoTracking()
+                .Where(dc => dc.Id == guard.DatabaseConnectionId)
+                .Select(dc => new DatabaseConnectionDTO
+                {
+                    Id = dc.Id,
+                    Endpoint = dc.EndPoint,
+                    DatabaseEngine = dc.DatabaseEngine,
+                    DatabaseName = dc.DatabaseName,
+                    Username = dc.Username,
+                    Password = User.IsInRole(RoleNames.Admin) && dc.Password != null ? _credentialProtector.Decrypt(dc.Password) : null
+                })
+                .FirstOrDefaultAsync();
+            if(databaseConnection is null)
+            {
+                return NotFound(new { Message = $"No database connection exists for database id {guard.DatabaseConnectionId}"});
+            }
+            return databaseConnection;
+        }
         [HttpGet(nameof(GetDatabaseConnection) + "/{id}")]
         public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnection(int id)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             DatabaseConnection? connection = await context.DatabaseConnections.FindAsync(id);
-            if(connection is null)
+            if (connection is null)
             {
                 return NotFound();
             }
@@ -55,7 +80,7 @@ namespace DBGuardAPI.Controllers
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             User? user = await _userManager.GetUserAsync(User);
-            if(user is null)
+            if (user is null)
             {
                 return NotFound();
             }
@@ -70,7 +95,7 @@ namespace DBGuardAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})"});
+                return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})" });
             }
             DatabaseConnection newConnObject = new()
             {
@@ -93,5 +118,4 @@ namespace DBGuardAPI.Controllers
             });
         }
     }
-
 }

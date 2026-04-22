@@ -6,6 +6,7 @@ export interface DatabaseConnectionDTO {
     databaseEngine: DatabaseEngine,
     databaseName: string,
     username?: string,
+    password?: string
 }
 
 export interface CreateDatabaseConnectionDTO {

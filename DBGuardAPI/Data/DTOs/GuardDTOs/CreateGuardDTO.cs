@@ -14,10 +14,11 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public GuardOperator TriggerOperator { get; set; }
         public int TriggerValue { get; set; }
         public required DatabaseConnectionDTO DatabaseConnection { get; set; }
+        public bool IsActive { get; set; }
         public bool NotifyOnClear { get; set; }
         public bool NotifyOnError { get; set; }
         public bool NotifyOnTrigger { get; set; }
-        public int RunPeriodInMinutes { get; set; }
+        public double RunPeriodInMinutes { get; set; }
         public List<CreateNotificationDTO> Notifications { get; set; } = [];
     }
 }
