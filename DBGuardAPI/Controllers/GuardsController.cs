@@ -64,6 +64,7 @@ namespace DBGuardAPI.Controllers
                 .ToListAsync();
             List<NotificationProvider> notificationProviders = await context.NotificationProviders
                 .AsNoTracking()
+                .Include(provider => provider.CreatedByUser)
                 .ToListAsync();
 
             return new CreateGuardsReferenceData
@@ -99,7 +100,8 @@ namespace DBGuardAPI.Controllers
                     NotifyOnTrigger = guard.NotifyOnTrigger,
                     TotalErrors = guard.TotalErrors,
                     TotalTriggers = guard.TotalTriggers,
-                    RunPeriodInMinutes = guard.RunPeriodInMinutes
+                    RunPeriodInMinutes = guard.RunPeriodInMinutes,
+                    DatabaseConnectionId = guard.DatabaseConnectionId
                 })
             .Where(guard => guard.Id == id)
             .FirstOrDefaultAsync();
@@ -121,8 +123,8 @@ namespace DBGuardAPI.Controllers
             IQueryable<GuardView> query = context.GuardView.AsNoTracking().AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardView>(sieveParams, query);
         }
-        [HttpGet(nameof(GetGuardTransactionsPreview))]
-        public async Task<ActionResult<PagedResponseDTO<GuardChangeTransactionDTO>>> GetGuardTransactionsPreview([FromQuery] SieveModel sieveParams)
+        [HttpGet(nameof(GetGuardChangeTransactions))]
+        public async Task<ActionResult<PagedResponseDTO<GuardChangeTransactionDTO>>> GetGuardChangeTransactions([FromQuery] SieveModel sieveParams)
         {
             if (sieveParams.PageSize == null || sieveParams.Page == null)
             {
@@ -159,6 +161,7 @@ namespace DBGuardAPI.Controllers
                 .Include(guard => guard.DatabaseConnection)
                 .Include(guard => guard.GuardNotifications)
                 .ThenInclude(notification => notification.NotificationProvider)
+                .ThenInclude(provider => provider!.CreatedByUser)
                 .Select(guard => new CreateGuardDTO
                 {
                     Id = guard.Id,

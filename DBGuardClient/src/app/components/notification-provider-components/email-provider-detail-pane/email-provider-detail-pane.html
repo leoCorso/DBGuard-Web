@@ -1,0 +1,16 @@
+<h3>Email provider info</h3>
+<div class="email-provider">
+    <span class="email-key">SMTP Server:</span>
+    <span class="email-value">{{ emailProviderDetails().smtpServer }}</span>
+    <span class="email-key">Port:</span>
+    <span class="email-value">{{ emailProviderDetails().port }}</span>
+    <span class="email-key">Username:</span>
+    <span class="email-value">{{ emailProviderDetails().username}}</span>
+    @if (authService.hasRoles(['Admin']) && emailProviderDetails().password) {
+        <span class="email-key">Password:</span>
+        <div class="email-value">
+            <span>{{ showPassword() ? emailProviderDetails().password : '*******' }}</span>
+            <p-button [icon]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" (onClick)="showPassword.set(!showPassword())"></p-button>
+        </div>
+    }
+</div>

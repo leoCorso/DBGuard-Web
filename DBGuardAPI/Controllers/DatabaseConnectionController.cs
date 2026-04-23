@@ -27,18 +27,12 @@ namespace DBGuardAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet(nameof(GetGuardDatabaseConnection))]
-        public async Task<ActionResult<DatabaseConnectionDTO>> GetGuardDatabaseConnection([FromQuery] int guardId)
+        [HttpGet(nameof(GetDatabaseConnectionDetail))]
+        public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnectionDetail([FromQuery] int databaseConnectionId)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            Guard? guard = await context.Guards.FindAsync(guardId);
-            if(guard is null)
-            {
-                _logger.LogWarning("Database connection requested for invalid guard {GuardId}", guardId);
-                return NotFound(new { Message = $"No guard exists for guard id {guardId}"});
-            }
             DatabaseConnectionDTO? databaseConnection = await context.DatabaseConnections.AsNoTracking()
-                .Where(dc => dc.Id == guard.DatabaseConnectionId)
+                .Where(dc => dc.Id == databaseConnectionId)
                 .Select(dc => new DatabaseConnectionDTO
                 {
                     Id = dc.Id,
@@ -51,7 +45,7 @@ namespace DBGuardAPI.Controllers
                 .FirstOrDefaultAsync();
             if(databaseConnection is null)
             {
-                return NotFound(new { Message = $"No database connection exists for database id {guard.DatabaseConnectionId}"});
+                return NotFound(new { Message = $"No database connection exists for database id {databaseConnectionId}"});
             }
             return databaseConnection;
         }

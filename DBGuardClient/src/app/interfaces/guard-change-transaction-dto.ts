@@ -2,7 +2,7 @@ import { DatabaseEngine } from "../enums/database-engines";
 import { GuardOperator } from "../enums/guard-operator";
 import { GuardState } from "../enums/guard-state";
 
-export interface GuardChangeTransactionPreviewDTO {
+export interface GuardChangeTransactionDTO {
     id: number,
     timestamp: Date,
     guardId?: number,
@@ -12,7 +12,7 @@ export interface GuardChangeTransactionPreviewDTO {
     guardOperator: GuardOperator,
     guardValue: number,
     databaseConnectionId?: number,
-    databaseConnectionEndPoint: string,
+    databaseConnectionEndpoint: string,
     databaseName: string,
     databaseConnectionEngine: DatabaseEngine,
     databaseConnectionUsername: string,

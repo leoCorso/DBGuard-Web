@@ -9,12 +9,19 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
     public class NotificationProviderDTO
     {
         public int Id { get; set; }
+        public NotificationType NotificationType { get; set; }
+        public DateTimeOffset CreateDate { get; set; }
+        public DateTimeOffset LastEdited { get; set; }
+        public required string CreatedByUserId { get; set; }
+        public required string CreatedByUsername { get; set; }
+
     }
     public class EmailProviderDTO : NotificationProviderDTO
     {
         public required string SMTPServer { get; set; }
         public required string Username { get; set; }
         public int Port { get; set; }
+        public string? Password { get; set; }
     }
     public class TextProviderDTO : NotificationProviderDTO
     {

@@ -81,5 +81,6 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
         }
       }
       );
-    }
+  }
+  protected abstract configureFilters(): void;
 }

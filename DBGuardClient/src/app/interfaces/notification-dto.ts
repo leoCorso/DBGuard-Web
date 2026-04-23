@@ -42,3 +42,18 @@ export interface NotificationTransactionDTO {
     notificationType: NotificationType,
     guardChangeTransactionId: number
 }
+export interface NotificationDetailDTO {
+    id: number,
+    guardId: number,
+    notificationType: NotificationType,
+    notificationProviderId: number,
+    createDate: Date,
+    lastEdited: Date,
+}
+export interface EmailNotificationDetailDTO extends NotificationDetailDTO {
+    emailSubject?: string,
+    emailBody?: string,
+    toEmails: string[],
+    ccEmails: string[],
+    bccEmails: string[]
+}

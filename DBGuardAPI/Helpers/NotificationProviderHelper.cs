@@ -13,14 +13,14 @@ namespace DBGuardAPI.Helpers
                 EmailProvider email => new EmailProviderDTO
                 {
                     Id = email.Id,
+                    NotificationType = email.ProviderType,
+                    CreateDate = email.CreateDate,
+                    LastEdited = email.LastEditedDate,
+                    CreatedByUserId = email.CreatedByUserId,
+                    CreatedByUsername = email.CreatedByUser!.UserName!,
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
-                    Port = email.Port
-                },
-                TextProvider text => new TextProviderDTO
-                {
-                    Id = text.Id,
-                    PhoneNumber = text.PhoneNumber
+                    Port = email.Port,
                 },
                 _ => throw new InvalidOperationException()
             };

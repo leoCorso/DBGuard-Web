@@ -1,0 +1,40 @@
+
+<div class="cards">
+    <p-card>
+        <ng-template #header>
+            <div class="header">
+                <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
+                <p-buttongroup>
+                    <p-confirmpopup></p-confirmpopup>
+                    <p-button (onClick)="editGuardClicked()" label="Edit guard" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
+                    <p-button (onClick)="onDeleteGuard($event)" label="Delete guard" icon="pi pi-trash" severity="danger" [rounded]="true"
+                        [text]="true"></p-button>
+                </p-buttongroup>
+            </div>
+        </ng-template>
+        @if(showLoadingSpinner()){
+            <div style="display: flex; flex-direction: column;align-items: center;justify-content: center;overflow: hidden;">
+                <p-progressspinner>
+
+                </p-progressspinner>
+                <em style="text-align: center;">Loading details</em>
+            </div>
+        }
+        @else {
+            <app-guard-detail-pane [guardDetail]="guardDetail()!"></app-guard-detail-pane>
+        }
+    </p-card>
+    <p-card>
+        <app-guard-db-connection-detail-pane [guardId]="guardId()!" [databaseConnectionId]="guardDetail()!.databaseConnectionId"></app-guard-db-connection-detail-pane>
+    </p-card>
+    <p-card>
+        <app-guard-notifications-table [guardId]="guardId()!"></app-guard-notifications-table>
+    </p-card>
+    <p-card>
+        <app-guard-change-history-table [guardId]="guardId()!"></app-guard-change-history-table>
+    </p-card>
+    <p-card>
+        <app-guard-notification-transactions-table [guardId]="guardId()!"></app-guard-notification-transactions-table>
+    </p-card>
+
+</div>

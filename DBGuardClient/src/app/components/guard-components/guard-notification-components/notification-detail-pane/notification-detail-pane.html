@@ -1,0 +1,23 @@
+<div class="notification-info">
+    <span class="info-key">Id:</span>
+    <span class="info-value">{{ notificationDetail().guardId }}</span>
+    <span class="info-key">Guard id:</span>
+    <span class="info-value">
+        <p-button [label]="notificationDetail().guardId.toString()" [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', notificationDetail().guardId]">
+
+        </p-button></span>
+    <span class="info-key">Notification type:</span>
+    <span class="info-value">{{ getEnumLabel(notificationTypes, notificationDetail().notificationType) }}</span>
+    <span class="info-key">Create date</span>
+    <span class="info-value">{{ notificationDetail().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="info-key">Last edited</span>
+    <span class="info-value">{{ notificationDetail().lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+</div>
+<p-divider></p-divider>
+
+@switch (notificationDetail().notificationType) {
+    <!-- Email -->
+    @case (0) {
+        <app-email-notification-detail-pane [emailNotificationConfig]="emailNotificationDetail()!"></app-email-notification-detail-pane>
+    }
+}

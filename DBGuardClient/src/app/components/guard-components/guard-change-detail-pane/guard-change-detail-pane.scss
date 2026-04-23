@@ -1,0 +1,13 @@
+.change-detail {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+}
+.change-key {
+    justify-self: end;
+    align-self: center;
+}
+.change-value {
+    justify-self: start;
+    align-self: center;
+}

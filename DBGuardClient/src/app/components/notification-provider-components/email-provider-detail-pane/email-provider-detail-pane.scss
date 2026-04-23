@@ -1,0 +1,13 @@
+.email-provider {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+}
+.email-key {
+    justify-self: end;
+    align-self: center;
+    font-weight: bold;
+}
+.email-value {
+    align-self: center;
+}

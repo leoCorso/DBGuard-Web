@@ -27,10 +27,38 @@ namespace DBGuardAPI.Controllers
             _logger = logger;
             _userManager = userManager;
         }
-        [HttpGet(nameof(GetNotificationProvider) + "/{id}")]
-        public async Task<ActionResult<NotificationProviderDTO>> GetNotificationProvider(int id)
+        [HttpGet(nameof(GetNotificationProviderDetail))]
+        public async Task<ActionResult<NotificationProviderDTO>> GetNotificationProviderDetail([FromQuery] int id)
         {
-            throw new NotImplementedException();
+
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            NotificationProvider? provider = await context.NotificationProviders
+                .AsNoTracking()
+                .Where(provider => provider.Id == id)
+                .Include(provider => provider.CreatedByUser)
+                .FirstOrDefaultAsync();
+            User user = (await _userManager.GetUserAsync(User))!;
+            if(provider is null)
+            {
+                _logger.LogWarning("A notification provider detail request was made for a non-existing id {ProviderId}", id);
+                return NotFound(new { Message = $"No notification provider was found for {id}" });
+            }
+            return provider switch
+            {
+                EmailProvider email => new EmailProviderDTO
+                {
+                    Id = email.Id,
+                    NotificationType = email.ProviderType,
+                    CreateDate = email.CreateDate,
+                    LastEdited = email.LastEditedDate,
+                    CreatedByUserId = email.CreatedByUserId,
+                    CreatedByUsername = email.CreatedByUser!.UserName!,
+                    SMTPServer = email.SMTPServer,
+                    Username = email.Username,
+                    Port = email.Port,
+                    Password = await _userManager.IsInRoleAsync(user, RoleNames.Admin) ? _credentialProtector.Decrypt(email.Password) : null
+                }
+            };
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostNotificationProvider))]

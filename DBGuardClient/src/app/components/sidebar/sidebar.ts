@@ -29,20 +29,22 @@ export class Sidebar {
         {
           label: 'View guards',
         icon: 'pi pi-shield',
-          routerLink: 'guards/view-guards'
+          routerLink: 'guards/view-all'
         },
         {
-          label: 'Guard history',
+          label: 'Change history',
           icon: 'pi pi-history',
-          routerLink: 'guards/guards-history'
+          routerLink: 'guards/change-history'
         },
         {
           label: 'Notifications transactions',
-          icon: 'pi pi-envelope'
+          icon: 'pi pi-envelope',
+          routerLink: 'guards/notification-transactions'
         },
         {
           label: 'Configured notifications',
-          icon: 'pi pi-file'
+          icon: 'pi pi-file',
+          routerLink: 'guards/configured-notifications'
         }
       ]
     },

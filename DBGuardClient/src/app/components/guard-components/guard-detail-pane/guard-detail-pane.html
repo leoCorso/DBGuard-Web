@@ -1,0 +1,45 @@
+<div class="guard-info">
+    <span class="guard-key">Id:</span>
+    <span class="guard-value"><p-button [label]="guardDetail().id.toString()" severity="contrast" [outlined]="true" [routerLink]="['/guards/detail', guardDetail().id]"></p-button></span>
+    <span class="guard-key">Guard name: </span>
+    <span class="guard-value">{{ guardDetail().guardName ?? 'Unnamed' }}</span>
+    <span class="guard-key">Guard description:</span>
+    <span class="guard-value">{{ guardDetail().guardDescription }}</span>
+    <span class="guard-key">Create date:</span>
+    <span class="guard-value">{{ guardDetail().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="guard-key">Last run:</span>
+    <span class="guard-value">{{ guardDetail().lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="guard-key">Last edited:</span>
+    <span class="guard-value">{{ guardDetail().lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+    <span class="guard-key">Query:</span>
+    <span class="guard-value">{{ guardDetail().triggerQuery }}</span>
+    <span class="guard-key">Count column:</span>
+    <span class="guard-value">{{ guardDetail().countColumn }}</span>
+    <span class="guard-key">Trigger operator:</span>
+    <span class="guard-value">{{ formatEnum(getEnumLabel(guardOperators, guardDetail().triggerOperator)) }}</span>
+    <span class="guard-key">Trigger value:</span>
+    <span class="guard-value">{{ guardDetail().triggerValue }}</span>
+    <span class="guard-key">Guard state:</span>
+    <p-tag class="guard-value" [severity]="getGuardStateSeverity(guardDetail().guardState)" [rounded]="true"
+        [value]="formatEnum(getEnumLabel(guardStates, guardDetail().guardState))"></p-tag>
+    <span class="guard-key">Status:</span>
+    <div>
+        <p-tag [value]="guardDetail().isActive ? 'Active' : 'Disabled'"
+            [severity]="guardDetail().isActive ? 'info' : 'danger'"></p-tag>
+    </div>
+    <span class="guard-key">Run period in minutes</span>
+    <span>{{ guardDetail()!.runPeriodInMinutes | formatRunPeriod}}</span>
+    <span class="guard-key">Notify on clear:</span>
+    <span class="guard-value">{{ guardDetail().notifyOnClear ? 'yes' : 'no' }}</span>
+    <span class="guard-key">Notify on error:</span>
+    <span class="guard-value">{{ guardDetail().notifyOnError ? 'yes' : 'no' }}</span>
+    <span class="guard-key">Notify on trigger:</span>
+    <span class="guard-value">{{ guardDetail().notifyOnTrigger ? 'yes' : 'no' }}</span>
+    <span class="guard-key">Total errors:</span>
+    <span class="guard-value">{{ guardDetail().totalErrors }}</span>
+    <span class="guard-key">Total triggers:</span>
+    <span class="guard-value">{{ guardDetail().totalTriggers }}</span>
+    <span class="guard-key">Created by:</span>
+    <a class="guard-value" href="">{{ guardDetail().userName }}</a>
+
+</div>

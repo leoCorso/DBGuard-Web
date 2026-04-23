@@ -52,6 +52,27 @@ namespace DBGuardAPI.Helpers
                 _ => throw new InvalidOperationException()
             };
         }
+        public static NotificationDetailDTO MapToDetailDTO(GuardNotification guardNotification)
+        {
+            return guardNotification switch
+            {
+                EmailNotification emailDetail => new EmailNotificationDetailDTO
+                {
+                    Id = emailDetail.Id,
+                    GuardId = emailDetail.GuardId,
+                    NotificationType = emailDetail.NotificationType,
+                    NotificationProviderId = emailDetail.NotificationProviderId,
+                    CreateDate = emailDetail.CreateDate,
+                    LastEdited = emailDetail.LastEdited,
+                    EmailSubject = emailDetail.EmailSubject,
+                    EmailBody = emailDetail.EmailBody,
+                    ToEmails = emailDetail.ToEmails,
+                    CCEmails = emailDetail.CCEmails,
+                    BCCEmails = emailDetail.BCCEmails
+                },
+                _ => throw new NotSupportedException("This notification type is not supported")
+            };
+        }
         private static List<EmailContact> ParseEmailContacts(List<string> emails)
         {
             // Element in emails is type:email

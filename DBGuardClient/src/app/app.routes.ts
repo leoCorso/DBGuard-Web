@@ -3,11 +3,15 @@ import { HomeWebpage } from './components/home-webpage/home-webpage';
 import { loggedInGuard } from './guards/logged-in-guard';
 import { LoginWebpage } from './components/login-webpage/login-webpage';
 import { notLoggedInGuard } from './guards/not-logged-in-guard';
-import { GuardsWebpage } from './components/guards-webpage/guards-webpage';
-import { ViewGuards } from './components/guards-webpage/view-guards/view-guards';
-import { GuardDetail } from './components/guards-webpage/guard-detail/guard-detail';
-import { DbConnectionsWebpage } from './components/db-connections-webpage/db-connections-webpage';
-import { GuardsHistory } from './components/guards-webpage/guards-history/guards-history';
+import { GuardsSectionWrapper } from './components/guard-components/guards-section-wrapper/guards-section-wrapper';
+import { ViewGuardsWebpage } from './components/guard-components/view-guards-webpage/view-guards-webpage';
+import { GuardDetailWebpage } from './components/guard-components/guard-detail-webpage/guard-detail-webpage';
+import { DbConnectionsWebpage } from './components/db-connection-components/db-connections-webpage/db-connections-webpage';
+import { GuardsChangeHistoryWebpage } from './components/guard-components/guards-change-history-webpage/guards-change-history-webpage';
+import { NotificationTransactionsWebpage } from './components/guard-components/guard-notification-components/notification-transactions-webpage/notification-transactions-webpage';
+import { GuardNotificationsWebpage } from './components/guard-components/guard-notification-components/guard-notifications-webpage/guard-notifications-webpage';
+import { GuardChangeDetailWebpage } from './components/guard-components/guard-change-detail-webpage/guard-change-detail-webpage';
+import { NotificationDetailWebpage } from './components/guard-components/guard-notification-components/notification-detail-webpage/notification-detail-webpage';
 
 export const routes: Routes = [
     {
@@ -22,20 +26,36 @@ export const routes: Routes = [
     },
     {
         path: 'guards',
-        component: GuardsWebpage,
+        component: GuardsSectionWrapper,
         canActivate: [loggedInGuard],
         children: [
             {
-                path: 'view-guards',
-                component: ViewGuards
+                path: 'view-all',
+                component: ViewGuardsWebpage
             },
             {
-                path: 'guard-detail/:id',
-                component: GuardDetail
+                path: 'detail/:id',
+                component: GuardDetailWebpage
             },
             {
-                path: 'guards-history',
-                component: GuardsHistory
+                path: 'change-history',
+                component: GuardsChangeHistoryWebpage
+            },
+            {
+                path: 'history-detail/:id',
+                component: GuardChangeDetailWebpage
+            },
+            {
+                path: 'notification-transactions',
+                component: NotificationTransactionsWebpage
+            },
+            {
+                path: 'configured-notifications',
+                component: GuardNotificationsWebpage
+            },
+            {
+                path: 'notification-config-detail/:id',
+                component: NotificationDetailWebpage
             }
         ]
     },

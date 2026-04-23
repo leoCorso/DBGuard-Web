@@ -1,0 +1,49 @@
+<div class="change-detail">
+    <span class="change-key"><strong>Id:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().id }}</span>
+    <span class="change-key"><strong>Timestamp:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="change-key"><strong>Guard id:</strong></span>
+    @if (changeHistoryDetail().guardId) {
+    <span class="change-value">
+        <p-button [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', changeHistoryDetail().guardId]"
+            [label]="changeHistoryDetail().guardId?.toString()">
+
+        </p-button></span>
+    }
+    @else {
+    <span class="change-value"><p-tag value="Deleted" severity="danger"></p-tag></span>
+    }
+    <span class="change-key"><strong>Guard state:</strong></span>
+    <span class="change-value"><p-tag [value]="getEnumLabel(guardStates, changeHistoryDetail().guardState)"
+            [severity]="getGuardStateSeverity(changeHistoryDetail().guardState)"></p-tag></span>
+    <span class="change-key"><strong>Previous guard state:</strong></span>
+    <span class="change-value"><p-tag [value]="getEnumLabel(guardStates, changeHistoryDetail().previousGuardState)"
+            [severity]="getGuardStateSeverity(changeHistoryDetail().previousGuardState)"></p-tag></span>
+    <span class="change-key"><strong>Guard query:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().guardQuery }}</span>
+    <span class="change-key"><strong>Guard operator:</strong></span>
+    <span class="change-value">{{ formatEnumKey(getEnumLabel(guardOperators, changeHistoryDetail().guardOperator))
+        }}</span>
+    <span class="change-key"><strong>Trigger value:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().guardValue }}</span>
+    <span class="change-key"><strong>Result value:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().resultValue }}</span>
+    <span class="change-key"><strong>Database connection id</strong></span>
+    @if (changeHistoryDetail().databaseConnectionId) {
+    <p-button [label]="changeHistoryDetail().databaseConnectionId?.toString()" [outlined]="true" severity="contrast"></p-button>
+    }
+    @else {
+    <p-tag value="Deleted" severity="danger"></p-tag>
+    }
+
+    <span class="change-key"><strong>Database endpoint:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().databaseConnectionEndpoint }}</span>
+    <span class="change-key"><strong>Database name:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().databaseName }}</span>
+    <span class="change-key"><strong>Database engine:</strong></span>
+    <span class="change-value">{{ getEnumLabel(databaseEngines, changeHistoryDetail().databaseConnectionEngine)
+        }}</span>
+    <span class="change-key"><strong>Database connection username:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().databaseConnectionUsername }}</span>
+</div>

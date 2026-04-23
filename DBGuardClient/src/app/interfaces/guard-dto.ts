@@ -74,5 +74,6 @@ export interface GuardDetailDTO {
     notifyOnTrigger: boolean,
     totalErrors: number,
     totalTriggers: number,
-    runPeriodInMinutes: number
+    runPeriodInMinutes: number,
+    databaseConnectionId: number
 }

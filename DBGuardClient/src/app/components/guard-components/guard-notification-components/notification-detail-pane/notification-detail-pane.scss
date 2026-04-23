@@ -1,0 +1,13 @@
+.notification-info {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+}
+.info-key {
+    justify-self: end;
+    align-self: center;
+    font-weight: bold;
+}
+.info-value {
+    align-self: center;
+}
