@@ -34,7 +34,10 @@ namespace DBGuardAPI.Controllers
                 return BadRequest();
             }
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            IQueryable<GuardNotificationDTO> query = context.GuardNotifications.AsNoTracking().Select(notification => new GuardNotificationDTO
+            IQueryable<GuardNotificationDTO> query = context.GuardNotifications.AsNoTracking()
+            .Include(notification => notification.Guard)
+            .ThenInclude(guard => guard!.CreatedByUser)
+            .Select(notification => new GuardNotificationDTO
             {
                 Id = notification.Id,
                 GuardId = notification.GuardId,
@@ -42,6 +45,8 @@ namespace DBGuardAPI.Controllers
                 CreateDate = notification.CreateDate,
                 LastEdited = notification.LastEdited,
                 NotificationProviderId = notification.NotificationProviderId,
+                CreatedByUserId = notification.Guard!.CreatedByUserId,
+                CreatedByUsername = notification.Guard!.CreatedByUser!.UserName!
             }).AsQueryable();
             PagedResponseDTO<GuardNotificationDTO> response = await _entityViewGetter.GetPagedResponseAsync<GuardNotificationDTO>(sieveParams, query);
             return response;
@@ -50,7 +55,11 @@ namespace DBGuardAPI.Controllers
         public async Task<ActionResult<NotificationDetailDTO>> GetNotificationConfigDetail([FromQuery] int id)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            GuardNotification? notification = await context.GuardNotifications.AsNoTracking().Where(notification => notification.Id == id).FirstOrDefaultAsync();
+            GuardNotification? notification = await context.GuardNotifications.AsNoTracking()
+                .Where(notification => notification.Id == id)
+                .Include(notification => notification.Guard)
+                .ThenInclude(guard => guard!.CreatedByUser)
+                .FirstOrDefaultAsync();
             if(notification is null)
             {
                 _logger.LogWarning("A guard notification detail was requested on an invalid id {NotificationId}", id);

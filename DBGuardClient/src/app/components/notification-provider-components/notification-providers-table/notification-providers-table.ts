@@ -1,0 +1,53 @@
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { PreviewTable } from '../../shared/preview-table/preview-table';
+import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
+import { Column } from '../../../interfaces/table-items';
+import { environment } from '../../../../environments/environment.development';
+import { SortValue } from '../../../interfaces/sorting';
+import { FilterConfig, FilterValue } from '../../../interfaces/filters';
+import { enumToOptions, getEnumLabel } from '../../../helper-functions/enum-helper';
+import { NotificationType } from '../../../enums/notification-type';
+import { TableModule } from 'primeng/table';
+import { Button } from 'primeng/button';
+import { FilterItem } from '../../shared/filter-item/filter-item';
+import { RouterModule } from '@angular/router';
+import { DatePipe } from '@angular/common';
+
+@Component({
+  selector: 'app-notification-providers-table',
+  imports: [TableModule, Button, FilterItem, RouterModule, DatePipe],
+  templateUrl: './notification-providers-table.html',
+  styleUrl: './notification-providers-table.scss',
+})
+export class NotificationProvidersTable extends PreviewTable<NotificationProviderDTO> implements OnInit {
+
+  public override columns: Column[] = [
+    {field: 'id', header: 'Id', sortable: true},
+    {field: 'notificationType', header: 'Provider Type', sortable: true},
+    {field: 'createDate', header: 'Create Date', sortable: true},
+    {field: 'lastEdited', header: 'Last Edited', sortable: true},
+    {field: 'createdByUsername', header: 'Created by', sortable: true}
+  ]
+  public override fetchUrl: string = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviders'].join('/');
+  public override defaultSort: SortValue[] = [
+    {field: 'createDate', order: -1}
+  ];
+  public override filtersConfig: FilterConfig[] = [];
+  public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
+  public notificationTypes = enumToOptions(NotificationType);
+  public getEnumLabel = getEnumLabel;
+  public notificationType = NotificationType;
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.configureFilters();
+  }
+  protected override configureFilters(): void {
+    this.filtersConfig = [
+      {field: 'id', type: 'numeric', isTableFilter: true, placeholder: 'Filter by Id'},
+      {field: 'notificationType', type: 'multi-select', isTableFilter: true, placeholder: 'Filter by Provider Type', options: this.notificationTypes},
+      {field: 'createDate', type: 'datetime', isTableFilter: true, placeholder: 'Filter by Create Date'},
+      {field: 'lastEdited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by Last Edited'},
+      {field: 'createdByUsername', type: 'text', isTableFilter: true, placeholder: 'Filter by Created By'},
+    ];
+  }
+}

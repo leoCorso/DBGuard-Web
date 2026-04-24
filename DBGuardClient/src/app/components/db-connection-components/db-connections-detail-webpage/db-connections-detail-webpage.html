@@ -1,0 +1,6 @@
+<p-card header="Database connection info">
+    <app-db-connection-detail-pane [databaseConnectionId]="dbConnectionId()!"></app-db-connection-detail-pane>
+</p-card>
+<p-card>
+    <app-guards-detail-table [dbConnectionId]="dbConnectionId()!"></app-guards-detail-table>
+</p-card>

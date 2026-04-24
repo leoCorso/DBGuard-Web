@@ -6,9 +6,19 @@ export interface DatabaseConnectionDTO {
     databaseEngine: DatabaseEngine,
     databaseName: string,
     username?: string,
-    password?: string
+    password?: string,
+    createDate: Date,
+    lastEdited: Date,
+    createdByUserId: string,
+    createdByUsername: string
 }
-
+export interface SimpleDatabaseConnectionDTO {
+    id?: number,
+    endpoint: string,
+    databaseEngine: DatabaseEngine,
+    databaseName: string,
+    username?: string,
+}
 export interface CreateDatabaseConnectionDTO {
     id?: number,
     endpoint: string,

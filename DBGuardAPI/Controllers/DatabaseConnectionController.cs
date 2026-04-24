@@ -1,4 +1,5 @@
 ﻿using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
+using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.StaticData;
 using DBGuardAPI.Helpers;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
 
 namespace DBGuardAPI.Controllers
 {
@@ -18,12 +20,14 @@ namespace DBGuardAPI.Controllers
         private readonly ILogger<DatabaseConnectionController> _logger;
         private readonly CredentialProtector _credentialProtector;
         private readonly UserManager<User> _userManager;
-        public DatabaseConnectionController(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<DatabaseConnectionController> logger, CredentialProtector credentialProtector, UserManager<User> userManager)
+        private readonly EntityViewGetter _entityViewGetter;
+        public DatabaseConnectionController(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<DatabaseConnectionController> logger, CredentialProtector credentialProtector, UserManager<User> userManager, EntityViewGetter entityViewGetter)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
             _credentialProtector = credentialProtector;
             _userManager = userManager;
+            _entityViewGetter = entityViewGetter;
         }
 
         [Authorize]
@@ -31,8 +35,10 @@ namespace DBGuardAPI.Controllers
         public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnectionDetail([FromQuery] int databaseConnectionId)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            DatabaseConnectionDTO? databaseConnection = await context.DatabaseConnections.AsNoTracking()
+            DatabaseConnectionDTO? databaseConnection = await context.DatabaseConnections
+                .AsNoTracking()
                 .Where(dc => dc.Id == databaseConnectionId)
+                .Include(dc => dc.CreatedByUser)
                 .Select(dc => new DatabaseConnectionDTO
                 {
                     Id = dc.Id,
@@ -40,7 +46,11 @@ namespace DBGuardAPI.Controllers
                     DatabaseEngine = dc.DatabaseEngine,
                     DatabaseName = dc.DatabaseName,
                     Username = dc.Username,
-                    Password = User.IsInRole(RoleNames.Admin) && dc.Password != null ? _credentialProtector.Decrypt(dc.Password) : null
+                    Password = User.IsInRole(RoleNames.Admin) && dc.Password != null ? _credentialProtector.Decrypt(dc.Password) : null,
+                    CreatedByUserId = dc.CreatedByUserId,
+                    CreatedByUsername = dc.CreatedByUser!.UserName!,
+                    CreateDate = dc.CreateDate,
+                    LastEdited = dc.LastEditedDate
                 })
                 .FirstOrDefaultAsync();
             if(databaseConnection is null)
@@ -49,24 +59,29 @@ namespace DBGuardAPI.Controllers
             }
             return databaseConnection;
         }
-        [HttpGet(nameof(GetDatabaseConnection) + "/{id}")]
-        public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnection(int id)
+        [HttpGet(nameof(GetPagedDatabaseConnections))]
+        public async Task<ActionResult<PagedResponseDTO<DatabaseConnectionDTO>>> GetPagedDatabaseConnections([FromQuery] SieveModel sieveParams)
         {
-            using var context = await _dbContextFactory.CreateDbContextAsync();
-            DatabaseConnection? connection = await context.DatabaseConnections.FindAsync(id);
-            if (connection is null)
+            if(sieveParams.PageSize is null || sieveParams.Page is null)
             {
-                return NotFound();
+                return BadRequest();
             }
-            return new DatabaseConnectionDTO
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            IQueryable<DatabaseConnectionDTO> query = context.DatabaseConnections.AsNoTracking()
+                .Include(connection => connection.CreatedByUser)
+                .Select(connection => new DatabaseConnectionDTO
             {
                 Id = connection.Id,
                 Endpoint = connection.EndPoint,
+                DatabaseEngine = connection.DatabaseEngine,
                 DatabaseName = connection.DatabaseName,
                 Username = connection.Username,
-                DatabaseEngine = connection.DatabaseEngine
-
-            };
+                CreatedByUserId = connection.CreatedByUserId,
+                CreatedByUsername = connection.CreatedByUser!.UserName!,
+                CreateDate = connection.CreateDate,
+                LastEdited = connection.LastEditedDate
+                }).AsQueryable();
+            return await _entityViewGetter.GetPagedResponseAsync(sieveParams, query);
         }
         [HttpPost(nameof(PostDatabaseConnection))]
         [Authorize(Roles = RoleNames.Admin)]
@@ -102,7 +117,7 @@ namespace DBGuardAPI.Controllers
             };
             await context.DatabaseConnections.AddAsync(newConnObject);
             await context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetDatabaseConnection), new { id = newConnObject.Id }, new DatabaseConnectionDTO
+            return CreatedAtAction(nameof(GetDatabaseConnectionDetail), new { id = newConnObject.Id }, new SimpleDatabaseConnectionDTO
             {
                 Id = newConnObject.Id,
                 Endpoint = newConnObject.EndPoint,

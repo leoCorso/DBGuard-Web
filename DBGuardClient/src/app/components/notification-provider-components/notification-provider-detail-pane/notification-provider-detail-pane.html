@@ -4,9 +4,9 @@
         <p-button [label]="providerDetails()!.id.toString()" [outlined]="true" severity="contrast"></p-button>
     </span>
     <span class="provider-key">Create date</span>
-    <span class="provider-value">{{ providerDetails()?.createDate | date: 'mm/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="provider-value">{{ providerDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
     <span class="provider-key">Last edited</span>
-    <span class="provider-value">{{ providerDetails()?.lastEdited | date: 'mm/dd/yyyy hh:mm:ss a'}}</span>
+    <span class="provider-value">{{ providerDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
     <span class="provider-key">Notification type</span>
     <span class="provider-value">{{ getEnumLabel(notificationTypes, providerDetails()!.providerType) }}</span>
     <span class="provider-key">Created by</span>

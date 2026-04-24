@@ -68,7 +68,9 @@ namespace DBGuardAPI.Helpers
                     EmailBody = emailDetail.EmailBody,
                     ToEmails = emailDetail.ToEmails,
                     CCEmails = emailDetail.CCEmails,
-                    BCCEmails = emailDetail.BCCEmails
+                    BCCEmails = emailDetail.BCCEmails,
+                    CreatedByUserId = emailDetail.Guard!.CreatedByUserId,
+                    CreatedByUsername = emailDetail.Guard.CreatedByUser!.UserName!
                 },
                 _ => throw new NotSupportedException("This notification type is not supported")
             };

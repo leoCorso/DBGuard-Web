@@ -49,6 +49,8 @@ export interface NotificationDetailDTO {
     notificationProviderId: number,
     createDate: Date,
     lastEdited: Date,
+    createdByUserId: string,
+    createdByUsername: string
 }
 export interface EmailNotificationDetailDTO extends NotificationDetailDTO {
     emailSubject?: string,
@@ -56,4 +58,14 @@ export interface EmailNotificationDetailDTO extends NotificationDetailDTO {
     toEmails: string[],
     ccEmails: string[],
     bccEmails: string[]
+}
+export interface GuardNotificationDTO {
+    id: number,
+    guardId: number,
+    notificationType: NotificationType,
+    createDate: Date,
+    lastEdited: Date,
+    notificationProviderId: number,
+    createdByUserId: string,
+    createdByUsername: string
 }

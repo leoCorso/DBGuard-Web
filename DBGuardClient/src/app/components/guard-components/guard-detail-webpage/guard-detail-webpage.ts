@@ -19,7 +19,7 @@ import { ConfirmPopup } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
-import { GuardDbConnectionDetailPane } from '../../db-connection-components/guard-db-connection-detail-pane/guard-db-connection-detail-pane';
+import { DbConnectionDetailPane } from '../../db-connection-components/db-connection-detail-pane/db-connection-detail-pane';
 import { CreateGuard } from '../create-guard/create-guard';
 import { GuardChangeHistoryTable } from '../guard-change-history-table/guard-change-history-table';
 import { GuardNotificationTransactionsTable } from '../guard-notification-components/guard-notification-transactions-table/guard-notification-transactions-table';
@@ -29,7 +29,7 @@ import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
 @Component({
   selector: 'app-guard-detail-webpage',
   imports: [Card, GuardDetailPane, Button, Tag, ButtonGroup, GuardChangeHistoryTable, GuardNotificationTransactionsTable, 
-    GuardDbConnectionDetailPane, GuardNotificationsTable, ProgressSpinner, ConfirmPopup],
+    DbConnectionDetailPane, GuardNotificationsTable, ProgressSpinner, ConfirmPopup],
   templateUrl: './guard-detail-webpage.html',
   styleUrl: './guard-detail-webpage.scss',
 })

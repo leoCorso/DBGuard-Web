@@ -54,7 +54,7 @@ export class Sidebar {
         {
           label: 'View connections',
           icon: 'pi pi-database',
-          routerLink: 'db-connections'
+          routerLink: 'db-connections/view-all'
         }
       ]
     },
@@ -63,7 +63,8 @@ export class Sidebar {
       items: [
         {
           label: 'View providers',
-          icon: 'pi pi-send'
+          icon: 'pi pi-send',
+          routerLink: 'providers/view-all'
         }
       ]
     },

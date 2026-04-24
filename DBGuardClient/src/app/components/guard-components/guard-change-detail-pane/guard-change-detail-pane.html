@@ -1,6 +1,8 @@
 <div class="change-detail">
     <span class="change-key"><strong>Id:</strong></span>
-    <span class="change-value">{{ changeHistoryDetail().id }}</span>
+    <span class="change-value">
+        <p-button [outlined]="true" severity="contrast" [label]="changeHistoryDetail().id.toString()" [routerLink]="['/guards/history-detail', changeHistoryDetail().id]"></p-button>
+    </span>
     <span class="change-key"><strong>Timestamp:</strong></span>
     <span class="change-value">{{ changeHistoryDetail().timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
     <span class="change-key"><strong>Guard id:</strong></span>

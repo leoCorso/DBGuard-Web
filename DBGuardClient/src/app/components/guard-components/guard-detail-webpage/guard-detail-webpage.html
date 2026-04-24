@@ -24,8 +24,8 @@
             <app-guard-detail-pane [guardDetail]="guardDetail()!"></app-guard-detail-pane>
         }
     </p-card>
-    <p-card>
-        <app-guard-db-connection-detail-pane [guardId]="guardId()!" [databaseConnectionId]="guardDetail()!.databaseConnectionId"></app-guard-db-connection-detail-pane>
+    <p-card header="Database connection info">
+        <app-db-connection-detail-pane [guardId]="guardId()!" [databaseConnectionId]="guardDetail()!.databaseConnectionId"></app-db-connection-detail-pane>
     </p-card>
     <p-card>
         <app-guard-notifications-table [guardId]="guardId()!"></app-guard-notifications-table>

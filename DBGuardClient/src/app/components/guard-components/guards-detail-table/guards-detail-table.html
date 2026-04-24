@@ -5,7 +5,7 @@
     [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
     [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
     <ng-template #caption>
-        <h2>Guard notificaton configs</h2>
+        <h2>Guards</h2>
     </ng-template>
     <ng-template #header>
         <tr>
@@ -34,26 +34,32 @@
                 }
             </tr>
     </ng-template>
-    <ng-template #body let-notification let-rowIndex="rowIndex">
+    <ng-template #body let-guard let-rowIndex="rowIndex">
         <tr>
             <td>{{ rowIndex + 1 }}</td>
-            <td><p-button [label]="notification.id" [link]="true" [routerLink]="['/guards/notification-config-detail', notification.id]"></p-button></td>
             <td>
-                @if (notification.guardId) {
-                    <p-button [label]="notification.guardId" [link]="true" [routerLink]="['/guards/detail', notification.guardId]"></p-button>
-                }
-                @else {
-                    <p-tag value="Deleted" severity="danger"></p-tag>
-                }
+                <p-button [label]="guard.id" [link]="true" [routerLink]="['/guards/detail', guard.id]"></p-button>
             </td>
-            <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
-            <td>{{ notification.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-            <td>{{ notification.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
+            <td>{{ guard.guardName }}</td>
+            <td>{{ guard.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
+            <td>{{ guard.lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
+            <td>{{ guard.lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
             <td>
-                <p-button [link]="true" [label]="notification.notificationProviderId" [routerLink]="['/providers/detail', notification.notificationProviderId]"></p-button>
+                <p-button [label]="guard.userName" [link]="true" [routerLink]=""></p-button>
             </td>
+            <td>{{ guard.countColumn }}</td>
+            <td>{{ formatEnumKey(getEnumLabel(guardOperator, guard.triggerOperator)) }}</td>
+            <td>{{ guard.triggerValue }}</td>
+            <td><p-tag [value]="getEnumLabel(guardState, guard.guardState)" [severity]="getGuardStateSeverity(guard.guardState)"></p-tag></td>
+            <td><p-tag [value]="guard.isActive ? 'Active' : 'Inactive'" [severity]="guard.isActive ? 'info': 'danger'"></p-tag></td>
+            <td><p-tag [value]="guard.notifyOnClear ? 'Yes': 'No'" [severity]="guard.notifyOnClear ? 'info': 'danger'"></p-tag></td>
+            <td><p-tag [value]="guard.notifyOnError ? 'Yes': 'No'" [severity]="guard.notifyOnError ? 'info': 'danger'"></p-tag></td>
+            <td><p-tag [value]="guard.notifyOnTrigger ? 'Yes': 'No'" [severity]="guard.notifyOnTrigger ? 'info': 'danger'"></p-tag></td>
+            <td>{{ guard.totalErrors }}</td>
+            <td>{{ guard.totalTriggers }}</td>
+            <td>{{ guard.runPeriodInMinutes }}</td>
             <td>
-                <p-button [label]="notification.createdByUsername" [link]="true" ></p-button>
+                <p-button [link]="true" [label]="guard.databaseConnectionId" [routerLink]="['/db-connections/dfetail', guard.databaseConnectionId]"></p-button>
             </td>
         </tr>
     </ng-template>

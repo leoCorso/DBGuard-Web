@@ -53,7 +53,7 @@
                 <td>{{ change.guardQuery }}</td>
                 <td>{{ formatEnumKey(getEnumLabel(guardOperator, change.guardOperator)) }}</td>
                 <td>{{ change.guardValue }}</td>
-                <td><a href="">{{ change.databaseConnectionId }}</a></td>
+                <td><p-button [link]="true" [label]="change.databaseConnectionId" [routerLink]="['/db-connections/detail', change.databaseConnectionId]"></p-button></td>
                 <td>{{ change.databaseConnectionEndpoint }}</td>
                 <td>{{ change.databaseName }}</td>
                 <td>{{ getEnumLabel(databaseEngine, change.databaseConnectionEngine) }}</td>

@@ -1,6 +1,8 @@
 <div class="notification-info">
     <span class="info-key">Id:</span>
-    <span class="info-value">{{ notificationDetail().guardId }}</span>
+    <span class="info-value">
+        <p-button [outlined]="true" severity="contrast" [label]="notificationDetail().guardId.toString()" [routerLink]="['/guards/notification-config-detail', notificationDetail().guardId]"></p-button>
+    </span>
     <span class="info-key">Guard id:</span>
     <span class="info-value">
         <p-button [label]="notificationDetail().guardId.toString()" [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', notificationDetail().guardId]">
@@ -12,6 +14,10 @@
     <span class="info-value">{{ notificationDetail().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
     <span class="info-key">Last edited</span>
     <span class="info-value">{{ notificationDetail().lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+    <span class="info-key">Created by:</span>
+    <span class="info-value">
+        <p-button [label]="notificationDetail().createdByUsername" [routerLink]="['/users/detail', notificationDetail().createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+    </span>
 </div>
 <p-divider></p-divider>
 

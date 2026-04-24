@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using DBGuardAPI.Data.Enums;
+using Sieve.Attributes;
 
 namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
 {
@@ -8,11 +9,17 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
     [JsonDerivedType(typeof(TextProviderDTO), (int)NotificationType.Text)]
     public class NotificationProviderDTO
     {
+        [Sieve(CanSort = true, CanFilter = true)]
         public int Id { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
         public NotificationType NotificationType { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
         public DateTimeOffset CreateDate { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
         public DateTimeOffset LastEdited { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
         public required string CreatedByUserId { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
         public required string CreatedByUsername { get; set; }
 
     }

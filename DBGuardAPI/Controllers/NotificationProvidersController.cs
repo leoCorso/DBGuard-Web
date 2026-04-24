@@ -1,4 +1,5 @@
 ﻿using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Data.StaticData;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
 
 namespace DBGuardAPI.Controllers
 {
@@ -20,12 +22,14 @@ namespace DBGuardAPI.Controllers
         private readonly CredentialProtector _credentialProtector;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<NotificationProvidersController> _logger;
-        public NotificationProvidersController(IDbContextFactory<ApplicationDbContext> dbContextFactory, CredentialProtector credentialProtector, ILogger<NotificationProvidersController> logger, UserManager<User> userManager)
+        private readonly EntityViewGetter _entityViewGetter;
+        public NotificationProvidersController(IDbContextFactory<ApplicationDbContext> dbContextFactory, CredentialProtector credentialProtector, ILogger<NotificationProvidersController> logger, UserManager<User> userManager, EntityViewGetter entityViewGetter)
         {
             _dbContextFactory = dbContextFactory;
             _credentialProtector = credentialProtector;
             _logger = logger;
             _userManager = userManager;
+            _entityViewGetter = entityViewGetter;
         }
         [HttpGet(nameof(GetNotificationProviderDetail))]
         public async Task<ActionResult<NotificationProviderDTO>> GetNotificationProviderDetail([FromQuery] int id)
@@ -59,6 +63,27 @@ namespace DBGuardAPI.Controllers
                     Password = await _userManager.IsInRoleAsync(user, RoleNames.Admin) ? _credentialProtector.Decrypt(email.Password) : null
                 }
             };
+        }
+        [HttpGet(nameof(GetNotificationProviders))]
+        public async Task<ActionResult<PagedResponseDTO<NotificationProviderDTO>>> GetNotificationProviders([FromQuery] SieveModel sieveParams)
+        {
+            if(sieveParams.Page is null || sieveParams.PageSize is null)
+            {
+                return BadRequest();
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            IQueryable<NotificationProviderDTO> query = context.NotificationProviders.AsNoTracking()
+                .Include(provider => provider.CreatedByUser)
+                .Select(provider => new NotificationProviderDTO
+                {
+                    Id = provider.Id,
+                    NotificationType = provider.ProviderType,
+                    CreateDate = provider.CreateDate,
+                    LastEdited = provider.LastEditedDate,
+                    CreatedByUserId = provider.CreatedByUserId,
+                    CreatedByUsername = provider.CreatedByUser!.UserName!
+                }).AsQueryable();
+            return await _entityViewGetter.GetPagedResponseAsync(sieveParams, query);
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostNotificationProvider))]

@@ -1,4 +1,3 @@
-<h2>Guard Database info</h2>
 @if (showLoadingUi()) {
     <div class="loading-spinner">
         <p-progressspinner></p-progressspinner>
@@ -8,7 +7,13 @@
 @else {
     <div class="database-info">
         <span class="connection-key"><strong>Id:</strong></span>
-        <span class="connection-value">{{ databaseConnectionInfo()?.id }}</span>
+        <span class="connection-value">
+            <p-button [label]="databaseConnectionInfo()?.id?.toString()" [routerLink]="['/db-connections/detail', databaseConnectionInfo()?.id]" [outlined]="true" severity="contrast"></p-button>
+        </span>
+        <span class="connection-key"><strong>Create date:</strong></span>
+        <span class="connection-value">{{ databaseConnectionInfo()?.createDate | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
+        <span class="connection-key"><strong>Last edited</strong></span>
+        <span class="connection-value">{{ databaseConnectionInfo()?.lastEdited | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
         <span class="connection-key"><strong>Endpoint:</strong></span>
         <span class="connection-value">{{ databaseConnectionInfo()?.endpoint }}</span>
         <span class="connection-key"><strong>Database engine:</strong></span>
@@ -24,5 +29,7 @@
                 <p-button (onClick)="viewPassword.set(!viewPassword())" [link]="true" [icon]="viewPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" pTooltip="View password"></p-button>
             </div>
         }
+        <span class="connection-key"><strong>Created by:</strong></span>
+        <span class="connection-value"><p-button [label]="databaseConnectionInfo()?.createdByUsername" [routerLink]="['']" [outlined]="true" severity="contrast"></p-button></span>
     </div>
 }

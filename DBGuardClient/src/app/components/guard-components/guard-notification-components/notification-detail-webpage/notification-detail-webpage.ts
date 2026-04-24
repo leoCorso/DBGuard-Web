@@ -9,9 +9,8 @@ import { GuardNotificationTransactionsTable } from '../guard-notification-transa
 import { environment } from '../../../../../environments/environment.development';
 import { NotificationType } from '../../../../enums/notification-type';
 import { getEnumLabel } from '../../../../helper-functions/enum-helper';
-import { GuardNotificationDTO } from '../../../../interfaces/guard-notification-dto';
-import { NotificationDetailDTO, EmailNotificationDetailDTO } from '../../../../interfaces/notification-dto';
-import { GuardDbConnectionDetailPane } from '../../../db-connection-components/guard-db-connection-detail-pane/guard-db-connection-detail-pane';
+import { NotificationDetailDTO, EmailNotificationDetailDTO, GuardNotificationDTO } from '../../../../interfaces/notification-dto';
+import { DbConnectionDetailPane } from '../../../db-connection-components/db-connection-detail-pane/db-connection-detail-pane';
 import { NotificationDetailPane } from '../notification-detail-pane/notification-detail-pane';
 import { NotificationProviderDetailPane } from '../../../notification-provider-components/notification-provider-detail-pane/notification-provider-detail-pane';
 

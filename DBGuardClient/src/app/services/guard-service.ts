@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { CreateGuardDTO, GuardDTO } from '../interfaces/guard-dto';
+import { CreateGuardDTO, SimpleGuardDTO } from '../interfaces/guard-dto';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';

@@ -12,14 +12,16 @@ import { GuardService } from '../../../services/guard-service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Password } from 'primeng/password';
 import { Tooltip } from "primeng/tooltip";
+import { DatePipe } from '@angular/common';
+import { RouterLink, RouterModule } from "@angular/router";
 
 @Component({
-  selector: 'app-guard-db-connection-detail-pane',
-  imports: [Button, ProgressSpinner, Tooltip],
-  templateUrl: './guard-db-connection-detail-pane.html',
-  styleUrl: './guard-db-connection-detail-pane.scss',
+  selector: 'app-db-connection-detail-pane',
+  imports: [Button, ProgressSpinner, Tooltip, DatePipe, RouterLink, RouterModule],
+  templateUrl: './db-connection-detail-pane.html',
+  styleUrl: './db-connection-detail-pane.scss',
 })
-export class GuardDbConnectionDetailPane implements OnInit, OnDestroy {
+export class DbConnectionDetailPane implements OnInit, OnDestroy {
   public databaseConnectionId = input.required<number>();
   public guardId = input<number>();
   public databaseConnectionInfo = signal<DatabaseConnectionDTO | null>(null);

@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { GuardOperator } from '../../../enums/guard-operator';
-import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
+import { DatabaseConnectionDTO, SimpleDatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 import { InputText } from 'primeng/inputtext';
@@ -17,7 +17,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { CreateGuardNotificationDTO } from '../../../interfaces/notification-dto';
-import { CreateGuardDTO, CreateGuardReferenceData, GuardDTO } from '../../../interfaces/guard-dto';
+import { CreateGuardDTO, CreateGuardReferenceData, SimpleGuardDTO } from '../../../interfaces/guard-dto';
 import { Listbox } from 'primeng/listbox';
 import { Tag } from 'primeng/tag';
 import { Card } from 'primeng/card';
@@ -40,7 +40,7 @@ export class CreateGuard implements OnInit, OnDestroy {
   public guardToEditId = input<number>();
   public guardToEdit = signal<CreateGuardDTO | null>(null);
 
-  public databaseConnections = signal<DatabaseConnectionDTO[]>([]);
+  public databaseConnections = signal<SimpleDatabaseConnectionDTO[]>([]);
   public notificationProviders = signal<NotificationProviderDTO[]>([]);
 
   private httpClient = inject(HttpClient);
@@ -61,7 +61,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     countColumn: new FormControl<string | null>(null, [Validators.required]),
     triggerOperator: new FormControl<GuardOperator | null>(null, [Validators.required]),
     triggerValue: new FormControl<number | null>(null, [Validators.required]),
-    databaseConnection: new FormControl<DatabaseConnectionDTO | null>(null, [Validators.required]),
+    databaseConnection: new FormControl<SimpleDatabaseConnectionDTO | null>(null, [Validators.required]),
     isActive: new FormControl<boolean>(true, [Validators.required]),
     notifyOnClear: new FormControl<boolean>(true, [Validators.required]),
     notifyOnError: new FormControl<boolean>(true, [Validators.required]),
@@ -131,9 +131,9 @@ export class CreateGuard implements OnInit, OnDestroy {
     const url = [environment.api.uri, 'Guards'];
     this.guardToEdit() ? url.push('PutGuard') : url.push('PostGuard');
     const urlString = url.join('/');
-    const request = this.guardToEdit() ? this.httpClient.put<GuardDTO>(urlString, guard) : this.httpClient.post<GuardDTO>(urlString, guard);
+    const request = this.guardToEdit() ? this.httpClient.put<SimpleGuardDTO>(urlString, guard) : this.httpClient.post<SimpleGuardDTO>(urlString, guard);
     request.subscribe({
-      next: (newGuard: GuardDTO) => {
+      next: (newGuard: SimpleGuardDTO) => {
         this.guardService.guardEdited.next(newGuard.id);
         this.dialogRef.close(newGuard);
       }

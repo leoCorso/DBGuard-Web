@@ -12,6 +12,12 @@ import { NotificationTransactionsWebpage } from './components/guard-components/g
 import { GuardNotificationsWebpage } from './components/guard-components/guard-notification-components/guard-notifications-webpage/guard-notifications-webpage';
 import { GuardChangeDetailWebpage } from './components/guard-components/guard-change-detail-webpage/guard-change-detail-webpage';
 import { NotificationDetailWebpage } from './components/guard-components/guard-notification-components/notification-detail-webpage/notification-detail-webpage';
+import { DbConnectionsWrapper } from './components/db-connection-components/db-connections-wrapper/db-connections-wrapper';
+import { DbConnectionsDetailWebpage } from './components/db-connection-components/db-connections-detail-webpage/db-connections-detail-webpage';
+import { NotificationProvidersWrapper } from './components/notification-provider-components/notification-providers-wrapper/notification-providers-wrapper';
+import { NotificationProvidersWebpage } from './components/notification-provider-components/notification-providers-webpage/notification-providers-webpage';
+import { NotificationProviderDetailPane } from './components/notification-provider-components/notification-provider-detail-pane/notification-provider-detail-pane';
+import { NotificationProviderDetailWebpage } from './components/notification-provider-components/notification-provider-detail-webpage/notification-provider-detail-webpage';
 
 export const routes: Routes = [
     {
@@ -57,11 +63,36 @@ export const routes: Routes = [
                 path: 'notification-config-detail/:id',
                 component: NotificationDetailWebpage
             }
+        ],
+    },
+    {
+        path: 'providers',
+        component: NotificationProvidersWrapper,
+        canActivate: [loggedInGuard],
+        children: [
+            {
+                path: 'view-all',
+                component: NotificationProvidersWebpage
+            },
+            {
+                path: 'detail/:id',
+                component: NotificationProviderDetailWebpage
+            }
         ]
     },
     {
         path: 'db-connections',
-        component: DbConnectionsWebpage,
-        canActivate: [loggedInGuard]
+        component: DbConnectionsWrapper,
+        canActivate: [loggedInGuard],
+        children: [
+            {
+                path: 'view-all',
+                component: DbConnectionsWebpage
+            },
+            {
+                path: 'detail/:id',
+                component: DbConnectionsDetailWebpage
+            }
+        ]
     }
 ];

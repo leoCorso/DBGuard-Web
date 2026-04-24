@@ -17,5 +17,9 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
         public DateTimeOffset LastEdited { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public int NotificationProviderId { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
+        public required string CreatedByUserId { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
+        public required string CreatedByUsername { get; set; }
     }
 }

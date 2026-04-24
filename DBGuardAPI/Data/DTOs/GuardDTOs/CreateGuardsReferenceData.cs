@@ -5,7 +5,7 @@ namespace DBGuardAPI.Data.DTOs
 {
     public class CreateGuardsReferenceData
     {
-        public List<DatabaseConnectionDTO> DatabaseConnections { get; set; } = [];
+        public List<SimpleDatabaseConnectionDTO> DatabaseConnections { get; set; } = [];
         public List<NotificationProviderDTO> NotificationProviders { get; set; } = [];
     }
 }

@@ -13,7 +13,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public required string CountColumn { get; set; }
         public GuardOperator TriggerOperator { get; set; }
         public int TriggerValue { get; set; }
-        public required DatabaseConnectionDTO DatabaseConnection { get; set; }
+        public required SimpleDatabaseConnectionDTO DatabaseConnection { get; set; }
         public bool IsActive { get; set; }
         public bool NotifyOnClear { get; set; }
         public bool NotifyOnError { get; set; }

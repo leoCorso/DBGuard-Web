@@ -1,6 +1,5 @@
 import { Component, inject, input, OnInit, signal, WritableSignal } from '@angular/core';
 import { PreviewTable } from '../../../shared/preview-table/preview-table';
-import { GuardNotificationDTO } from '../../../../interfaces/guard-notification-dto';
 import { Column } from '../../../../interfaces/table-items';
 import { SortValue } from '../../../../interfaces/sorting';
 import { environment } from '../../../../../environments/environment.development';
@@ -16,6 +15,7 @@ import { takeUntil } from 'rxjs';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { RouterLink, RouterModule } from "@angular/router";
+import { GuardNotificationDTO } from '../../../../interfaces/notification-dto';
 
 @Component({
   selector: 'app-guard-notifications-table',
@@ -35,7 +35,8 @@ export class GuardNotificationsTable extends PreviewTable<GuardNotificationDTO> 
     {field: 'notificationType', header: 'Type', sortable: true},
     {field: 'createDate', header: 'Date created', sortable: true},
     {field: 'lastEdited', header: 'Last edited', sortable: true},
-    {field: 'notificationProviderId', header: 'Notification provider', sortable: true}
+    {field: 'notificationProviderId', header: 'Notification provider', sortable: true},
+    {field: 'createdbyUsername', header: 'Created by', sortable: true}
   ];
   public override defaultSort: SortValue[] = [
     {field: 'lastEdited', order: -1}
@@ -43,22 +44,34 @@ export class GuardNotificationsTable extends PreviewTable<GuardNotificationDTO> 
   public override fetchUrl: string = [environment.api.uri, 'Notifications', 'GetGuardNotifications'].join('/');
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
   public guardId = input<number>();
+  public providerId = input<number>();
+
   public override filtersConfig: FilterConfig[] = [];
   
   override ngOnInit(): void {
     super.ngOnInit();
     this.configureFilters();
-
+    let filter: FilterValue | null = null;
     if(this.guardId()){
-      const filter: FilterValue = {
+      filter = {
         field: 'guardId',
         value: this.guardId(),
         operator: '==',
         type: 'numeric'
       };
+    }
+    if(this.providerId()){
+      filter = {
+        field: 'notificationProviderId',
+        value: this.providerId(),
+        operator: '==',
+        type: 'numeric'
+      }
+    }
+    if(filter){
       this.filters.update(filters => {
         const newFilter = new Map(filters);
-        newFilter.set('guardId', filter);
+        newFilter.set(filter.field, filter);
         return newFilter;
       });
     }
@@ -78,7 +91,8 @@ export class GuardNotificationsTable extends PreviewTable<GuardNotificationDTO> 
       {field: 'notificationType', type: 'multi-select', isTableFilter: true, options: this.notificationTypes, placeholder: 'Filter by notification type'},
       {field: 'createDate', type: 'datetime', isTableFilter: true, placeholder: 'Filter by create date'},
       {field: 'lastEdited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by last edited'},
-      {field: 'notificationProviderId', type: 'numeric', isTableFilter: true, placeholder: 'Filter by notification provider id'}
+      {field: 'notificationProviderId', type: this.providerId() ? 'empty': 'numeric', isTableFilter: true, placeholder: 'Filter by notification provider id'},
+      {field: 'createdByUsername', type: 'text', isTableFilter: true, placeholder: 'Filter by creator username'}
     ];
   }
 }
