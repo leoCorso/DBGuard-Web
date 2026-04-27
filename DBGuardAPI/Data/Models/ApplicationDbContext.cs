@@ -30,13 +30,19 @@ namespace DBGuardAPI.Data.Models
                     .WithOne(sp => sp.CreatedByUser)
                     .HasForeignKey(sp => sp.CreatedByUserId)
                     .OnDelete(DeleteBehavior.NoAction);
+                user.HasOne(u => u.CreatedByUser)
+                    .WithMany(u => u.CreatedUsers)
+                    .HasForeignKey(u => u.CreatedByUserId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.SetNull);
+
             });
             builder.Entity<DatabaseConnection>(databaseConnection =>
             {
                 databaseConnection.HasMany(dc => dc.Guards)
                     .WithOne(g => g.DatabaseConnection)
                     .HasForeignKey(g => g.DatabaseConnectionId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
                 databaseConnection.HasMany(dc => dc.GuardChangeTransactions)
                     .WithOne(gct => gct.DatabaseConnection)
                     .HasForeignKey(gct => gct.DatabaseConnectionId)

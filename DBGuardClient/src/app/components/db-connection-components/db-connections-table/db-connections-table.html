@@ -6,9 +6,6 @@
         columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
         [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
         [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
-        <ng-template #caption>
-            <h2>Database connections</h2>
-        </ng-template>
         <ng-template #header>
             <tr>
                 <th>#</th>
@@ -47,7 +44,7 @@
                 <td>{{ connection.username }}</td>
                 <td>{{ connection.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>{{ connection.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-                <td><p-button [label]="connection.createdByUsername" [routerLink]="['/']" [link]="true"></p-button></td>
+                <td><p-button [label]="connection.createdByUsername" [routerLink]="['/users/detail', connection.createdByUserId]" [link]="true"></p-button></td>
             </tr>
         </ng-template>
     </p-table>

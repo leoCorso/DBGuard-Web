@@ -25,5 +25,6 @@ export interface CreateDatabaseConnectionDTO {
     databaseEngine: DatabaseEngine,
     databaseName: string,
     username?: string,
-    password?: string
+    password?: string,
+    validateConnection?: boolean
 }

@@ -11,7 +11,7 @@ import { GuardDetailDTO, GuardView } from '../../../../interfaces/guard-dto';
 import { TableModule } from 'primeng/table';
 import { FilterItem } from '../../../shared/filter-item/filter-item';
 import { DatePipe } from '@angular/common';
-import { GuardService } from '../../../../services/guard-service';
+import { EntityChangeService } from '../../../../services/entity-change-service';
 import { takeUntil } from 'rxjs';
 
 @Component({
@@ -28,7 +28,7 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
 
   public getEnumLabels = getEnumLabel;
   public formatEnumKey = formatEnumKey;
-  private guardService = inject(GuardService);
+  private guardService = inject(EntityChangeService);
   public notificationType = NotificationType;
 
   public override columns: Column[] = [
@@ -48,6 +48,18 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
   
   override ngOnInit(): void {
     super.ngOnInit();
+    this.initFilterInputs();
+    this.configureFilters();
+    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
+      next: (guardId: number) => {
+        if(this.guardId() == guardId){
+          const event = this.viewItemsTable.createLazyLoadMetadata();
+          this.loadPreviewData(event);
+        }
+      }
+    })
+  }
+  protected override initFilterInputs(): void {
     let filter: FilterValue;
     if(this.guardId()){
       filter = {
@@ -75,15 +87,6 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
         return newFilters;
       });
     }
-
-    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
-      next: (guardId: number) => {
-        if(this.guardId() == guardId){
-          const event = this.viewItemsTable.createLazyLoadMetadata();
-          this.loadPreviewData(event);
-        }
-      }
-    })
   }
   protected override configureFilters(): void {
     this.filtersConfig = [

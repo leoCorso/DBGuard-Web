@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class GuardService {
+export class EntityChangeService {
   public guardEdited = new Subject<number>(); // Used to alert components displaying details that guard has been edited
+  public dbConnectionCreated = new Subject<void>(); // Used to alert components displaying db connections that a new connection has been created
 }

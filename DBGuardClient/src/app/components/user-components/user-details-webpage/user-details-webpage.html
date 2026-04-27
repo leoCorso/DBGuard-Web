@@ -1,0 +1,14 @@
+<div class="cards">
+    <p-card header="User details">
+        <app-user-details-pane [userId]="userId()!"></app-user-details-pane>
+    </p-card>
+    <p-card header="Created guards">
+        <app-guards-detail-table [userId]="userId()!"></app-guards-detail-table>
+    </p-card>
+    <p-card header="Created database connections">
+        <app-db-connections-table [createdByUserId]="userId()!"></app-db-connections-table>
+    </p-card>
+    <p-card header="Created notification providers">
+        <app-notification-providers-table [createdByUserId]="userId()!"></app-notification-providers-table>
+    </p-card>
+</div>

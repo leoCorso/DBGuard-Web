@@ -18,7 +18,7 @@ import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
 import { SortValue } from '../../../interfaces/sorting';
 import { Column } from '../../../interfaces/table-items';
-import { GuardService } from '../../../services/guard-service';
+import { EntityChangeService } from '../../../services/entity-change-service';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 
 @Component({
@@ -34,7 +34,7 @@ export class GuardChangeHistoryTable extends PreviewTable<GuardChangeTransaction
   public guardStates = enumToOptions(GuardState);
   public guardOperators = enumToOptions(GuardOperator);
   public databaseEngines = enumToOptions(DatabaseEngine);
-  private guardService = inject(GuardService);
+  private guardService = inject(EntityChangeService);
   public guardState = GuardState;
   public guardOperator = GuardOperator;
   public databaseEngine = DatabaseEngine;
@@ -65,6 +65,18 @@ export class GuardChangeHistoryTable extends PreviewTable<GuardChangeTransaction
 
   override ngOnInit(): void {
     super.ngOnInit();
+    this.initFilterInputs();
+    this.configureFilters();
+    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
+      next: (guardId: number) => {
+        if(guardId === this.guardId()){
+          const event = this.viewItemsTable.createLazyLoadMetadata();
+          this.loadPreviewData(event);
+        }
+      }
+    });
+  }
+  protected override initFilterInputs(): void {
     if(this.guardId()){
       this.guardFilter = {
         field: 'guardId',
@@ -78,15 +90,6 @@ export class GuardChangeHistoryTable extends PreviewTable<GuardChangeTransaction
         return filter;
       });
     }
-    this.configureFilters();
-    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
-      next: (guardId: number) => {
-        if(guardId === this.guardId()){
-          const event = this.viewItemsTable.createLazyLoadMetadata();
-          this.loadPreviewData(event);
-        }
-      }
-    });
   }
   protected override configureFilters(): void {
     this.filtersConfig = [

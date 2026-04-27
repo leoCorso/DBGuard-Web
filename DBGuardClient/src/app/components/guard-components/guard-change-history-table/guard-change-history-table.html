@@ -5,9 +5,6 @@
         columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
         [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
         [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
-        <ng-template #caption>
-            <h2>Guard change transactions</h2>
-        </ng-template>
         <ng-template #header>
             <tr>
                 <th>#</th>

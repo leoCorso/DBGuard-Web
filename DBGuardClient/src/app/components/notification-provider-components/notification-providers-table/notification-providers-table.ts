@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, input, OnInit, signal, WritableSignal } from '@angular/core';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { Column } from '../../../interfaces/table-items';
@@ -20,6 +20,7 @@ import { DatePipe } from '@angular/common';
   styleUrl: './notification-providers-table.scss',
 })
 export class NotificationProvidersTable extends PreviewTable<NotificationProviderDTO> implements OnInit {
+  public createdByUserId = input<string | undefined>(undefined);
 
   public override columns: Column[] = [
     {field: 'id', header: 'Id', sortable: true},
@@ -37,9 +38,30 @@ export class NotificationProvidersTable extends PreviewTable<NotificationProvide
   public notificationTypes = enumToOptions(NotificationType);
   public getEnumLabel = getEnumLabel;
   public notificationType = NotificationType;
+  
   override ngOnInit(): void {
     super.ngOnInit();
+    this.initFilterInputs();
     this.configureFilters();
+  }
+  protected override initFilterInputs(): void {
+    const filters: FilterValue[] = [];
+    if(this.createdByUserId() !== undefined){
+      const filter: FilterValue = {
+        field: 'createdByUserId',
+        value: this.createdByUserId(),
+        operator: '==',
+        type: 'text'
+      }
+      filters.push(filter);
+    }
+    if(filters.length > 0){
+      this.filters.update(current => {
+        const updated =  new Map(current);
+        filters.forEach(filter => updated.set(filter.field, filter));
+        return updated;
+      });
+    }
   }
   protected override configureFilters(): void {
     this.filtersConfig = [
@@ -47,7 +69,7 @@ export class NotificationProvidersTable extends PreviewTable<NotificationProvide
       {field: 'notificationType', type: 'multi-select', isTableFilter: true, placeholder: 'Filter by Provider Type', options: this.notificationTypes},
       {field: 'createDate', type: 'datetime', isTableFilter: true, placeholder: 'Filter by Create Date'},
       {field: 'lastEdited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by Last Edited'},
-      {field: 'createdByUsername', type: 'text', isTableFilter: true, placeholder: 'Filter by Created By'},
+      {field: 'createdByUsername', type: this.createdByUserId() === undefined ? 'text' : 'empty', isTableFilter: true, placeholder: 'Filter by Created By'},
     ];
   }
 }

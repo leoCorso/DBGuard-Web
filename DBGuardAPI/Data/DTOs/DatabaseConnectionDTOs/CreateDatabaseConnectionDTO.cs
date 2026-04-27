@@ -10,5 +10,6 @@ namespace DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs
         public required string DatabaseName { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
+        public bool ValidateConnection { get; set; } = true;
     }
 }

@@ -26,7 +26,7 @@ import { CreateDbConnection } from '../../db-connection-components/create-db-con
 import { Subject, takeUntil } from 'rxjs';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
-import { GuardService } from '../../../services/guard-service';
+import { EntityChangeService } from '../../../services/entity-change-service';
 import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
 
 @Component({
@@ -44,7 +44,7 @@ export class CreateGuard implements OnInit, OnDestroy {
   public notificationProviders = signal<NotificationProviderDTO[]>([]);
 
   private httpClient = inject(HttpClient);
-  private guardService = inject(GuardService);
+  private guardService = inject(EntityChangeService);
   public enumOptions = enumToOptions(GuardOperator);
   public getEnumLabel = getEnumLabel;
   public databaseEngine = DatabaseEngine;

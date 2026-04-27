@@ -21,3 +21,9 @@ html, body {
     max-width: 100%;
     overflow: hidden;
 }
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    padding-bottom: 0;
+}

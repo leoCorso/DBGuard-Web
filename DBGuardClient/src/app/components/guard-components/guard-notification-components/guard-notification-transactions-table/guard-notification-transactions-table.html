@@ -1,48 +1,49 @@
-<p-table class="preview-table" #previewTable [lazy]="true" [lazyLoadOnInit]="true" (onLazyLoad)="loadPreviewData($event)"
-    [showCurrentPageReport]="true" currentPageReportTemplate="{totalRecords} records across {totalPages} pages"
-    [scrollable]="true" scrollHeight="flex" [value]="dataItems()" [showGridlines]="true" [resizableColumns]="true" sortMode="multiple"
-    columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
-    [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
-    [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
-    <ng-template #caption>
-        <h2>Guard notification transactions</h2>
-    </ng-template>
-    <ng-template #header>
-        <tr>
-            <th>#</th>
-            @for (column of columns; track $index) {
-            @if (column.sortable) {
-            <th pResizableColumn [pSortableColumn]="column.field" class="custom-view-header">
-                <div class="table-header-cell">
-                    {{ column.header }}<p-sortIcon [field]="column.field" />
-                </div>
-            </th>
-            }
-            @else {
-            <th pResizableColumn class="custom-view-header">
-                <div class="table-header-cell">{{ column.header }}</div>
-            </th>
-            }
-            }
-        </tr>
-        <tr>
+<div class="data-table">
+    <p-table class="preview-table" #previewTable [lazy]="true" [lazyLoadOnInit]="true"
+        (onLazyLoad)="loadPreviewData($event)" [showCurrentPageReport]="true"
+        currentPageReportTemplate="{totalRecords} records across {totalPages} pages" [scrollable]="true"
+        scrollHeight="flex" [value]="dataItems()" [showGridlines]="true" [resizableColumns]="true" sortMode="multiple"
+        columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
+        [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
+        [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
+        <ng-template #header>
+            <tr>
+                <th>#</th>
+                @for (column of columns; track $index) {
+                @if (column.sortable) {
+                <th pResizableColumn [pSortableColumn]="column.field" class="custom-view-header">
+                    <div class="table-header-cell">
+                        {{ column.header }}<p-sortIcon [field]="column.field" />
+                    </div>
+                </th>
+                }
+                @else {
+                <th pResizableColumn class="custom-view-header">
+                    <div class="table-header-cell">{{ column.header }}</div>
+                </th>
+                }
+                }
+            </tr>
+            <tr>
                 <th></th>
                 @for (filter of filtersConfig; track $index) {
                 <th>
-                    <app-filter-item [filterConfig]="filter" (filterValueChanged)="filtersChanged($event)"></app-filter-item>
+                    <app-filter-item [filterConfig]="filter"
+                        (filterValueChanged)="filtersChanged($event)"></app-filter-item>
                 </th>
                 }
             </tr>
-    </ng-template>
-    <ng-template #body let-notification let-rowIndex="rowIndex">
-        <tr>
-            <td>{{ rowIndex + 1 }}</td>
-            <td>{{ notification.id }}</td>
-            <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-            <td>{{ notification.guardId ?? 'NULL' }}</td>
-            <td>{{ notification.guardNotificationId ?? 'NULL' }}</td>
-            <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
-            <td>{{ notification.guardChangeTransactionId }}</td>
-        </tr>
-    </ng-template>
-</p-table>
+        </ng-template>
+        <ng-template #body let-notification let-rowIndex="rowIndex">
+            <tr>
+                <td>{{ rowIndex + 1 }}</td>
+                <td>{{ notification.id }}</td>
+                <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
+                <td>{{ notification.guardId ?? 'NULL' }}</td>
+                <td>{{ notification.guardNotificationId ?? 'NULL' }}</td>
+                <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
+                <td>{{ notification.guardChangeTransactionId }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -26,7 +26,7 @@
             <div class="first-bottom">
                 <div class="info">
                     <label for="created-by"><strong>Created by:</strong></label>
-                    <a href="#">{{ guardData().userName }}</a>
+                    <p-button [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
                 </div>
             </div>
         </div>

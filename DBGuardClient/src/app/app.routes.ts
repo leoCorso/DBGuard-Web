@@ -18,6 +18,10 @@ import { NotificationProvidersWrapper } from './components/notification-provider
 import { NotificationProvidersWebpage } from './components/notification-provider-components/notification-providers-webpage/notification-providers-webpage';
 import { NotificationProviderDetailPane } from './components/notification-provider-components/notification-provider-detail-pane/notification-provider-detail-pane';
 import { NotificationProviderDetailWebpage } from './components/notification-provider-components/notification-provider-detail-webpage/notification-provider-detail-webpage';
+import { UsersWrapper } from './components/user-components/users-wrapper/users-wrapper';
+import { isAdminGuardGuard } from './guards/is-admin-guard-guard';
+import { UsersWebpage } from './components/user-components/users-webpage/users-webpage';
+import { UserDetailsWebpage } from './components/user-components/user-details-webpage/user-details-webpage';
 
 export const routes: Routes = [
     {
@@ -92,6 +96,21 @@ export const routes: Routes = [
             {
                 path: 'detail/:id',
                 component: DbConnectionsDetailWebpage
+            }
+        ]
+    },
+    {
+        path: 'users',
+        component: UsersWrapper,
+        canActivate: [loggedInGuard, isAdminGuardGuard],
+        children: [
+            {
+                path: 'view-all',
+                component: UsersWebpage
+            },
+            {
+                path: 'detail/:id',
+                component: UserDetailsWebpage
             }
         ]
     }

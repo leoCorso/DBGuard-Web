@@ -30,6 +30,6 @@
             </div>
         }
         <span class="connection-key"><strong>Created by:</strong></span>
-        <span class="connection-value"><p-button [label]="databaseConnectionInfo()?.createdByUsername" [routerLink]="['']" [outlined]="true" severity="contrast"></p-button></span>
+        <span class="connection-value"><p-button [label]="databaseConnectionInfo()?.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
     </div>
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, input, OnInit, signal, WritableSignal } from '@angular/core';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { Column } from '../../../interfaces/table-items';
@@ -12,6 +12,7 @@ import { FilterItem } from '../../shared/filter-item/filter-item';
 import { Button } from 'primeng/button';
 import { RouterLink } from "@angular/router";
 import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-db-connections-table',
@@ -20,6 +21,8 @@ import { DatePipe } from '@angular/common';
   styleUrl: './db-connections-table.scss',
 })
 export class DbConnectionsTable extends PreviewTable<DatabaseConnectionDTO> implements OnInit {
+  public createdByUserId = input<string | undefined>();
+
   public override columns: Column[] = [
     {field: 'id', header: 'Id', sortable: true},
     {field: 'endpoint', header: 'Endpoint', sortable: true},
@@ -39,9 +42,39 @@ export class DbConnectionsTable extends PreviewTable<DatabaseConnectionDTO> impl
   public formatEnumKey = formatEnumKey;
   public getEnumLabel = getEnumLabel;
   public databaseEngine = DatabaseEngine;
+
   override ngOnInit(): void {
     super.ngOnInit();
+    this.listenToEntityChanges();
+    this.initFilterInputs();
     this.configureFilters();
+  }
+  private listenToEntityChanges(): void {
+    this.entityChanges.dbConnectionCreated.pipe(takeUntil(this.destroy)).subscribe({
+      next: () => {
+        const event = this.viewItemsTable.createLazyLoadMetadata();
+        this.loadPreviewData(event);
+      }
+    })
+  }
+  protected override initFilterInputs(): void {
+    let filters: FilterValue[] = [];
+    if(this.createdByUserId() !== undefined){
+      const filter: FilterValue = {
+        field: 'createdByUserId',
+        value: this.createdByUserId(),
+        operator: 'equals',
+        type: 'text'
+      }
+      filters.push(filter);
+    }
+    if(filters.length > 0){
+      this.filters.update(current => {
+        const newFitlers = new Map(current);
+        filters.map(filter => newFitlers.set(filter.field, filter));
+        return newFitlers;
+      });
+    }
   }
   protected override configureFilters(): void {
     this.filtersConfig = [
@@ -51,7 +84,7 @@ export class DbConnectionsTable extends PreviewTable<DatabaseConnectionDTO> impl
       {field: 'username', label: 'Username', type: 'text', isTableFilter: true, placeholder: 'Filter by username'},
       {field: 'createDate', label: 'Create date', type: 'datetime', isTableFilter: true, placeholder: 'Filter by create date'},
       {field: 'lastEdited', label: 'Last edited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by last edited'},
-      {field: 'createdByUsername', label: 'Created by', type: 'text', isTableFilter: true, placeholder: 'Filter by creator username'},
+      {field: 'createdByUsername', label: 'Created by', type: this.createdByUserId() === undefined ? 'text' : 'empty', isTableFilter: true, placeholder: 'Filter by creator username'},
     ]
   }
 }

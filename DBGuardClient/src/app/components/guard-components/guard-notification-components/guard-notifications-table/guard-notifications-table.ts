@@ -10,7 +10,7 @@ import { GuardDetailDTO } from '../../../../interfaces/guard-dto';
 import { TableModule } from 'primeng/table';
 import { FilterItem } from '../../../shared/filter-item/filter-item';
 import { DatePipe } from '@angular/common';
-import { GuardService } from '../../../../services/guard-service';
+import { EntityChangeService } from '../../../../services/entity-change-service';
 import { takeUntil } from 'rxjs';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
@@ -25,7 +25,7 @@ import { GuardNotificationDTO } from '../../../../interfaces/notification-dto';
 })
 export class GuardNotificationsTable extends PreviewTable<GuardNotificationDTO> implements OnInit {
   public notificationTypes = enumToOptions(NotificationType);
-  private guardService = inject(GuardService);
+  private guardService = inject(EntityChangeService);
   public notificationType = NotificationType;
   public formatEnumKey = formatEnumKey;
   public getEnumLabels = getEnumLabel;
@@ -50,7 +50,10 @@ export class GuardNotificationsTable extends PreviewTable<GuardNotificationDTO> 
   
   override ngOnInit(): void {
     super.ngOnInit();
+    this.initFilterInputs();
     this.configureFilters();
+  }
+  protected override initFilterInputs(): void {
     let filter: FilterValue | null = null;
     if(this.guardId()){
       filter = {

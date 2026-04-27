@@ -1,0 +1,14 @@
+.user-details {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+}
+.user-key {
+    justify-self: end;
+    font-weight: bold;
+    align-self: center;
+}
+.user-value {
+    justify-self: start;
+    align-self: center;
+}

@@ -2,7 +2,7 @@
 <div class="cards">
     <p-card>
         <ng-template #header>
-            <div class="header">
+            <div class="card-header">
                 <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
                 <p-buttongroup>
                     <p-confirmpopup></p-confirmpopup>
@@ -27,13 +27,13 @@
     <p-card header="Database connection info">
         <app-db-connection-detail-pane [guardId]="guardId()!" [databaseConnectionId]="guardDetail()!.databaseConnectionId"></app-db-connection-detail-pane>
     </p-card>
-    <p-card>
+    <p-card header="Guard notifications">
         <app-guard-notifications-table [guardId]="guardId()!"></app-guard-notifications-table>
     </p-card>
-    <p-card>
+    <p-card header="Guard changes">
         <app-guard-change-history-table [guardId]="guardId()!"></app-guard-change-history-table>
     </p-card>
-    <p-card>
+    <p-card header="Guard notifications">
         <app-guard-notification-transactions-table [guardId]="guardId()!"></app-guard-notification-transactions-table>
     </p-card>
 

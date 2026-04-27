@@ -2,11 +2,11 @@
     <p-card header="Change detail">
         <app-guard-change-detail-pane [changeHistoryDetail]="changeHistoryDetail()!"></app-guard-change-detail-pane>
     </p-card>
-    <p-card>
+    <p-card header="Change notifications">
         <app-guard-notification-transactions-table [guardChangeId]="changeHistoryId()!"></app-guard-notification-transactions-table>
     </p-card>
     @if (guardDetail()) {
-        <p-card header="Guard current info">
+        <p-card header="Current guard info">
             <app-guard-detail-pane [guardDetail]="guardDetail()!"></app-guard-detail-pane>
         </p-card>
     }

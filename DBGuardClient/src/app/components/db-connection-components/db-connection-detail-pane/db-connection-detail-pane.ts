@@ -8,7 +8,7 @@ import { getEnumLabel } from '../../../helper-functions/enum-helper';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { AuthService } from '../../../services/auth-service';
 import { Button } from 'primeng/button';
-import { GuardService } from '../../../services/guard-service';
+import { EntityChangeService } from '../../../services/entity-change-service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Password } from 'primeng/password';
 import { Tooltip } from "primeng/tooltip";
@@ -27,7 +27,7 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
   public databaseConnectionInfo = signal<DatabaseConnectionDTO | null>(null);
   private httpClient = inject(HttpClient);
   public authService = inject(AuthService);
-  private guardService = inject(GuardService);
+  private guardService = inject(EntityChangeService);
   public getEnumLabel = getEnumLabel;
   public databaseEngines = DatabaseEngine;
   private destroy = new Subject<void>();

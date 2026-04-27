@@ -14,7 +14,7 @@ import { BehaviorSubject, debounceTime, Subject, takeUntil } from 'rxjs';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
 import { DialogService } from 'primeng/dynamicdialog';
-import { GuardService } from '../../../services/guard-service';
+import { EntityChangeService } from '../../../services/entity-change-service';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
@@ -37,7 +37,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   
   private httpClient = inject(HttpClient);
   private dialogService = inject(DialogService);
-  private guardService = inject(GuardService);
+  private guardService = inject(EntityChangeService);
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
   public guardDetail = signal<GuardDetailDTO | null>(null);
@@ -90,7 +90,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
       message: 'Are you sure you want to delete this guard? You can pause them if needed.',
-      icon: 'pi pi-info-curcle',
+      icon: 'pi pi-info-circle',
       rejectButtonProps: {
         label: 'Cancel',
         severity: 'secondary',

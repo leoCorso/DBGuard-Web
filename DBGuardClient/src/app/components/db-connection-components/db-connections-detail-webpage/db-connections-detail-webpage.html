@@ -1,6 +1,19 @@
-<p-card header="Database connection info">
-    <app-db-connection-detail-pane [databaseConnectionId]="dbConnectionId()!"></app-db-connection-detail-pane>
-</p-card>
-<p-card>
-    <app-guards-detail-table [dbConnectionId]="dbConnectionId()!"></app-guards-detail-table>
-</p-card>
+<p-confirmpopup></p-confirmpopup>
+<div class="cards">
+    <p-card>
+        <ng-template #header>
+            <div class="card-header">
+                <h2>Database connection info</h2>
+                <p-buttongroup>
+                    <p-button (onClick)="editDbConnection()" label="Edit connection" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
+                    <p-button (onClick)="onDeleteConnection($event)" label="Delete connection" icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"></p-button>
+                </p-buttongroup>
+            </div>
+        </ng-template>
+
+        <app-db-connection-detail-pane [databaseConnectionId]="dbConnectionId()!"></app-db-connection-detail-pane>
+    </p-card>
+    <p-card header="Guards with database connection">
+        <app-guards-detail-table [dbConnectionId]="dbConnectionId()!"></app-guards-detail-table>
+    </p-card>
+</div>

@@ -15,7 +15,7 @@ namespace DBGuardAPI.Helpers
         {
             return databaseEngine switch
             {
-                DatabaseEngine.SQLServer => $"Server={endpoint};Database={databaseName};User Id={username};Password={password};",
+                DatabaseEngine.SQLServer => $"Server={endpoint};Database={databaseName};User Id={username};Password={password};TrustServerCertificate=True",
                 DatabaseEngine.SQLite => $"Data Source={endpoint}",  // SQLite uses file path
                 DatabaseEngine.MySql => $"Server={endpoint};Database={databaseName};Uid={username};Pwd={password};",
                 DatabaseEngine.PostgreSQL => $"Host={endpoint};Database={databaseName};Username={username};Password={password};",

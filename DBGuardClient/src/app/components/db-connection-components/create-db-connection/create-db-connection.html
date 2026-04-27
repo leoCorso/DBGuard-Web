@@ -33,8 +33,12 @@
             <label for="password">Password</label>
         </p-floatlabel>
     </div>
+    <div style="display: flex;gap:.5rem;">
+        <label for="validate-conn">Validate connection:</label>
+        <p-checkbox [binary]="true" inputId="validate-conn" formControlName="validateConnection" pTooltip="When selected it will ensure connection and query are valid"></p-checkbox>
+    </div>
     <div class="bottom-section">
-        <p-button (onClick)="saveConnectionForm()" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEdit() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid"></p-button>
+        <p-button (onClick)="saveConnectionForm()" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid"></p-button>
     </div>
         @if (loading()) {
             <div class="loading-spinner">

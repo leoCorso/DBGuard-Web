@@ -6,9 +6,6 @@
         columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
         [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
         [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
-        <ng-template #caption>
-            <h2>Database connections</h2>
-        </ng-template>
         <ng-template #header>
             <tr>
                 <th>#</th>
@@ -45,7 +42,7 @@
                 <td>{{ getEnumLabel(notificationType, provider.notificationType) }}</td>
                 <td>{{ provider.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>{{ provider.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-                <td><p-button [label]="provider.createdByUsername" [routerLink]="['/']" [link]="true"></p-button></td>
+                <td><p-button [label]="provider.createdByUsername" [routerLink]="['/users/detail', provider.createdByUserId]" [link]="true"></p-button></td>
             </tr>
         </ng-template>
     </p-table>

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DBGuardAPI.Controllers
 {
@@ -83,6 +84,30 @@ namespace DBGuardAPI.Controllers
                 }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync(sieveParams, query);
         }
+        [HttpGet(nameof(GetDatabaseConnectionToEdit))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult<CreateDatabaseConnectionDTO>> GetDatabaseConnectionToEdit([FromQuery] int connectionId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            CreateDatabaseConnectionDTO? dbToEdit = await context.DatabaseConnections
+                .Where(conn => conn.Id == connectionId)
+                .Select(conn => new CreateDatabaseConnectionDTO
+                {
+                    Id = conn.Id,
+                    Endpoint = conn.EndPoint,
+                    DatabaseEngine = conn.DatabaseEngine,
+                    DatabaseName = conn.DatabaseName,
+                    Username = conn.Username,
+                    Password = conn.Password != null ? _credentialProtector.Decrypt(conn.Password) : null
+                })
+                .FirstOrDefaultAsync();
+            if(dbToEdit is null)
+            {
+                _logger.LogWarning("A database connection was requested for editing that does not exist {DatabaseConnectionId}", connectionId);
+                return NotFound();
+            }
+            return dbToEdit;
+        }
         [HttpPost(nameof(PostDatabaseConnection))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult> PostDatabaseConnection(CreateDatabaseConnectionDTO newConnection)
@@ -97,14 +122,33 @@ namespace DBGuardAPI.Controllers
             {
                 return Conflict(new { Message = "This database connection already exists" });
             }
-            try
+            if (newConnection.ValidateConnection)
             {
-                string connectionString = QueryHelper.BuildConnectionString(newConnection.DatabaseEngine, newConnection.Endpoint, newConnection.DatabaseName, newConnection.Username, newConnection.Password);
-                QueryHelper.ValidateDatabaseConnection(newConnection.DatabaseEngine, connectionString);
+                try
+                {
+                    string connectionString = QueryHelper.BuildConnectionString(newConnection.DatabaseEngine, newConnection.Endpoint, newConnection.DatabaseName, newConnection.Username, newConnection.Password);
+                    QueryHelper.ValidateDatabaseConnection(newConnection.DatabaseEngine, connectionString);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})" });
+                }
             }
-            catch (Exception ex)
+            if (string.IsNullOrEmpty(newConnection.Endpoint))
             {
-                return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})" });
+                return BadRequest(new { Message = "The database endpoint cannot be null or empty" });
+            }
+            if (string.IsNullOrEmpty(newConnection.DatabaseName))
+            {
+                return BadRequest(new { Message = "The database name cannot be null or empty" });
+            }
+            if (newConnection.Username is not null && newConnection.Username == string.Empty)
+            {
+                return BadRequest(new { Message = "The database username must be null or contain a non-empty value" });
+            }
+            if (newConnection.Password is not null && newConnection.Password == string.Empty)
+            {
+                return BadRequest(new { Message = "The database password must be null or contain a non-empty value" });
             }
             DatabaseConnection newConnObject = new()
             {
@@ -125,6 +169,85 @@ namespace DBGuardAPI.Controllers
                 Username = newConnObject.Username,
                 DatabaseEngine = newConnObject.DatabaseEngine
             });
+        }
+        [HttpPut(nameof(PutDatabaseConnection))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult<CreateDatabaseConnectionDTO>> PutDatabaseConnection(CreateDatabaseConnectionDTO updatedConnection)
+        {
+            if (updatedConnection.Id is null)
+            {
+                _logger.LogError("A database connection put request was received with no connection id");
+                return BadRequest();
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            DatabaseConnection? connection = await context.DatabaseConnections.FindAsync(updatedConnection.Id);
+            if (connection is null)
+            {
+                _logger.LogWarning("A database connection put request was received with an id not matching any record {Id}", updatedConnection.Id);
+                return NotFound(new { Message = $"No connection to edit was found with the specified id {updatedConnection.Id}" });
+
+            }
+            if ((await context.DatabaseConnections.AsNoTracking().AnyAsync(conn => conn.DatabaseEngine == updatedConnection.DatabaseEngine && conn.DatabaseName == updatedConnection.DatabaseName && updatedConnection.Username == conn.Username && conn.Id != updatedConnection.Id)))
+            {
+                return Conflict(new { Message = "This database connection already exists" });
+            }
+            if (string.IsNullOrEmpty(updatedConnection.Endpoint))
+            {
+                return BadRequest(new { Message = "The database endpoint cannot be empty or null" });
+            }
+            if (string.IsNullOrEmpty(updatedConnection.DatabaseName))
+            {
+                return BadRequest(new { Message = "The database name cannot be empty or null" });
+            }
+            if (connection.Username is not null && connection.Username == string.Empty)
+            {
+                return BadRequest(new { Message = "The database username must be null or contain a non-empty value" });
+            }
+            if (connection.Password is not null && connection.Password == string.Empty)
+            {
+                return BadRequest(new { Message = "The database password must be null or contain a non-empty value" });
+            }
+            if (updatedConnection.ValidateConnection)
+            {
+                try
+                {
+                    string connectionString = QueryHelper.BuildConnectionString(updatedConnection.DatabaseEngine, updatedConnection.Endpoint, updatedConnection.DatabaseName, updatedConnection.Username, updatedConnection.Password);
+                    QueryHelper.ValidateDatabaseConnection(updatedConnection.DatabaseEngine, connectionString);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not modify connection to the database. ({ex.Message})" });
+                }
+            }
+            connection.EndPoint = updatedConnection.Endpoint;
+            connection.DatabaseEngine = updatedConnection.DatabaseEngine;
+            connection.DatabaseName = updatedConnection.DatabaseName;
+            connection.Username = updatedConnection.Username;
+            if(connection.Password is not null)
+            {
+                connection.Password = _credentialProtector.Encrypt(connection.Password);
+            }
+            await context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetDatabaseConnectionDetail), new { Id = updatedConnection.Id});
+        }
+        [HttpDelete(nameof(DeleteDatabaseConnection))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult> DeleteDatabaseConnection([FromQuery] int connectionId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            DatabaseConnection? connectionToDel = await context.DatabaseConnections.FindAsync(connectionId);
+            if(connectionToDel is null)
+            {
+                _logger.LogWarning("A database connection deletion was requested for a non-existing database connection {ConnectionId}", connectionId);
+                return NotFound();
+            }
+            if(await(context.Guards.AsNoTracking().AnyAsync(g => g.DatabaseConnectionId == connectionId)))
+            {
+                return Conflict(new { Message = "There are guards using this database connection. Please update the guards before deleting." });
+            }
+            context.DatabaseConnections.Remove(connectionToDel);
+            await context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

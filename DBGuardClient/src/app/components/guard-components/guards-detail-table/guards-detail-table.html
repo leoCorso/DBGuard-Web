@@ -4,9 +4,6 @@
     columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
     [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
     [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
-    <ng-template #caption>
-        <h2>Guards</h2>
-    </ng-template>
     <ng-template #header>
         <tr>
             <th>#</th>
@@ -45,7 +42,7 @@
             <td>{{ guard.lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
             <td>{{ guard.lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
             <td>
-                <p-button [label]="guard.userName" [link]="true" [routerLink]=""></p-button>
+                <p-button [label]="guard.userName" [link]="true" [routerLink]="['/users/detail', guard.createdByUserId]"></p-button>
             </td>
             <td>{{ guard.countColumn }}</td>
             <td>{{ formatEnumKey(getEnumLabel(guardOperator, guard.triggerOperator)) }}</td>

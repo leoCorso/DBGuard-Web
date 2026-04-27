@@ -13,10 +13,11 @@ import { GuardState } from '../../../enums/guard-state';
 import { getEnumLabel, formatEnumKey } from '../../../helper-functions/enum-helper';
 import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
 import { GuardView } from '../../../interfaces/guard-dto';
+import { Button } from 'primeng/button';
 
 @Component({
   selector: 'app-view-guard-item',
-  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink],
+  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button],
   templateUrl: './view-guard-item.html',
   styleUrl: './view-guard-item.scss',
 })

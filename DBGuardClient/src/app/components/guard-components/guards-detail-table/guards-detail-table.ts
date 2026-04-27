@@ -23,8 +23,9 @@ import { getGuardStateSeverity } from '../../../helper-functions/guard-state-hel
   styleUrl: './guards-detail-table.scss',
 })
 export class GuardsDetailTable extends PreviewTable<GuardDTO> implements OnInit{
-  public guardId = input<number | null>();
-  public dbConnectionId = input<number | null>();
+  public guardId = input<number | undefined>();
+  public userId = input<string | undefined>();
+  public dbConnectionId = input<number | undefined>();
 
   public override columns: Column[] = [
     { field: 'id', header: 'Id', sortable: true},
@@ -59,43 +60,59 @@ export class GuardsDetailTable extends PreviewTable<GuardDTO> implements OnInit{
   public getEnumLabel = getEnumLabel;
   public formatEnumKey = formatEnumKey;
   public getGuardStateSeverity = getGuardStateSeverity;
+
   override ngOnInit(): void {
     super.ngOnInit();
-    let filter: FilterValue | null = null;
-
-    if(this.guardId() !== null){
-      filter = {
+    this.initFilterInputs();
+    this.configureFilters();
+  }
+  protected override initFilterInputs(): void {
+    let filters: FilterValue[] = [];
+    if(this.guardId() !== undefined){
+      const filter: FilterValue = {
         field: 'id',
         value: this.guardId(),
         operator: '==',
         type: 'numeric'
       };
+      filters.push(filter);
     }
-    else if(this.dbConnectionId() !== null){
-      filter = {
+    if(this.dbConnectionId() !== undefined){
+      const filter: FilterValue = {
         field: 'databaseConnectionId',
-        value: this.guardId(),
+        value: this.dbConnectionId(),
         operator: '==',
         type: 'numeric'
       };
+      filters.push(filter);
     }
-    if(filter){
-      this.filters.update(filters => {
-        const newFilters = new Map(filters);
-        newFilters.set(filter.field, filter);
+    if (this.userId() !== undefined){
+      const filter: FilterValue = {
+        field: 'createdByUserId',
+        value: this.userId(),
+        operator: '==',
+        type: 'text'
+      }
+      filters.push(filter); 
+    }
+  
+    if(filters.length > 0){
+      this.filters.update(currentFilters => {
+        const newFilters = new Map(currentFilters);
+        filters.forEach(filter => newFilters.set(filter.field, filter));
         return newFilters;
       });
     }
-    this.configureFilters();
+    
   }
   protected override configureFilters(): void {
     this.filtersConfig = [
-      {field: 'id', label: 'Id', type: this.guardId() !== null ? 'numeric' : 'empty', placeholder: 'Filter by Id', isTableFilter: true},
+      {field: 'id', label: 'Id', type: this.guardId() === undefined ? 'numeric' : 'empty', placeholder: 'Filter by Id', isTableFilter: true},
       {field: 'guardName', label: 'Guard Name', type: 'text', placeholder: 'Filter by Guard Name', isTableFilter: true},
       {field: 'createDate', label: 'Created Date', type: 'datetime', placeholder: 'Filter by Created Date', isTableFilter: true},
       {field: 'lastEditedDate', label: 'Last Edited Date', type: 'datetime', placeholder: 'Filter by Last Edited Date', isTableFilter: true},
       {field: 'lastRun', label: 'Last Run', type: 'datetime', placeholder: 'Filter by Last Run', isTableFilter: true},
-      {field: 'userName', label: 'Created By', type: 'text', placeholder: 'Filter by Created By', isTableFilter: true},
+      {field: 'userName', label: 'Created By', type: this.userId() === undefined ? 'text': 'empty', placeholder: 'Filter by Created By', isTableFilter: true},
       {field: 'countColumn', label: 'Count Column', type: 'text', placeholder: 'Filter by Count Column', isTableFilter: true},
       {field: 'triggerOperator', label: 'Trigger Operator', type: 'multi-select', options: this.guardOperators, placeholder: 'Filter by Trigger Operator', isTableFilter: true},
       {field: 'triggerValue', label: 'Trigger Value', type: 'numeric', placeholder: 'Filter by Trigger Value', isTableFilter: true},

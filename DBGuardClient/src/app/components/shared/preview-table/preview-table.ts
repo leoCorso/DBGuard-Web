@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { PaginatedView } from '../paginated-view/paginated-view';
 import { Column } from '../../../interfaces/table-items';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
@@ -6,6 +6,7 @@ import { SortValue } from '../../../interfaces/sorting';
 import { LazyLoadEvent } from 'primeng/api';
 import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
+import { EntityChangeService } from '../../../services/entity-change-service';
 
 @Component({
   selector: 'app-preview-table',
@@ -15,6 +16,7 @@ import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 })
 export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
   public abstract columns: Column[];
+  protected entityChanges = inject(EntityChangeService);
   public abstract defaultSort: SortValue[];
   @ViewChild('previewTable') viewItemsTable!: Table;
   public abstract fetchUrl: string;
@@ -83,4 +85,5 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
       );
   }
   protected abstract configureFilters(): void;
+  protected abstract initFilterInputs(): void;
 }

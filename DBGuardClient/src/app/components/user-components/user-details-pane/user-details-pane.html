@@ -1,0 +1,29 @@
+<div class="user-details">
+    <span class="user-key">Id:</span>
+    <span class="user-value">
+        <p-button [label]="userDetails()?.id?.toString()" [routerLink]="['/users/detail', userDetails()?.id]" [outlined]="true" severity="contrast"></p-button>
+    </span>
+    <span class="user-key">Username:</span>
+    <span class="user-value">{{ userDetails()?.username }}</span>
+    <span class="user-key">Created At:</span>
+    <span class="user-value">{{ userDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="user-key">Last edited:</span>
+    <span class="user-value">{{ userDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="user-key">Created by:</span>
+    <span class="user-value">
+    @if (userDetails()?.createdByUserId) {
+        <p-button [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+    }
+    @else {
+        <p-tag value="System" severity="info"></p-tag>
+    }
+    </span>
+</div>
+<div class="roles-list">
+    <h3>Roles</h3>
+    <ul>
+        @for (role of userDetails()?.roles; track $index) {
+            <li>{{ role }}</li>
+        }
+    </ul>
+</div>

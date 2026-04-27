@@ -40,6 +40,5 @@
     <span class="guard-key">Total triggers:</span>
     <span class="guard-value">{{ guardDetail().totalTriggers }}</span>
     <span class="guard-key">Created by:</span>
-    <a class="guard-value" href="">{{ guardDetail().userName }}</a>
-
+    <p-button [label]="guardDetail().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardDetail().createdByUserId]"></p-button>
 </div>

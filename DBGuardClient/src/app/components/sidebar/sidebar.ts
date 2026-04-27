@@ -4,6 +4,7 @@ import { Menu } from 'primeng/menu';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Button } from 'primeng/button';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,8 @@ import { Button } from 'primeng/button';
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
+  private authService = inject(AuthService);
+
   public menuItems: MenuItem[] = [
     {
       label: 'Home',
@@ -73,7 +76,9 @@ export class Sidebar {
       items: [
         {
           label: 'Users',
-          icon: 'pi pi-users'
+          icon: 'pi pi-users',
+          visible: this.authService.hasRoles(['Admin']),
+          routerLink: 'users/view-all'
         },
         {
           label: 'Settings',
