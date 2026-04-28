@@ -4,11 +4,18 @@
     <span class="guard-key">Guard name: </span>
     <span class="guard-value">{{ guardDetail().guardName ?? 'Unnamed' }}</span>
     <span class="guard-key">Guard description:</span>
-    <span class="guard-value">{{ guardDetail().guardDescription }}</span>
+    <span class="guard-value">{{ guardDetail().guardDescription ?? 'None' }}</span>
     <span class="guard-key">Create date:</span>
     <span class="guard-value">{{ guardDetail().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
     <span class="guard-key">Last run:</span>
-    <span class="guard-value">{{ guardDetail().lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="guard-value">
+        @if (guardDetail().lastRun) {
+            {{ guardDetail().lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}
+        }
+        @else {
+            <p-tag value="Not ran"></p-tag>
+        }
+    </span>
     <span class="guard-key">Last edited:</span>
     <span class="guard-value">{{ guardDetail().lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
     <span class="guard-key">Query:</span>

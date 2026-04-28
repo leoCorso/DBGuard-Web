@@ -20,8 +20,6 @@ export class AuthService {
   public loggingIn = signal<boolean>(false);
 
   private accessTokenKey = 'access_token';
-  private refreshTokenKey = 'refresh_token';
-  private userIdKey = 'user-id';
 
   private userRoles = signal<string[]>([]);
   private tokenExpiration = signal<number | null>(null);
@@ -30,17 +28,21 @@ export class AuthService {
 
   public initUser(): void {
     const accessToken = this.getAccessToken();
-    const refreshToken = this.getRefreshToken();
-    const userId = this.getUserId();
-
     if(accessToken){
       this.accessToken.set(accessToken);
       this.decodeToken(accessToken);
-      this.loggedIn.set(true);
+      if(this.tokenValid()){ // If token not expired and valid
+        this.loggedIn.set(true);
+      }
+      else {
+        this.loggedIn.set(false); // Else clear token from local storage and service
+        this.clearTokenAndClaims();
+      }
 
     }
-    else if(!this.tokenValid() && userId && refreshToken){ // If access token is invalid or missing but we have refresh token, try to refresh
-      this.refreshToken();
+    else {
+      this.loggedIn.set(false);
+      this.clearTokenAndClaims();
     }
   }
   public login(username: string, password: string): void {
@@ -68,28 +70,17 @@ export class AuthService {
     });
   }
   public logout(): void {
-    const url = [environment.api.uri, 'User', 'LogOut'].join('/');
-    this.httpClient.post<void>(url, {userId: this.getUserId()}).subscribe();
-
     this.loggedIn.set(false);  
-    this.clearAuthTokens();
+    this.clearTokenAndClaims();
     this.router.navigate(['login']);
   }
-  public refreshToken(): Observable<AuthResult> {
-    const url = [environment.api.uri, 'User', 'ProcessUserRefreshToken'].join('/');
-    return this.httpClient.post<AuthResult>(url, {userId: this.getUserId(), refreshToken: this.getRefreshToken()}).pipe(tap(response => this.storeAuthTokens(response),
-      catchError(err => {
-          this.logout();
-          return throwError(err);
-      })))
-  }
+
   public getAccessToken = () => localStorage.getItem(this.accessTokenKey);
-  public getRefreshToken = () => localStorage.getItem(this.refreshTokenKey);
-  public getUserId = () => localStorage.getItem(this.userIdKey);
 
   private handleValidLogin(loginResult: AuthResult): void {
     this.loggedIn.set(true);
     this.storeAuthTokens(loginResult);
+    this.decodeToken(loginResult.accessToken!);
   }
   private tokenValid(): boolean {
     if(!this.accessToken || !this.tokenExpiration()){
@@ -132,12 +123,11 @@ export class AuthService {
   }
   private storeAuthTokens(authResult: AuthResult): void {
     localStorage.setItem(this.accessTokenKey, authResult.accessToken!);
-    localStorage.setItem(this.refreshTokenKey, authResult.refreshToken!);
-    localStorage.setItem(this.userIdKey, authResult.userId!);
   }
-  private clearAuthTokens(): void {
+  private clearTokenAndClaims(): void {
     localStorage.removeItem(this.accessTokenKey);
-    localStorage.removeItem(this.refreshTokenKey);
-    localStorage.removeItem(this.userIdKey);
+    this.accessToken.set(null);
+    this.userRoles.set([]);
+    this.tokenExpiration.set(null);
   }
 }

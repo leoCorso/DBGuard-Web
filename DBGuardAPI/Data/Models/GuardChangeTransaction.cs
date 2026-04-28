@@ -14,6 +14,7 @@ namespace DBGuardAPI.Data.Models
         public GuardOperator GuardOperator { get; set; }
         public int GuardValue { get; set; }
         public int? ResultValue { get; set; } // The value of result set which triggered or untriggered query
+        public string? Message { get; set; } //  Message log
         public int? DatabaseConnectionId { get; set; }
         public required string DatabaseConnectionEndPoint { get; set; }
         public DatabaseEngine DatabaseConnectionEngine { get; set; }

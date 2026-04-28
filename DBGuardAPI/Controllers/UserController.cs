@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg;
 using Sieve.Models;
 
 namespace DBGuardAPI.Controllers
@@ -93,6 +94,38 @@ namespace DBGuardAPI.Controllers
                 Roles = userRoleNames
             };
         }
+
+        [HttpGet(nameof(GetCreateUserRefData))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult<CreateUserReferenceData>> GetCreateUserRefData()
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            List<string> roles = await context.Roles.Select(role => role.Name!).ToListAsync();
+            return new CreateUserReferenceData
+            {
+                Roles = roles
+            };
+        }
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpGet(nameof(GetUserToEdit))]
+        public async Task<ActionResult<CreateUserDTO>> GetUserToEdit([FromQuery] string userId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            User? userToEdit = await context.Users.FindAsync(userId);
+            if(userToEdit is null)
+            {
+                _logger.LogError("A get user to edit request was made for a non-existing userId {UserId}", userId);
+            }
+            IList<string> roles = await _userManager.GetRolesAsync(userToEdit!);
+            return new CreateUserDTO
+            {
+                Id = userToEdit!.Id,
+                Username = userToEdit.UserName!,
+                Password = userToEdit.PasswordHash!,
+                ConfirmPassword = userToEdit.PasswordHash!,
+                Roles = roles.ToList()
+            };
+        }
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<AuthResult>> Login(LoginRequest loginRequest)
         {
@@ -167,6 +200,111 @@ namespace DBGuardAPI.Controllers
                 RefreshToken = refreshToken,
                 AccessToken = jwt
             };
+        }
+        [HttpPost(nameof(PostUser))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult<UserDTO>> PostUser(CreateUserDTO newUser)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            if(await context.Users.AnyAsync(user => user.UserName == newUser.Username))
+            {
+                return Conflict(new { Message = "Another user already has this username" });
+            }
+            if(newUser.Password != newUser.ConfirmPassword)
+            {
+                return BadRequest(new { Message = "Passwords do not match" });
+            }
+            User currentUser = (await _userManager.GetUserAsync(User))!;
+
+            User user = new()
+            {
+                UserName = newUser.Username,
+                CreatedByUserId = currentUser.Id
+            };
+            await _userManager.CreateAsync(user, newUser.Password);
+            _logger.LogInformation("A user was created {UserId} by {CreatedById}", user.Id, currentUser.Id);
+            await _userManager.AddToRolesAsync(user, newUser.Roles);
+            return new UserDTO
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                CreateDate = user.CreateDate,
+                LastEdited = user.LastEdited,
+                CreatedByUserId = user.CreatedByUserId,
+                CreatedByUsername = currentUser.UserName
+            };
+        }
+        [HttpPut(nameof(PutUser))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult<UserDTO>> PutUser(CreateUserDTO editedUser)
+        {
+            if(editedUser.Id is null)
+            {
+                _logger.LogError("A user edit was requested without a user id");
+                return BadRequest();
+            }
+            if(editedUser.Password != editedUser.ConfirmPassword)
+            {
+                return BadRequest(new { Message = "Passwords do not match"});
+            }
+            User? userToEdit = await _userManager.FindByIdAsync(editedUser.Id);
+            if(userToEdit is null)
+            {
+                _logger.LogError("A user edit was requested with an invalid user id {UserId}", editedUser.Id);
+                return NotFound();
+            }
+            userToEdit.UserName = editedUser.Username;
+            await _userManager.UpdateAsync(userToEdit);
+            // Remove user from roles not in new object
+            var currentUserRoles = await _userManager.GetRolesAsync(userToEdit);
+            var rolesToRemove = currentUserRoles.Where(role => !editedUser.Roles.Contains(role)).ToList();
+            await _userManager.RemoveFromRolesAsync(userToEdit, rolesToRemove);
+            // Add user to roles in new object
+            var rolesToAdd = editedUser.Roles.Where(role => !currentUserRoles.Contains(role)).ToList();
+            await _userManager.AddToRolesAsync(userToEdit, rolesToAdd);
+            // Update password if password is not the hash
+            if(editedUser.Password != userToEdit.PasswordHash)
+            {
+                await _userManager.RemovePasswordAsync(userToEdit);
+                await _userManager.AddPasswordAsync(userToEdit, editedUser.Password);
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            User userDTO = await context.Users.Where(user => user.Id == userToEdit.Id).Include(user => user.CreatedByUser).AsNoTracking().FirstAsync();
+
+            return CreatedAtAction(nameof(GetUserDetails), new { UserId = userDTO.Id }, new UserDTO
+            {
+                Id = userToEdit.Id,
+                Username = userToEdit.UserName,
+                CreateDate = userToEdit.CreateDate,
+                LastEdited = userDTO.LastEdited,
+                CreatedByUserId = userDTO.CreatedByUserId,
+                CreatedByUsername = userDTO.CreatedByUser!.UserName
+            });
+        }
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpDelete(nameof(DeleteUser))]
+        public async Task<ActionResult> DeleteUser([FromQuery] string userId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            User? userToDel = await context.Users.FindAsync(userId);
+            if(userToDel is null)
+            {
+                _logger.LogError("A user deletion was attempted on a non-existing userId {UserId}", userId);
+                return NotFound();
+            }
+            // Ensure if user to delete is admin there is at least another admin user in db
+            if(await _userManager.IsInRoleAsync(userToDel, "Admin"))
+            {
+                string adminId = await context.Roles.Where(role => role.Name == "Admin").Select(role => role.Id).FirstAsync();
+                int adminCount = await context.UserRoles.Where(ur => ur.RoleId == adminId).CountAsync();
+                if(adminCount == 1)
+                {
+                    return Conflict(new { Message = "This is the only admin account. It cannot be deleted as you will lose access to the application. Create another admin before deleting this one." });
+                }
+            }
+            await _userManager.DeleteAsync(userToDel);
+            _logger.LogInformation("A user was deleted {UserId}", userId);
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, OnInit, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateEmailNotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 import { InputText } from 'primeng/inputtext';
@@ -15,7 +15,7 @@ import { Button } from 'primeng/button';
   templateUrl: './email-provider-form.html',
   styleUrl: './email-provider-form.scss',
 })
-export class EmailProviderForm {
+export class EmailProviderForm implements OnInit {
   public emailProviderToEdit = input<CreateEmailNotificationProviderDTO>();
 
   public createEmailProvider = output<CreateEmailNotificationProviderDTO>();
@@ -25,6 +25,11 @@ export class EmailProviderForm {
     username: new FormControl<string | null>(null, Validators.required),
     password: new FormControl<string | null>(null, [Validators.required])
   });
+  ngOnInit(): void {
+    if(this.emailProviderToEdit()){
+      this.emailProviderForm.patchValue(this.emailProviderToEdit()!);
+    }
+  }
   public addEmailProvider(): void {
     const values = this.emailProviderForm.value;
     if(!values){

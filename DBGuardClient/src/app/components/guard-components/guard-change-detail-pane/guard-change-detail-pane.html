@@ -48,4 +48,13 @@
         }}</span>
     <span class="change-key"><strong>Database connection username:</strong></span>
     <span class="change-value">{{ changeHistoryDetail().databaseConnectionUsername }}</span>
+    <span class="change-key"><strong>Change message</strong></span>
+    <span class="change-value">
+        @if(changeHistoryDetail().message){
+            {{ changeHistoryDetail().message }}
+        }
+        @else {
+            <p-tag value="None"></p-tag>
+        }
+    </span>
 </div>

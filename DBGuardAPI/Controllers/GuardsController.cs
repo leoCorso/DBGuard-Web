@@ -38,13 +38,16 @@ namespace DBGuardAPI.Controllers
         private readonly CredentialProtector _credentialProtector;
         private readonly UserManager<User> _userManager;
         private readonly EntityViewGetter _entityViewGetter;
-        public GuardsController(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<GuardsController> logger, CredentialProtector credentialProtector, UserManager<User> user, EntityViewGetter entityViewGetter)
+        private readonly GuardProcessor _guardProcessor;
+
+        public GuardsController(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<GuardsController> logger, CredentialProtector credentialProtector, UserManager<User> user, EntityViewGetter entityViewGetter, GuardProcessor guardProcessor)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
             _credentialProtector = credentialProtector;
             _userManager = user;
             _entityViewGetter = entityViewGetter;
+            _guardProcessor = guardProcessor;
         }
 
         [HttpGet(nameof(GetCreateGuardsReferenceData))]
@@ -181,7 +184,8 @@ namespace DBGuardAPI.Controllers
                     DatabaseName = change.DatabaseName,
                     DatabaseConnectionEngine = change.DatabaseConnectionEngine,
                     DatabaseConnectionUsername = change.DatabaseConnectionUsername,
-                    ResultValue = change.ResultValue
+                    ResultValue = change.ResultValue,
+                    Message = change.Message
                     })
                 .AsQueryable();
             return (await _entityViewGetter.GetPagedResponseAsync<GuardChangeTransactionDTO>(sieveParams, query));
@@ -247,20 +251,23 @@ namespace DBGuardAPI.Controllers
                 {
                     password = _credentialProtector.Decrypt(dbConnection.Password);
                 }
-                string connectionString = QueryHelper.BuildConnectionString(dbConnection.DatabaseEngine, dbConnection.EndPoint, dbConnection.DatabaseName, dbConnection.Username, password);
-                DbConnection connection = QueryHelper.GetDatabaseConnection(dbConnection.DatabaseEngine, connectionString);
-                // Test query and ensure it executes
-                IDictionary<string, object> resultSet = connection.QuerySingle(newGuard.TriggerQuery);
-                // Ensure query contains column specified
-                if (!TriggerHelper.ColumnExistsInSet(newGuard.CountColumn, resultSet))
+                if (newGuard.ValidateGuard)
                 {
-                    throw new InvalidDataException($"The column {newGuard.CountColumn} is not present in the querys result set");
-                }
+                    string connectionString = QueryHelper.BuildConnectionString(dbConnection.DatabaseEngine, dbConnection.EndPoint, dbConnection.DatabaseName, dbConnection.Username, password);
+                    DbConnection connection = QueryHelper.GetDatabaseConnection(dbConnection.DatabaseEngine, connectionString);
+                    // Test query and ensure it executes
+                    IDictionary<string, object> resultSet = connection.QuerySingle(newGuard.TriggerQuery);
+                    // Ensure query contains column specified
+                    if (!TriggerHelper.ColumnExistsInSet(newGuard.CountColumn, resultSet))
+                    {
+                        throw new InvalidDataException($"The column {newGuard.CountColumn} is not present in the querys result set");
+                    }
 
-                // Ensure row and column value is int
-                if (!int.TryParse(resultSet[newGuard.CountColumn].ToString(), out int count))
-                {
-                    throw new InvalidDataException($"The count column in result set is not a int parseable value.");
+                    // Ensure row and column value is int
+                    if (!int.TryParse(resultSet[newGuard.CountColumn].ToString(), out int count))
+                    {
+                        throw new InvalidDataException($"The count column in result set is not a int parseable value.");
+                    }
                 }
                 // Create guard
                 Guard guard = new()
@@ -282,6 +289,11 @@ namespace DBGuardAPI.Controllers
                 };
                 await context.Guards.AddAsync(guard);
                 await context.SaveChangesAsync();
+                _logger.LogInformation("A new guard was created {GuardId}", guard.Id);
+                foreach(var notification in guard.GuardNotifications)
+                {
+                    _logger.LogInformation("A new notification was created {NotificationId}", notification.Id);
+                }
                 return CreatedAtAction(nameof(GetGuardDetail), new { id = guard.Id }, new SimpleGuardDTO
                 {
                     Id = guard.Id,
@@ -293,6 +305,19 @@ namespace DBGuardAPI.Controllers
             {
                 return BadRequest(new { ex.Message });
             }
+        }
+        [HttpPost(nameof(RunGuardManually))]
+        public async Task<ActionResult<GuardState>> RunGuardManually([FromQuery] int guardId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            if(!(await context.Guards.AnyAsync(guard => guard.Id == guardId)))
+            {
+                _logger.LogError("A manual guard run was attempted for an invalid guard id {GuardId}", guardId);
+                return NotFound();
+            }
+            await _guardProcessor.ProcessGuardAsync(guardId);
+            Guard guardAfterProcessing = (await context.Guards.FindAsync(guardId))!;
+            return guardAfterProcessing.GuardState;
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPut(nameof(PutGuard))]
@@ -345,6 +370,15 @@ namespace DBGuardAPI.Controllers
                 notificationToEdit.LastEdited = DateTime.UtcNow;
             }
             await context.SaveChangesAsync();
+            _logger.LogInformation("A guard was edited {GuardId}", guard.Id);
+            foreach(GuardNotification newNotification in newNotifications)
+            {
+                _logger.LogInformation("A new notification was added {NotificationId}", newNotification.Id);
+            }
+            foreach(GuardNotification editedNotification in notificationsToEdit)
+            {
+                _logger.LogInformation("A notification was edited {NotificationId}", editedNotification.Id);
+            }
             return CreatedAtAction(nameof(GetGuardDetail), new { id = guard.Id }, new SimpleGuardDTO
             {
                 Id = guard.Id,
@@ -363,9 +397,15 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A guard deletion was attempted on a non-existing guard {GuardId}", guardId);
                 return NotFound();
             }
+
+            List<int> notificationsRemoved = await context.GuardNotifications.AsNoTracking().Where(noti => noti.GuardId == guardToDelete.Id).Select(noti => noti.Id).ToListAsync();
             context.Guards.Remove(guardToDelete);
             await context.SaveChangesAsync();
             _logger.LogInformation("Delete a guard {GuardId}", guardId);
+            foreach(int id in notificationsRemoved)
+            {
+                _logger.LogInformation("A notificationw was removed {NotificationId}", id);
+            }
             return NoContent();
         }
     }

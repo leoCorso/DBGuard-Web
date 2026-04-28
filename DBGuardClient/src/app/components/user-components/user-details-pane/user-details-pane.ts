@@ -1,11 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { UserDetailDTO } from '../../../interfaces/user.dto';
 import { DatePipe } from '@angular/common';
 import { Button } from 'primeng/button';
 import { RouterLink, RouterModule } from "@angular/router";
 import { Tag } from 'primeng/tag';
+import { EntityChangeService } from '../../../services/entity-change-service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-details-pane',
@@ -13,13 +15,26 @@ import { Tag } from 'primeng/tag';
   templateUrl: './user-details-pane.html',
   styleUrl: './user-details-pane.scss',
 })
-export class UserDetailsPane implements OnInit {
+export class UserDetailsPane implements OnInit, OnDestroy {
   private httpClient = inject(HttpClient);
+  private entityChangeService = inject(EntityChangeService);
+  private destroy = new Subject<void>();
   public userId = input.required<string>();
   public userDetails = signal<UserDetailDTO | null>(null);
 
   ngOnInit(): void {
+    this.entityChangeService.userEdited.pipe(takeUntil(this.destroy)).subscribe({
+      next: (id: string) => {
+        if(this.userId() === id){
+          this.loadDetails();
+        }
+      }
+    })
     this.loadDetails();
+  }
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
   private loadDetails(): void {
     const url = [environment.api.uri, 'User', 'GetUserDetails'].join('/');

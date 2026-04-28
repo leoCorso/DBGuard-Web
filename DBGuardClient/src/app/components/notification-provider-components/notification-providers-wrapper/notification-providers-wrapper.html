@@ -1,1 +1,4 @@
+@if (authService.hasRoles(['Admin'])) {
+    <app-notification-provider-toolbar (createNotificationProvider)="createNotificationProvider()"></app-notification-provider-toolbar>
+}
 <router-outlet></router-outlet>

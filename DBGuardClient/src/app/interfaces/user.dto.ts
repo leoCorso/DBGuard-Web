@@ -1,5 +1,5 @@
 export interface UserDTO {
-    id: number;
+    id: string;
     username: string;
     createDate: Date,
     lastEdited: Date,
@@ -14,5 +14,15 @@ export interface UserDetailDTO {
     lastEdited: Date,
     createdByUserId?: number,
     createdByUsername?: string,
+    roles: string[]
+}
+export interface CreateUserDTO {
+    id?: string,
+    username: string,
+    password: string,
+    confirmPassword: string,
+    roles: string[]
+}
+export interface CreateUserReferenceData {
     roles: string[]
 }

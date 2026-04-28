@@ -1,4 +1,4 @@
-import { Component, input, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, input, OnInit, signal, WritableSignal } from '@angular/core';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { Column } from '../../../interfaces/table-items';
@@ -12,6 +12,8 @@ import { Button } from 'primeng/button';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { EntityChangeService } from '../../../services/entity-change-service';
+import { merge, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-notification-providers-table',
@@ -21,7 +23,7 @@ import { DatePipe } from '@angular/common';
 })
 export class NotificationProvidersTable extends PreviewTable<NotificationProviderDTO> implements OnInit {
   public createdByUserId = input<string | undefined>(undefined);
-
+  private entityChangeService = inject(EntityChangeService);
   public override columns: Column[] = [
     {field: 'id', header: 'Id', sortable: true},
     {field: 'notificationType', header: 'Provider Type', sortable: true},
@@ -41,6 +43,12 @@ export class NotificationProvidersTable extends PreviewTable<NotificationProvide
   
   override ngOnInit(): void {
     super.ngOnInit();
+    merge(this.entityChangeService.providerCreated, this.entityChangeService.providerEdited).pipe(takeUntil(this.destroy)).subscribe({
+      next: () => {
+        const event = this.viewItemsTable.createLazyLoadMetadata();
+        this.loadPreviewData(event);
+      }
+    });
     this.initFilterInputs();
     this.configureFilters();
   }

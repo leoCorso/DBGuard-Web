@@ -5,7 +5,7 @@
     </p-floatlabel>
     <!-- Email -->
     @if (notificationProviderType.value == 0) {
-        <app-email-provider-form (createEmailProvider)="createProvider($event)"></app-email-provider-form>
+        <app-email-provider-form [emailProviderToEdit]="emailProviderToEdit()" (createEmailProvider)="saveProvider($event)"></app-email-provider-form>
     }
     <!-- Text -->
     @else if(notificationProviderType.value == 1) {

@@ -19,6 +19,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public bool NotifyOnError { get; set; }
         public bool NotifyOnTrigger { get; set; }
         public double RunPeriodInMinutes { get; set; }
+        public bool ValidateGuard { get; set; } = true;
         public List<CreateNotificationDTO> Notifications { get; set; } = [];
     }
 }

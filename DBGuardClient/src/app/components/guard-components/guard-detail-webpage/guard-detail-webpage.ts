@@ -17,7 +17,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
+import { getGuardStateSeverity, getGuardStateSeverityTwo } from '../../../helper-functions/guard-state-helper';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
 import { DbConnectionDetailPane } from '../../db-connection-components/db-connection-detail-pane/db-connection-detail-pane';
 import { CreateGuard } from '../create-guard/create-guard';
@@ -25,11 +25,14 @@ import { GuardChangeHistoryTable } from '../guard-change-history-table/guard-cha
 import { GuardNotificationTransactionsTable } from '../guard-notification-components/guard-notification-transactions-table/guard-notification-transactions-table';
 import { GuardNotificationsTable } from '../guard-notification-components/guard-notifications-table/guard-notifications-table';
 import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
+import { AuthService } from '../../../services/auth-service';
+import { TooltipModule } from 'primeng/tooltip';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-guard-detail-webpage',
   imports: [Card, GuardDetailPane, Button, Tag, ButtonGroup, GuardChangeHistoryTable, GuardNotificationTransactionsTable, 
-    DbConnectionDetailPane, GuardNotificationsTable, ProgressSpinner, ConfirmPopup],
+    DbConnectionDetailPane, GuardNotificationsTable, ProgressSpinner, ConfirmPopup, TooltipModule, Toast],
   templateUrl: './guard-detail-webpage.html',
   styleUrl: './guard-detail-webpage.scss',
 })
@@ -38,6 +41,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   private httpClient = inject(HttpClient);
   private dialogService = inject(DialogService);
   private guardService = inject(EntityChangeService);
+  public authService = inject(AuthService);
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
   public guardDetail = signal<GuardDetailDTO | null>(null);
@@ -46,6 +50,8 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   private loadingEvent = new BehaviorSubject<boolean>(false);
   public showLoadingSpinner = signal<boolean>(true);
   private destroy = new Subject<void>();
+  private messageService = inject(MessageService);
+  private entityChangeService = inject(EntityChangeService);
 
   ngOnInit(): void {
     const guardId = this.activatedRoute.snapshot.paramMap.get('id');
@@ -110,6 +116,16 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     this.httpClient.delete<void>(url, { params: params }).subscribe({
       next: () => {
         this.router.navigate(['guards/view-guards']);
+      }
+    })
+  }
+  public runGuard(): void {
+    const url = [environment.api.uri, 'Guards', 'RunGuardManually'].join('/');
+    const params = new HttpParams().set('guardId', this.guardId()!);
+    this.httpClient.post<GuardState>(url, {}, { params: params }).subscribe({
+      next: (guardState: GuardState) => {
+        this.entityChangeService.guardEdited.next(this.guardId()!);
+        this.messageService.add({summary: 'Guard finished', detail: `Guard state: ${getEnumLabel(GuardState, guardState)}`, severity: getGuardStateSeverityTwo(guardState), key: 'guard-run-toast'});
       }
     })
   }

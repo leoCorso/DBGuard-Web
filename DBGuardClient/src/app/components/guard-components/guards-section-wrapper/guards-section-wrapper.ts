@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GuardsToolbar } from '../guards-toolbar/guards-toolbar';
 import { CreateGuard } from '../create-guard/create-guard';
+import { AuthService } from '../../../services/auth-service';
 
 @Component({
   selector: 'app-guards-section-wrapper',
@@ -13,7 +14,8 @@ import { CreateGuard } from '../create-guard/create-guard';
 export class GuardsSectionWrapper {
   
   private dialogService = inject(DialogService);
-
+  public authService = inject(AuthService);
+  
   public createGuardClicked(): void {
     this.dialogService.open(CreateGuard, {
       header: 'Create guard',

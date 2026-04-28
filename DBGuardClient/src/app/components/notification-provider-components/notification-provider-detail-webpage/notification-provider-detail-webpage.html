@@ -1,5 +1,17 @@
+<p-confirmpopup></p-confirmpopup>
 <div class="cards">
-    <p-card header="Notification provider">
+    <p-card>
+        <ng-template #header>
+            <div class="header">
+                <h3>Notification provider</h3>
+                @if (authService.hasRoles(['Admin'])) {
+                    <p-buttongroup>
+                        <p-button [text]="true" label="Edit" icon="pi pi-pencil" (onClick)="editProvider()"></p-button>
+                        <p-button [text]="true" label="Delete" icon="pi pi-trash" severity="danger" (onClick)="deleteProviderClicked($event)"></p-button>
+                    </p-buttongroup>
+                }
+            </div>
+        </ng-template>
         <app-notification-provider-detail-pane
             [notificationProviderId]="providerId()!"></app-notification-provider-detail-pane>
     </p-card>

@@ -18,12 +18,12 @@
         <p-tag value="System" severity="info"></p-tag>
     }
     </span>
-</div>
-<div class="roles-list">
-    <h3>Roles</h3>
-    <ul>
-        @for (role of userDetails()?.roles; track $index) {
-            <li>{{ role }}</li>
-        }
-    </ul>
+    <span class="user-key">Roles:</span>
+    <span class="user-value">
+        <div style="display: flex;gap: .2rem;">
+            @for (role of userDetails()?.roles; track $index) {
+                <p-tag [rounded]="true" [value]="role"></p-tag>
+            }
+        </div>
+    </span>
 </div>

@@ -53,7 +53,8 @@ export class GuardChangeHistoryTable extends PreviewTable<GuardChangeTransaction
     {field: 'databaseName', header: 'Database name', sortable: true},
     {field: 'databaseConnectionEngine', header: 'Database engine', sortable: true},
     {field: 'databaseConnectionUsername', header: 'Database username', sortable: true},
-    {field: 'resultValue', header: 'Result value count', sortable: true}
+    {field: 'resultalue', header: 'Result value count', sortable: true},
+    {field: 'message', header: 'Message', sortable: true}
   ];
   public override filtersConfig: FilterConfig[] = [];
   public override defaultSort: SortValue[] = [
@@ -106,7 +107,8 @@ export class GuardChangeHistoryTable extends PreviewTable<GuardChangeTransaction
       {field: 'databaseName', label: 'Database name', isTableFilter: true, type: 'text', placeholder: 'Filter by database name'},
       {field: 'databaseConnectionEngine', label: 'Database engine', isTableFilter: true, type: 'multi-select', placeholder: 'Filter by database engine', options: this.databaseEngines},
       {field: 'databaseConnectionUsername', label: 'Database username', isTableFilter: true, type: 'text', placeholder: 'Filter by database username'},
-      {field: 'resultValue', label: 'Result value', isTableFilter: true, type: 'numeric', placeholder: 'Filter by results value'}
+      {field: 'resultValue', label: 'Result value', isTableFilter: true, type: 'numeric', placeholder: 'Filter by results value'},
+      {field: 'message', label: 'Message', isTableFilter: true, type: 'text', placeholder: 'Filter by message'}
     ];
   }
 }

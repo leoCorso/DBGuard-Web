@@ -56,6 +56,14 @@
                 <td>{{ getEnumLabel(databaseEngine, change.databaseConnectionEngine) }}</td>
                 <td>{{ change.databaseConnectionUsername }}</td>
                 <td>{{ change.resultValue }}</td>
+                <td>
+                    @if(change.message){
+                        {{ change.message }}
+                    }
+                    @else {
+                        <p-tag value="None" severity="info"></p-tag>
+                    }
+                </td>
             </tr>
         </ng-template>
     </p-table>

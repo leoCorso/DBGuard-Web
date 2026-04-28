@@ -20,7 +20,8 @@ export interface CreateGuardDTO {
     notifyOnError: boolean,
     notifyOnTrigger: boolean,
     runPeriodInMinutes: number,
-    notifications: CreateGuardNotificationDTO[]
+    notifications: CreateGuardNotificationDTO[],
+    validateGuard?: boolean
 }
 
 export interface CreateGuardReferenceData {

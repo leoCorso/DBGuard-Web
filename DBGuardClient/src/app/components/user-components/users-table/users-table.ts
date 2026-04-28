@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { UserDTO } from '../../../interfaces/user.dto';
 import { Column } from '../../../interfaces/table-items';
@@ -11,6 +11,8 @@ import { Button } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { Tag } from 'primeng/tag';
+import { EntityChangeService } from '../../../services/entity-change-service';
+import { merge, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-users-table',
@@ -32,9 +34,16 @@ export class UsersTable extends PreviewTable<UserDTO> implements OnInit {
   public override fetchUrl: string = [environment.api.uri, 'User', 'GetUsers'].join('/');
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
   public override filtersConfig: FilterConfig[] = [];
+  private entityChangeService = inject(EntityChangeService);
 
   override ngOnInit(): void {
     super.ngOnInit();
+    merge(this.entityChangeService.userCreated, this.entityChangeService.userEdited).pipe(takeUntil(this.destroy)).subscribe({
+      next: () => {
+        const event = this.viewItemsTable.createLazyLoadMetadata();
+        this.loadPreviewData(event);
+      }
+    })
     this.configureFilters();
   }
   protected override initFilterInputs(): void {

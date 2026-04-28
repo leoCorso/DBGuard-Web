@@ -229,6 +229,10 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("guard_value");
 
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
                     b.Property<int>("PreviousGuardState")
                         .HasColumnType("integer")
                         .HasColumnName("previous_guard_state");

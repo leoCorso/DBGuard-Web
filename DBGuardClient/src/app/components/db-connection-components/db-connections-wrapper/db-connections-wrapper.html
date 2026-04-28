@@ -1,2 +1,4 @@
-<app-db-connection-toolbar (createDBConnectionClicked)="createDBConnection()"></app-db-connection-toolbar>
+@if (authService.hasRoles(['Admin'])) {
+    <app-db-connection-toolbar (createDBConnectionClicked)="createDBConnection()"></app-db-connection-toolbar>
+}
 <router-outlet></router-outlet>

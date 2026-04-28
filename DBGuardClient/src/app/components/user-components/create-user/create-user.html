@@ -1,0 +1,44 @@
+<form [formGroup]="userForm" class="user-form">
+    <div>
+        <p-floatlabel variant="on">
+            <label for="username">Username</label>
+            <input id="username" type="text" pInputText formControlName="username" fluid>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-password autocomplete="off" appendTo="body" id="password" [toggleMask]="true" formControlName="password" weakLabel="Invalid" mediumLabel="Invalid" fluid strongRegex="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$" strongLabel="Valid">
+                <ng-template #footer>
+                    <ul>
+                        <li>8 characters or more</li>
+                        <li>One digit</li>
+                        <li>One lowercase letter</li>
+                        <li>One uppercase letter</li>
+                        <li>One non-alphanumeric character</li>
+                    </ul>
+                </ng-template>
+            </p-password>
+            <label for="password">Password</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-password autocomplete="off" id="password-confirm" [toggleMask]="true" formControlName="confirmPassword" fluid weakLabel="Invalid" mediumLabel="Invalid" fluid strongRegex="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$" strongLabel="Valid"></p-password>
+            <label for="password-confirm">Confirm password</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-multiselect appendTo="body" [options]="referenceData()?.roles" fluid formControlName="roles" id="roles">
+
+            </p-multiselect>
+            <label for="roles">Roles</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <app-form-control-error [formControlInput]="userForm" [customMessage]="[{ key:'passwordMismatch', message:'Passwords do not match'}]"></app-form-control-error>
+    <p-button [label]="userIdToEdit() ? 'Save' : 'Create'" icon="pi pi-save" [rounded]="true" (onClick)="saveUser()" [disabled]="userForm.invalid"></p-button>
+</form>

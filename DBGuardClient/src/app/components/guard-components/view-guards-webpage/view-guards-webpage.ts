@@ -12,11 +12,12 @@ import { SortOption, SortValue } from '../../../interfaces/sorting';
 import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
 import { SortSelectControl } from '../../shared/sort-select-control/sort-select-control';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { takeUntil } from 'rxjs';
+import { merge, take, takeUntil } from 'rxjs';
 import { ViewParamsBuilder } from '../../../services/view-params-builder';
 import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { ViewGuardItem } from '../view-guard-item/view-guard-item';
+import { EntityChangeService } from '../../../services/entity-change-service';
 
 @Component({
   selector: 'app-view-guards-webpage',
@@ -27,7 +28,7 @@ import { ViewGuardItem } from '../view-guard-item/view-guard-item';
 export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements OnInit {
   public filterVisible = false;
   public override filters = signal<Map<string, FilterValue>>(new Map([]));
-
+  private entityChangeService = inject(EntityChangeService);
   public override sortOptions: SortOption[] = [
     {field: 'guardName', label: 'Guard name'},
     {field: 'createDate', label: 'Create date'},
@@ -42,6 +43,13 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
 
   override ngOnInit(): void {
     super.ngOnInit();
+    merge(this.entityChangeService.guardCreated, this.entityChangeService.guardEdited).pipe(takeUntil(this.destroy)).subscribe({
+      next: () => {
+        const event = this.dataView.createLazyLoadMetadata();
+        this.loadDataPage(event);
+      }
+    });
+    
     this.sortControl.valueChanges.pipe(takeUntil(this.destroy)).subscribe(() => {
       const loadEvent = this.dataView.createLazyLoadMetadata();
       this.loadDataPage(loadEvent);

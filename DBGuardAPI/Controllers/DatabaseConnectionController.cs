@@ -161,6 +161,7 @@ namespace DBGuardAPI.Controllers
             };
             await context.DatabaseConnections.AddAsync(newConnObject);
             await context.SaveChangesAsync();
+            _logger.LogInformation("A database connection was created {ConnectionId}", newConnObject.Id);
             return CreatedAtAction(nameof(GetDatabaseConnectionDetail), new { id = newConnObject.Id }, new SimpleDatabaseConnectionDTO
             {
                 Id = newConnObject.Id,
@@ -169,6 +170,28 @@ namespace DBGuardAPI.Controllers
                 Username = newConnObject.Username,
                 DatabaseEngine = newConnObject.DatabaseEngine
             });
+        }
+        [HttpPost(nameof(TestDatabaseConnection))]
+        public async Task<ActionResult> TestDatabaseConnection([FromQuery] int connectionId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            DatabaseConnection? connection = await context.DatabaseConnections.FindAsync(connectionId);
+            if(connection is null)
+            {
+                _logger.LogWarning("A database connection test was tried on a non-existing database {ConnectionId}", connectionId);
+                return NotFound();
+            }
+            try
+            {
+                string password = _credentialProtector.Decrypt(connection.Password);
+                string connectionString = QueryHelper.BuildConnectionString(connection!.DatabaseEngine, connection.EndPoint, connection.DatabaseName, connection.Username, password);
+                QueryHelper.ValidateDatabaseConnection(connection.DatabaseEngine, connectionString);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})" });
+            }
+            return Ok(new { Message = "Database connection is healthy" });
         }
         [HttpPut(nameof(PutDatabaseConnection))]
         [Authorize(Roles = RoleNames.Admin)]
@@ -228,6 +251,7 @@ namespace DBGuardAPI.Controllers
                 connection.Password = _credentialProtector.Encrypt(connection.Password);
             }
             await context.SaveChangesAsync();
+            _logger.LogInformation("A database connection was edited {ConnectionId}", updatedConnection.Id);
             return CreatedAtAction(nameof(GetDatabaseConnectionDetail), new { Id = updatedConnection.Id});
         }
         [HttpDelete(nameof(DeleteDatabaseConnection))]
@@ -247,6 +271,7 @@ namespace DBGuardAPI.Controllers
             }
             context.DatabaseConnections.Remove(connectionToDel);
             await context.SaveChangesAsync();
+            _logger.LogInformation("A database connection was deleted {ConnectionId}", connectionId);
             return NoContent();
         }
     }

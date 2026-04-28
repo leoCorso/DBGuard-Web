@@ -68,6 +68,7 @@ builder.Services.AddDataProtection()
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddHostedService<MonitorService>();
 builder.Services.AddSingleton<CredentialProtector>();
+builder.Services.AddTransient<GuardProcessor>();
 builder.Services.AddTransient<NotificationService>();
 builder.Services.AddScoped<SieveProcessor>();
 builder.Services.AddScoped<ISieveCustomFilterMethods, GuardFilters>();

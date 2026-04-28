@@ -108,6 +108,10 @@
             <p-toggleswitch formControlName="notifyOnTrigger"></p-toggleswitch>
         </div>
     </div>
+    <div style="display: flex;gap:.5rem;">
+        <label for="validate-guard">Validate guard:</label>
+        <p-checkbox [binary]="true" inputId="validate-guard" formControlName="validateGuard" pTooltip="When selected it will ensure connection and query are valid"></p-checkbox>
+    </div>
     <div class="bottom-btns">
         <p-button (onClick)="addGuard()" [label]="guardToEdit() ? 'Save' : 'Add'" icon="pi pi-save" [rounded]="true" [disabled]="guardFormGroup.invalid"></p-button>
     </div>

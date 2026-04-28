@@ -67,7 +67,12 @@ export class CreateDbConnection implements OnInit {
     const request = this.dbConnectionToEditId() ? this.httpClient.put<DatabaseConnectionDTO>(urlString, newConnection) : this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection);
     request.subscribe({
       next: (newConnection: DatabaseConnectionDTO) => {
-        this.entityChangeService.dbConnectionCreated.next();
+        if(this.dbConnectionToEditId()){
+          this.entityChangeService.dbConnectionEdited.next(newConnection.id!);
+        }
+        else {
+          this.entityChangeService.dbConnectionCreated.next(newConnection.id!);
+        }
         this.dialogRef.close(newConnection);
         this.loading.set(false);
       },

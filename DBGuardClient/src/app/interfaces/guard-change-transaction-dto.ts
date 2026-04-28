@@ -16,5 +16,6 @@ export interface GuardChangeTransactionDTO {
     databaseName: string,
     databaseConnectionEngine: DatabaseEngine,
     databaseConnectionUsername: string,
-    resultValue?: number
+    resultValue?: number,
+    message?: string
 }

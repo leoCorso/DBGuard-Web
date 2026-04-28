@@ -53,12 +53,10 @@ namespace DBGuardAPI.Data.Models
                 notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ProviderType))
                 .HasValue<EmailProvider>(NotificationType.Email)
                 .HasValue<TextProvider>(NotificationType.Text);
-
-
                 notificationProvider.HasMany(sp => sp.GuardNotifications)
                     .WithOne(gn => gn.NotificationProvider)
                     .HasForeignKey(gn => gn.NotificationProviderId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
             builder.Entity<Guard>(guard =>
             {

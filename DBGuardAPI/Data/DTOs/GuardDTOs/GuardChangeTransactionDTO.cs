@@ -33,5 +33,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public required string DatabaseConnectionUsername { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public int? ResultValue { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
+        public string? Message { get; set; }
     }
 }

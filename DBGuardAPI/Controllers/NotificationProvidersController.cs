@@ -85,6 +85,31 @@ namespace DBGuardAPI.Controllers
                 }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync(sieveParams, query);
         }
+        [HttpGet(nameof(GetProviderToEdit))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult<CreateNotificationProviderDTO>> GetProviderToEdit([FromQuery] int providerId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            NotificationProvider? provider = await context.NotificationProviders.FindAsync(providerId);
+            if(provider is null)
+            {
+                _logger.LogWarning("A get provider to edit request was made on an invalid provider id {ProviderId}", providerId);
+                return NotFound();
+            }
+            return provider switch
+            {
+                EmailProvider email => new CreateEmailNotificationProviderDTO
+                {
+                    Id = email.Id,
+                    ProviderType = email.ProviderType,
+                    SMTPServer = email.SMTPServer,
+                    Port = email.Port,
+                    Username = email.Username,
+                    Password = _credentialProtector.Decrypt(email.Password)
+                },
+                _ => throw new InvalidOperationException()
+            };
+        }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostNotificationProvider))]
         public async Task<ActionResult<NotificationProviderDTO>> PostNotificationProvider(CreateNotificationProviderDTO newProvider)
@@ -109,7 +134,65 @@ namespace DBGuardAPI.Controllers
             }
             await context.AddAsync(provider);
             await context.SaveChangesAsync();
-            return NotificationProviderHelper.MapToDTO(provider);
+            _logger.LogInformation("A notification provider was created {ProviderId}", newProvider.Id);
+            NotificationProvider providerToReturn = (await context.NotificationProviders.AsNoTracking().Where(provider => provider.Id == provider.Id).Include(provider => provider.CreatedByUser).FirstOrDefaultAsync())!;
+            return NotificationProviderHelper.MapToDTO(providerToReturn);
+        }
+
+        [Authorize(Roles = RoleNames.Admin)]
+        [HttpPut(nameof(PutNotificationProvider))]
+        public async Task<ActionResult<NotificationProviderDTO>> PutNotificationProvider(CreateNotificationProviderDTO updatedProvider)
+        {
+            if(updatedProvider.Id is null)
+            {
+                _logger.LogError("A notification provider edit was attempted without providing a provider id");
+                return BadRequest();
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            NotificationProvider? providerToEdit = await context.NotificationProviders.FindAsync(updatedProvider.Id);
+            if(providerToEdit is null)
+            {
+                _logger.LogWarning("A notification provider edit was attempted with an invalid provider id {ProviderId}", updatedProvider.Id);
+                return NotFound();
+            }
+            switch (providerToEdit)
+            {
+                case EmailProvider emailProvider when updatedProvider is CreateEmailNotificationProviderDTO emailUpdatedProvider:
+                    emailProvider.SMTPServer = emailUpdatedProvider.SMTPServer;
+                    emailProvider.Port = emailUpdatedProvider.Port;
+                    emailProvider.Username = emailUpdatedProvider.Username;
+                    emailProvider.Password = _credentialProtector.Encrypt(emailUpdatedProvider.Password);
+                    break;
+                default:
+                    _logger.LogError("A provider was edited with an invalid provider type {Type}", updatedProvider.ProviderType);
+                    return BadRequest();
+            }
+            await context.SaveChangesAsync();
+            _logger.LogInformation("A notification provider was edited {ProviderId}", updatedProvider.Id);
+            NotificationProvider providerDTO = (await context.NotificationProviders.Where(provider => provider.Id == updatedProvider.Id).Include(provider => provider.CreatedByUser).FirstOrDefaultAsync())!;
+            return NotificationProviderHelper.MapToDTO(providerDTO);
+        }
+        [HttpDelete(nameof(DeleteProvider))]
+        [Authorize(Roles = RoleNames.Admin)]
+        public async Task<ActionResult> DeleteProvider([FromQuery] int providerId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            // Ensure provider exists
+            NotificationProvider? providerToDel = await context.NotificationProviders.FindAsync(providerId);
+            if(providerToDel is null)
+            {
+                _logger.LogError("A provider deleting was attempted on a non-existing provider {ProviderId}", providerId);
+                return NotFound();
+            }
+            // Ensure no notifications are using this provider
+            if(await context.GuardNotifications.AnyAsync(notification => notification.NotificationProviderId == providerId))
+            {
+                return Conflict(new { Message = "There are guards using this provider. Please first update or delete those notifications" });
+            }
+            context.NotificationProviders.Remove(providerToDel);
+            await context.SaveChangesAsync();
+            _logger.LogInformation("A notification provider was deleted {ProviderId}", providerId);
+            return NoContent();
         }
     }
 }

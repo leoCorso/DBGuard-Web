@@ -12,7 +12,7 @@ import { FilterItem } from '../../shared/filter-item/filter-item';
 import { Button } from 'primeng/button';
 import { RouterLink } from "@angular/router";
 import { DatePipe } from '@angular/common';
-import { takeUntil } from 'rxjs';
+import { merge, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-db-connections-table',
@@ -50,12 +50,12 @@ export class DbConnectionsTable extends PreviewTable<DatabaseConnectionDTO> impl
     this.configureFilters();
   }
   private listenToEntityChanges(): void {
-    this.entityChanges.dbConnectionCreated.pipe(takeUntil(this.destroy)).subscribe({
+    merge(this.entityChanges.dbConnectionCreated, this.entityChanges.dbConnectionCreated).pipe(takeUntil(this.destroy)).subscribe({
       next: () => {
         const event = this.viewItemsTable.createLazyLoadMetadata();
         this.loadPreviewData(event);
       }
-    })
+    });
   }
   protected override initFilterInputs(): void {
     let filters: FilterValue[] = [];

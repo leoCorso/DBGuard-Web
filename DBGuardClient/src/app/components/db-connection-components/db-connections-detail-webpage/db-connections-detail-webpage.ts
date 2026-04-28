@@ -11,12 +11,15 @@ import { ButtonGroup } from 'primeng/buttongroup';
 import { Button } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { CreateDbConnection } from '../create-db-connection/create-db-connection';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopup } from 'primeng/confirmpopup';
+import { AuthService } from '../../../services/auth-service';
+import { TooltipModule } from 'primeng/tooltip';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-db-connections-detail-webpage',
-  imports: [DbConnectionDetailPane, GuardsDetailTable, Card, ButtonGroup, Button, ConfirmPopup],
+  imports: [DbConnectionDetailPane, GuardsDetailTable, Card, ButtonGroup, Button, ConfirmPopup, TooltipModule, Toast],
   templateUrl: './db-connections-detail-webpage.html',
   styleUrl: './db-connections-detail-webpage.scss',
 })
@@ -24,8 +27,10 @@ export class DbConnectionsDetailWebpage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private dialogService = inject(DialogService);
+  public authService = inject(AuthService);
   private confirmService = inject(ConfirmationService);
   private httpClient = inject(HttpClient);
+  private messageService = inject(MessageService);
 
   public dbConnectionId = signal<number | null>(null);
 
@@ -75,5 +80,14 @@ export class DbConnectionsDetailWebpage implements OnInit {
         this.router.navigate(['/db-connections/view-all']);
       }
     });
+  }
+  public testDatabaseConnection(): void {
+    const url = [environment.api.uri, 'DatabaseConnection', 'TestDatabaseConnection'].join('/');
+    const params = new HttpParams().set('connectionId', this.dbConnectionId()!);
+    this.httpClient.post(url, {}, {params: params}).subscribe({
+      next: () => {
+        this.messageService.add({summary: 'Healthy', detail: 'Database connection is healthy', severity: 'success', key: 'test-db-toast'});
+      }
+    })
   }
 }
