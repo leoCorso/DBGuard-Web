@@ -1,0 +1,40 @@
+<h3>Email info</h3>
+<div class="email-transaction-info">
+    <span class="email-key">Email subject:</span>
+    <span class="email-value">{{ emailTransactionInfo().emailSubject }}</span>
+    <span class="email-key">Email body:</span>
+    <span class="email-value">{{ emailTransactionInfo().emailBody }}</span>
+    <span class="email-key">To emails:</span>
+    <span class="email-value">
+        @if(emailTransactionInfo().toEmails.length > 0){
+            @for (email of emailTransactionInfo().toEmails; track $index) {
+                <a [href]="'mailto:' + email">{{ email }}</a>
+            }
+        }
+        @else {
+            None
+        }
+    </span>
+    <span class="email-key">CC emails:</span>
+    <span class="email-value">
+        @if(emailTransactionInfo().ccEmails.length > 0){
+            @for (email of emailTransactionInfo().ccEmails; track $index) {
+                <a [href]="'mailto:' + email">{{ email }}</a>
+            }
+        }
+        @else {
+            None
+        }
+    </span>
+    <span class="email-key">BCC emails:</span>
+    <span class="email-value">
+        @if(emailTransactionInfo().bccEmails.length > 0){
+            @for (email of emailTransactionInfo().bccEmails; track $index) {
+                <a [href]="'mailto:' + email">{{ email }}</a>
+            }
+        }
+        @else {
+            None
+        }
+    </span>
+</div>

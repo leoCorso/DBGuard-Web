@@ -25,6 +25,16 @@
         </p-floatlabel>
     </div>
     <div>
+        <p-floatlabel variant="on">
+            <input id="sender-email" fluid formControlName="senderEmail" pInputText/>
+            <label for="sender-email">Sender email</label>
+        </p-floatlabel>
+    </div>
+    <div style="display: flex;gap: .5rem;">
+        <label for="verify-provider">Verify provider:</label>
+        <p-checkbox pTooltip="When selected it will test connection to provider" [binary]="true" formControlName="verifyProvider" name="verify-provider" inputId="verify-provider"></p-checkbox>
+    </div>
+    <div>
         <p-button (onClick)="addEmailProvider()" [label]="emailProviderToEdit() ? 'Save' : 'Add'" icon="pi pi-plus" [rounded]="true" [disabled]="emailProviderForm.invalid"></p-button>
     </div>
 </form>

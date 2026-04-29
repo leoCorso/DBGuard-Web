@@ -12,18 +12,21 @@ export interface EmailProviderDTO extends NotificationProviderDTO {
     smtpServer: string,
     username: string,
     port: number,
-    password?: string
+    password?: string,
+    senderEmail: string
 }
 export interface TextProviderDTO extends NotificationProviderDTO {
     phoneNumber: string
 }
 export interface CreateNotificationProviderDTO {
     id?: number,
-    providerType: NotificationType
+    providerType: NotificationType,
+    verifyProvider: boolean
 }
 export interface CreateEmailNotificationProviderDTO extends CreateNotificationProviderDTO {
     smtpServer: string,
     port: number,
     username: string,
-    password: string
+    password: string,
+    senderEmail: string
 }

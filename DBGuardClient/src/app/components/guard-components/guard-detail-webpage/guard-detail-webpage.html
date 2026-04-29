@@ -2,29 +2,29 @@
 <p-toast key="guard-run-toast" position="bottom-right"></p-toast>
 <div class="cards">
     <p-card>
-        <ng-template #header>
-            <div class="card-header">
-                <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
-                @if (authService.hasRoles(['Admin'])) {
-                    <p-buttongroup>
-                        <p-confirmpopup></p-confirmpopup>
-                        <p-button (onClick)="runGuard()" [text]="true" severity="contrast" icon="pi pi-play" label="Run" pTooltip="Run the guard manually"></p-button>
-                        <p-button (onClick)="editGuardClicked()" label="Edit guard" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
-                        <p-button (onClick)="onDeleteGuard($event)" label="Delete guard" icon="pi pi-trash" severity="danger" [rounded]="true"
-                            [text]="true"></p-button>
-                    </p-buttongroup>
-                }
-            </div>
-        </ng-template>
         @if(showLoadingSpinner()){
-            <div style="display: flex; flex-direction: column;align-items: center;justify-content: center;overflow: hidden;">
+            <div class="loading-container">
                 <p-progressspinner>
-
+                    
                 </p-progressspinner>
                 <em style="text-align: center;">Loading details</em>
             </div>
         }
         @else {
+            <ng-template #header>
+                <div class="card-header">
+                    <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
+                    @if (authService.hasRoles(['Admin'])) {
+                        <p-buttongroup>
+                            <p-confirmpopup></p-confirmpopup>
+                            <p-button (onClick)="runGuard()" [text]="true" severity="contrast" icon="pi pi-play" label="Run" pTooltip="Run the guard manually"></p-button>
+                            <p-button (onClick)="editGuardClicked()" label="Edit guard" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
+                            <p-button (onClick)="onDeleteGuard($event)" label="Delete guard" icon="pi pi-trash" severity="danger" [rounded]="true"
+                                [text]="true"></p-button>
+                        </p-buttongroup>
+                    }
+                </div>
+            </ng-template>
             <app-guard-detail-pane [guardDetail]="guardDetail()!"></app-guard-detail-pane>
         }
     </p-card>
@@ -37,7 +37,7 @@
     <p-card header="Guard changes">
         <app-guard-change-history-table [guardId]="guardId()!"></app-guard-change-history-table>
     </p-card>
-    <p-card header="Guard notifications">
+    <p-card header="Guard sent notifications">
         <app-guard-notification-transactions-table [guardId]="guardId()!"></app-guard-notification-transactions-table>
     </p-card>
 

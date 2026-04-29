@@ -1,0 +1,13 @@
+.notification-transaction-info {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: .5rem;
+}
+.transaction-key {
+    justify-self: end;
+    align-self: center;
+    font-weight: bold;
+}
+.transaction-value {
+    align-self: center;
+}

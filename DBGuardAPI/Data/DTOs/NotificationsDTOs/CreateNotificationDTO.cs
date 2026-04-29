@@ -7,6 +7,7 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
     {
         public int? Id { get; set; }
         public NotificationType NotificationType { get; set; }
+        public int? GuardId { get; set; }
         public required NotificationProviderDTO NotificationProvider { get; set; }
     }
     public class CreateEmailNotificationDTO: CreateNotificationDTO

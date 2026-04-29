@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DBGuardAPI.Migrations
+namespace DBGuardAPI.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -33,6 +33,9 @@ namespace DBGuardAPI.Migrations
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    create_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_edited = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created_by_user_id = table.Column<string>(type: "text", nullable: true),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -51,6 +54,12 @@ namespace DBGuardAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_asp_net_users", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_asp_net_users_asp_net_users_created_by_user_id",
+                        column: x => x.created_by_user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,11 +202,12 @@ namespace DBGuardAPI.Migrations
                     create_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_edited_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     created_by_user_id = table.Column<string>(type: "text", nullable: false),
-                    notification_type = table.Column<int>(type: "integer", nullable: false),
+                    provider_type = table.Column<int>(type: "integer", nullable: false),
                     smtp_server = table.Column<string>(type: "text", nullable: true),
                     username = table.Column<string>(type: "text", nullable: true),
                     password = table.Column<string>(type: "text", nullable: true),
                     port = table.Column<int>(type: "integer", nullable: true),
+                    sender_email = table.Column<string>(type: "text", nullable: true),
                     phone_number = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -244,7 +254,7 @@ namespace DBGuardAPI.Migrations
                         column: x => x.database_connection_id,
                         principalTable: "database_connections",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_guards_users_created_by_user_id",
                         column: x => x.created_by_user_id,
@@ -261,12 +271,16 @@ namespace DBGuardAPI.Migrations
                     timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     guard_id = table.Column<int>(type: "integer", nullable: true),
                     guard_state = table.Column<int>(type: "integer", nullable: false),
+                    previous_guard_state = table.Column<int>(type: "integer", nullable: false),
                     guard_query = table.Column<string>(type: "text", nullable: false),
                     guard_operator = table.Column<int>(type: "integer", nullable: false),
                     guard_value = table.Column<int>(type: "integer", nullable: false),
+                    result_value = table.Column<int>(type: "integer", nullable: true),
+                    message = table.Column<string>(type: "text", nullable: true),
                     database_connection_id = table.Column<int>(type: "integer", nullable: true),
                     database_connection_end_point = table.Column<string>(type: "text", nullable: false),
                     database_connection_engine = table.Column<int>(type: "integer", nullable: false),
+                    database_name = table.Column<string>(type: "text", nullable: false),
                     database_connection_username = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -294,6 +308,8 @@ namespace DBGuardAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     guard_id = table.Column<int>(type: "integer", nullable: false),
                     notification_type = table.Column<int>(type: "integer", nullable: false),
+                    create_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_edited = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     notification_provider_id = table.Column<int>(type: "integer", nullable: false),
                     email_subject = table.Column<string>(type: "text", nullable: true),
                     email_body = table.Column<string>(type: "text", nullable: true),
@@ -317,7 +333,7 @@ namespace DBGuardAPI.Migrations
                         column: x => x.notification_provider_id,
                         principalTable: "notification_providers",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -327,14 +343,17 @@ namespace DBGuardAPI.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    guard_id = table.Column<int>(type: "integer", nullable: true),
                     guard_notification_id = table.Column<int>(type: "integer", nullable: true),
                     notification_type = table.Column<int>(type: "integer", nullable: false),
                     guard_change_transaction_id = table.Column<int>(type: "integer", nullable: false),
+                    successful = table.Column<bool>(type: "boolean", nullable: false),
+                    error_message = table.Column<string>(type: "text", nullable: true),
                     email_subject = table.Column<string>(type: "text", nullable: true),
                     email_body = table.Column<string>(type: "text", nullable: true),
-                    to_emails = table.Column<string>(type: "text", nullable: true),
-                    cc_emails = table.Column<string>(type: "text", nullable: true),
-                    bcc_emails = table.Column<string>(type: "text", nullable: true),
+                    to_emails = table.Column<List<string>>(type: "text[]", nullable: true),
+                    cc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
+                    bcc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
                     phone_numbers = table.Column<string>(type: "text", nullable: true),
                     text_message = table.Column<string>(type: "text", nullable: true)
                 },
@@ -347,6 +366,17 @@ namespace DBGuardAPI.Migrations
                         principalTable: "guard_change_transactions",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_notification_transactions_guard_notifications_guard_notific",
+                        column: x => x.guard_notification_id,
+                        principalTable: "guard_notifications",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_notification_transactions_guards_guard_id",
+                        column: x => x.guard_id,
+                        principalTable: "guards",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
@@ -379,6 +409,11 @@ namespace DBGuardAPI.Migrations
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "normalized_email");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_asp_net_users_created_by_user_id",
+                table: "AspNetUsers",
+                column: "created_by_user_id");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -430,6 +465,16 @@ namespace DBGuardAPI.Migrations
                 name: "ix_notification_transactions_guard_change_transaction_id",
                 table: "notification_transactions",
                 column: "guard_change_transaction_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_notification_transactions_guard_id",
+                table: "notification_transactions",
+                column: "guard_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_notification_transactions_guard_notification_id",
+                table: "notification_transactions",
+                column: "guard_notification_id");
         }
 
         /// <inheritdoc />
@@ -451,22 +496,22 @@ namespace DBGuardAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "guard_notifications");
-
-            migrationBuilder.DropTable(
                 name: "notification_transactions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "notification_providers");
-
-            migrationBuilder.DropTable(
                 name: "guard_change_transactions");
 
             migrationBuilder.DropTable(
+                name: "guard_notifications");
+
+            migrationBuilder.DropTable(
                 name: "guards");
+
+            migrationBuilder.DropTable(
+                name: "notification_providers");
 
             migrationBuilder.DropTable(
                 name: "database_connections");

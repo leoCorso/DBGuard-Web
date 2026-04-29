@@ -23,13 +23,15 @@ namespace DBGuardAPI.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ILogger<NotificationProvidersController> _logger;
         private readonly EntityViewGetter _entityViewGetter;
-        public NotificationProvidersController(IDbContextFactory<ApplicationDbContext> dbContextFactory, CredentialProtector credentialProtector, ILogger<NotificationProvidersController> logger, UserManager<User> userManager, EntityViewGetter entityViewGetter)
+        private readonly NotificationService _notificationService;
+        public NotificationProvidersController(IDbContextFactory<ApplicationDbContext> dbContextFactory, CredentialProtector credentialProtector, ILogger<NotificationProvidersController> logger, UserManager<User> userManager, EntityViewGetter entityViewGetter, NotificationService notificationService)
         {
             _dbContextFactory = dbContextFactory;
             _credentialProtector = credentialProtector;
             _logger = logger;
             _userManager = userManager;
             _entityViewGetter = entityViewGetter;
+            _notificationService = notificationService;
         }
         [HttpGet(nameof(GetNotificationProviderDetail))]
         public async Task<ActionResult<NotificationProviderDTO>> GetNotificationProviderDetail([FromQuery] int id)
@@ -60,7 +62,8 @@ namespace DBGuardAPI.Controllers
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
                     Port = email.Port,
-                    Password = await _userManager.IsInRoleAsync(user, RoleNames.Admin) ? _credentialProtector.Decrypt(email.Password) : null
+                    Password = await _userManager.IsInRoleAsync(user, RoleNames.Admin) ? _credentialProtector.Decrypt(email.Password) : null,
+                    SenderEmail = email.SenderEmail
                 }
             };
         }
@@ -105,7 +108,8 @@ namespace DBGuardAPI.Controllers
                     SMTPServer = email.SMTPServer,
                     Port = email.Port,
                     Username = email.Username,
-                    Password = _credentialProtector.Decrypt(email.Password)
+                    Password = _credentialProtector.Decrypt(email.Password),
+                    SenderEmail = email.SenderEmail
                 },
                 _ => throw new InvalidOperationException()
             };
@@ -117,6 +121,23 @@ namespace DBGuardAPI.Controllers
             using var context = await _dbContextFactory.CreateDbContextAsync();
             User user = (await _userManager.GetUserAsync(User))!;
             NotificationProvider provider;
+            if (newProvider.VerifyProvider)
+            {
+                try
+                {
+                    switch (newProvider)
+                    {
+                        case CreateEmailNotificationProviderDTO emailNotificationProviderDTO:
+                            await _notificationService.TestEmailProviderAsync(emailNotificationProviderDTO.SMTPServer, emailNotificationProviderDTO.Port, emailNotificationProviderDTO.Username, emailNotificationProviderDTO.Password);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status502BadGateway, new { ex.Message });
+
+                }
+            }
             switch(newProvider)
             {
                 case CreateEmailNotificationProviderDTO emailNotificationProviderDTO:
@@ -126,6 +147,7 @@ namespace DBGuardAPI.Controllers
                         Port = emailNotificationProviderDTO.Port,
                         Username = emailNotificationProviderDTO.Username,
                         Password = _credentialProtector.Encrypt(emailNotificationProviderDTO.Password),
+                        SenderEmail = emailNotificationProviderDTO.SenderEmail,
                         CreatedByUserId = user.Id
                     };
                     break;
@@ -139,6 +161,34 @@ namespace DBGuardAPI.Controllers
             return NotificationProviderHelper.MapToDTO(providerToReturn);
         }
 
+        [HttpPost(nameof(TestNotificationProvider))]
+        public async  Task<ActionResult> TestNotificationProvider([FromQuery] int providerId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            NotificationProvider? provider = await context.NotificationProviders
+                .Where(provider => provider.Id == providerId)
+                .FirstOrDefaultAsync();
+            if(provider is null)
+            {
+                _logger.LogError("A provider test was attempted on a non-existing provider id {ProviderId}", providerId);
+                return NotFound();
+            }
+            try
+            {
+                switch (provider)
+                {
+                    case EmailProvider emailProvider:
+                        string password = _credentialProtector.Decrypt(emailProvider.Password);
+                        await _notificationService.TestEmailProviderAsync(emailProvider.SMTPServer, emailProvider.Port, emailProvider.Username, password);
+                        break;
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status502BadGateway, new {  ex.Message });
+            }
+        }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPut(nameof(PutNotificationProvider))]
         public async Task<ActionResult<NotificationProviderDTO>> PutNotificationProvider(CreateNotificationProviderDTO updatedProvider)
@@ -155,18 +205,37 @@ namespace DBGuardAPI.Controllers
                 _logger.LogWarning("A notification provider edit was attempted with an invalid provider id {ProviderId}", updatedProvider.Id);
                 return NotFound();
             }
+
+            if (updatedProvider.VerifyProvider)
+            {
+                try
+                {
+                    switch (updatedProvider)
+                    {
+                        case CreateEmailNotificationProviderDTO emailProvider:
+                            await _notificationService.TestEmailProviderAsync(emailProvider.SMTPServer, emailProvider.Port, emailProvider.Username, emailProvider.Password);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status502BadGateway, new { ex.Message });
+                }
+            }
             switch (providerToEdit)
             {
                 case EmailProvider emailProvider when updatedProvider is CreateEmailNotificationProviderDTO emailUpdatedProvider:
                     emailProvider.SMTPServer = emailUpdatedProvider.SMTPServer;
                     emailProvider.Port = emailUpdatedProvider.Port;
                     emailProvider.Username = emailUpdatedProvider.Username;
+                    emailProvider.SenderEmail = emailUpdatedProvider.SenderEmail;
                     emailProvider.Password = _credentialProtector.Encrypt(emailUpdatedProvider.Password);
                     break;
                 default:
                     _logger.LogError("A provider was edited with an invalid provider type {Type}", updatedProvider.ProviderType);
                     return BadRequest();
             }
+
             await context.SaveChangesAsync();
             _logger.LogInformation("A notification provider was edited {ProviderId}", updatedProvider.Id);
             NotificationProvider providerDTO = (await context.NotificationProviders.Where(provider => provider.Id == updatedProvider.Id).Include(provider => provider.CreatedByUser).FirstOrDefaultAsync())!;

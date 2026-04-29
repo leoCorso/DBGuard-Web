@@ -6,6 +6,8 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
     {
         public int? Id { get; set; }
         public NotificationType ProviderType { get; set; }
+        public bool VerifyProvider { get; set; } = true;
+
     }
     public class CreateEmailNotificationProviderDTO: CreateNotificationProviderDTO
     {
@@ -13,5 +15,6 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
         public int Port { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }
+        public required string SenderEmail { get; set; }
     }
 }

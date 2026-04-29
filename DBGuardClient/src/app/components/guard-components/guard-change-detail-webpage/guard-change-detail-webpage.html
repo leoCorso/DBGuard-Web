@@ -1,6 +1,15 @@
 <div class="cards">
     <p-card header="Change detail">
-        <app-guard-change-detail-pane [changeHistoryDetail]="changeHistoryDetail()!"></app-guard-change-detail-pane>
+        @if (loadingChangeDetail()) {
+            <div class="loading-container">
+                <p-progressspinner></p-progressspinner>
+                <em>Loading change details</em>
+            </div>
+        }
+        @else {
+            <app-guard-change-detail-pane [changeHistoryDetail]="changeHistoryDetail()!"></app-guard-change-detail-pane>
+        }
+
     </p-card>
     <p-card header="Change notifications">
         <app-guard-notification-transactions-table [guardChangeId]="changeHistoryId()!"></app-guard-notification-transactions-table>

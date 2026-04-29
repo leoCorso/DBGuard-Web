@@ -10,18 +10,18 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DBGuardAPI.Migrations
+namespace DBGuardAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260427175606_AddedCreatedByReferenceToUser")]
-    partial class AddedCreatedByReferenceToUser
+    [Migration("20260429165913_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -232,6 +232,10 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("guard_value");
 
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
                     b.Property<int>("PreviousGuardState")
                         .HasColumnType("integer")
                         .HasColumnName("previous_guard_state");
@@ -310,6 +314,10 @@ namespace DBGuardAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text")
+                        .HasColumnName("error_message");
+
                     b.Property<int>("GuardChangeTransactionId")
                         .HasColumnType("integer")
                         .HasColumnName("guard_change_transaction_id");
@@ -325,6 +333,10 @@ namespace DBGuardAPI.Migrations
                     b.Property<int>("NotificationType")
                         .HasColumnType("integer")
                         .HasColumnName("notification_type");
+
+                    b.Property<bool>("Successful")
+                        .HasColumnType("boolean")
+                        .HasColumnName("successful");
 
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamp with time zone")
@@ -795,12 +807,14 @@ namespace DBGuardAPI.Migrations
                 {
                     b.HasBaseType("DBGuardAPI.Data.Models.NotificationTransactions.NotificationTransaction");
 
-                    b.Property<string>("BCCEmails")
-                        .HasColumnType("text")
+                    b.PrimitiveCollection<List<string>>("BCCEmails")
+                        .IsRequired()
+                        .HasColumnType("text[]")
                         .HasColumnName("bcc_emails");
 
-                    b.Property<string>("CCEmails")
-                        .HasColumnType("text")
+                    b.PrimitiveCollection<List<string>>("CCEmails")
+                        .IsRequired()
+                        .HasColumnType("text[]")
                         .HasColumnName("cc_emails");
 
                     b.Property<string>("EmailBody")
@@ -813,9 +827,9 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email_subject");
 
-                    b.Property<string>("ToEmails")
+                    b.PrimitiveCollection<List<string>>("ToEmails")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("text[]")
                         .HasColumnName("to_emails");
 
                     b.ToTable("notification_transactions", (string)null);
@@ -859,6 +873,11 @@ namespace DBGuardAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("smtp_server");
+
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("sender_email");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -908,7 +927,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.DatabaseConnection", "DatabaseConnection")
                         .WithMany("Guards")
                         .HasForeignKey("DatabaseConnectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_guards_database_connections_database_connection_id");
 
@@ -948,7 +967,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", "NotificationProvider")
                         .WithMany("GuardNotifications")
                         .HasForeignKey("NotificationProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_guard_notifications_notification_providers_notification_pro");
 

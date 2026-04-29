@@ -1,0 +1,13 @@
+.email-transaction-info {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: .8rem;
+}
+.email-key {
+    font-weight: bold;
+    justify-self: end;
+    align-self: center;
+}
+.email-value {
+    align-self: center;
+}

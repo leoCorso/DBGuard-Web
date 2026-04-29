@@ -5,6 +5,7 @@ export interface CreateGuardNotificationDTO {
     id?: number,
     notificationType: NotificationType
     notificationProvider: NotificationProviderDTO,
+    guardId?: number
 }
 export interface CreateGuardNotificationDTOWIndex extends CreateGuardNotificationDTO { // WIndex includes index for ui edit to work
     index: number
@@ -40,7 +41,16 @@ export interface NotificationTransactionDTO {
     guardId?: number,
     guardNotificationId?: number,
     notificationType: NotificationType,
-    guardChangeTransactionId: number
+    guardChangeTransactionId: number,
+    successful: boolean,
+    errorMessage?: string
+}
+export interface EmailNotificationTransactionDTO extends NotificationTransactionDTO {
+    emailSubject: string,
+    emailBody: string,
+    toEmails: string[],
+    ccEmails: string[],
+    bccEmails: string[]
 }
 export interface NotificationDetailDTO {
     id: number,

@@ -29,6 +29,7 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
         public required string Username { get; set; }
         public int Port { get; set; }
         public string? Password { get; set; }
+        public required string SenderEmail { get; set; }
     }
     public class TextProviderDTO : NotificationProviderDTO
     {

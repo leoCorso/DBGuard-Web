@@ -1,3 +1,6 @@
+:host {
+    overflow: auto;
+}
 .cards {
     display: flex;
     flex-direction: column;

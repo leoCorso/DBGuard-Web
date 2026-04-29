@@ -88,6 +88,7 @@ namespace DBGuardAPI.Data.Models
                 notificationTransactions.HasOne(nt => nt.GuardChangeTransaction)
                     .WithMany(gct => gct.NotificationTransactions)
                     .HasForeignKey(nt => nt.GuardChangeTransactionId)
+                    .IsRequired(false)
                     .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<GuardNotification>(guardNotification =>
@@ -99,7 +100,7 @@ namespace DBGuardAPI.Data.Models
                 .HasMany(gn => gn.NotificationTransactions)
                 .WithOne(nt => nt.GuardNotification)
                 .HasForeignKey(nt => nt.GuardNotificationId)
-                .OnDelete(DeleteBehavior.ClientNoAction);
+                .OnDelete(DeleteBehavior.SetNull);
             });
             base.OnModelCreating(builder);
         }

@@ -1,0 +1,45 @@
+<div class="notification-transaction-info">
+    <span class="transaction-key">Id:</span>
+    <span class="transaction-value">
+        <p-button [outlined]="true" severity="contrast" [label]="notificationTransactionDetails().id.toString()" [routerLink]="['/guards/notification-transaction-detail', notificationTransactionDetails().id]"></p-button>
+    </span>
+    <span class="transaction-key">Timestamp:</span>
+    <span class="transaction-value">{{ notificationTransactionDetails().timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="transaction-key">Guard id:</span>
+    <span class="transaction-value">
+        @if(notificationTransactionDetails().guardId){
+            <p-button [outlined]="true" severity="contrast" [label]="notificationTransactionDetails().guardId?.toString()" [routerLink]="['/guards/detail', notificationTransactionDetails().guardId]"></p-button>
+        }
+        @else {
+            <p-tag value="Deleted" severity="danger"></p-tag>
+        }
+    </span>
+    <span class="transaction-key">Notification id:</span>
+    <span class="transaction-value">
+        @if (notificationTransactionDetails().guardNotificationId) {
+            <p-button [outlined]="true" severity="contrast" [label]="notificationTransactionDetails().guardNotificationId?.toString()" [routerLink]="['/guards/notfication-config-detail', notificationTransactionDetails().guardNotificationId]"></p-button>
+        }   
+        @else {
+            <p-tag value="Deleted" severity="danger"></p-tag>
+        }
+    </span>
+    <span class="transaction-key">Notification type:</span>
+    <span class="transaction-value">{{ getEnumLabel(notificationTypes, notificationTransactionDetails().notificationType) }}</span>
+    <span class="transaction-key">Guard change id:</span>
+    <span class="transaction-value">
+        <p-button [outlined]="true" severity="contrast" [label]="notificationTransactionDetails().guardChangeTransactionId.toString()" [routerLink]="['/guards/history-detail', notificationTransactionDetails().guardChangeTransactionId]"></p-button>
+    </span>
+    <span class="transaction-key">Status:</span>
+    <span class="transaction-value">
+        <p-tag [value]="notificationTransactionDetails().successful ? 'Sent' : 'Failed'" [severity]="notificationTransactionDetails().successful ? 'success' : 'danger'"></p-tag>
+    </span>
+    <span class="transaction-key">Error message:</span>
+    <span class="transaction-value">{{ notificationTransactionDetails().errorMessage ?? 'None' }}</span>
+</div>
+<p-divider></p-divider>
+@switch (notificationTransactionDetails().notificationType) {
+    <!-- Email -->
+    @case (0) {
+        <app-email-transaction-detail-pane [emailTransactionInfo]="emailNotificationTransactionDetails()"></app-email-transaction-detail-pane>
+    }
+}

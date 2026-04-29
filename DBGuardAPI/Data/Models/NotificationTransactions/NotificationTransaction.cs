@@ -11,6 +11,8 @@ namespace DBGuardAPI.Data.Models.NotificationTransactions
         public int? GuardNotificationId { get; set; }
         public NotificationType NotificationType { get; set; }
         public int GuardChangeTransactionId { get; set; }
+        public bool Successful { get; set; }
+        public string? ErrorMessage { get; set; }
         public Guard? Guard { get; set; }
         public GuardNotification?  GuardNotification { get; set; }
         public GuardChangeTransaction? GuardChangeTransaction { get; set; }

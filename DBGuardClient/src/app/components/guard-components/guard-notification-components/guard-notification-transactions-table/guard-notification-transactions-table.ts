@@ -13,10 +13,13 @@ import { FilterItem } from '../../../shared/filter-item/filter-item';
 import { DatePipe } from '@angular/common';
 import { EntityChangeService } from '../../../../services/entity-change-service';
 import { takeUntil } from 'rxjs';
+import { Tag } from 'primeng/tag';
+import { Button } from 'primeng/button';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-guard-notification-transactions-table',
-  imports: [TableModule, FilterItem, DatePipe],
+  imports: [TableModule, FilterItem, DatePipe, Tag, Button, RouterModule],
   templateUrl: './guard-notification-transactions-table.html',
   styleUrl: './guard-notification-transactions-table.scss',
 })
@@ -37,7 +40,9 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
     {field: 'guardId', header: 'GuardId', sortable: false},
     {field: 'guardNotificationId', header: 'Guard notification id', sortable: true},
     {field: 'notificationType', header: 'Notification type', sortable: true},
-    {field: 'guardChangeTransactionId', header: 'Guard change transaction id', sortable: true}
+    {field: 'guardChangeTransactionId', header: 'Guard change transaction id', sortable: true},
+    {field: 'successful', header: 'Status', sortable: true},
+    {field: 'errorMessage', header: 'Error', sortable: true}
   ];
   public override defaultSort: SortValue[] = [
     {field: 'timestamp', order: -1}
@@ -95,7 +100,9 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
       {field: 'guardId', type: this.guardId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by guard id'},
       {field: 'guardNotificationId', type: this.guardNotificationId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by notification config id'},
       {field: 'notificationType', type: 'multi-select', isTableFilter: true, options: this.notificationTypes, placeholder: 'Filter by notification type'},
-      {field: 'guardChangeTransactionId', type: this.guardChangeId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by change transaction id'}
+      {field: 'guardChangeTransactionId', type: this.guardChangeId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by change transaction id'},
+      {field: 'successful', type: 'trivalue', isTableFilter: true, options: [{label: 'Sent', value: true}, {label: 'Failed', value: false}]},
+      {field: 'errorMessage', type: 'text', isTableFilter: true, placeholder: 'Filter by error message'}
     ];  
   }
 }

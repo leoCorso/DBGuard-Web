@@ -1,29 +1,37 @@
-<div class="user-details">
-    <span class="user-key">Id:</span>
-    <span class="user-value">
-        <p-button [label]="userDetails()?.id?.toString()" [routerLink]="['/users/detail', userDetails()?.id]" [outlined]="true" severity="contrast"></p-button>
-    </span>
-    <span class="user-key">Username:</span>
-    <span class="user-value">{{ userDetails()?.username }}</span>
-    <span class="user-key">Created At:</span>
-    <span class="user-value">{{ userDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
-    <span class="user-key">Last edited:</span>
-    <span class="user-value">{{ userDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
-    <span class="user-key">Created by:</span>
-    <span class="user-value">
-    @if (userDetails()?.createdByUserId) {
-        <p-button [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
-    }
-    @else {
-        <p-tag value="System" severity="info"></p-tag>
-    }
-    </span>
-    <span class="user-key">Roles:</span>
-    <span class="user-value">
-        <div style="display: flex;gap: .2rem;">
-            @for (role of userDetails()?.roles; track $index) {
-                <p-tag [rounded]="true" [value]="role"></p-tag>
-            }
-        </div>
-    </span>
-</div>
+@if (loadingUser()) {
+    <div class="loading-container">
+        <p-progressspinner></p-progressspinner>
+        <em>Loading user info</em>
+    </div>
+}
+@else {
+    <div class="user-details">
+        <span class="user-key">Id:</span>
+        <span class="user-value">
+            <p-button [label]="userDetails()?.id?.toString()" [routerLink]="['/users/detail', userDetails()?.id]" [outlined]="true" severity="contrast"></p-button>
+        </span>
+        <span class="user-key">Username:</span>
+        <span class="user-value">{{ userDetails()?.username }}</span>
+        <span class="user-key">Created At:</span>
+        <span class="user-value">{{ userDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+        <span class="user-key">Last edited:</span>
+        <span class="user-value">{{ userDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+        <span class="user-key">Created by:</span>
+        <span class="user-value">
+        @if (userDetails()?.createdByUserId) {
+            <p-button [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+        }
+        @else {
+            <p-tag value="System" severity="info"></p-tag>
+        }
+        </span>
+        <span class="user-key">Roles:</span>
+        <span class="user-value">
+            <div style="display: flex;gap: .2rem;">
+                @for (role of userDetails()?.roles; track $index) {
+                    <p-tag [rounded]="true" [value]="role"></p-tag>
+                }
+            </div>
+        </span>
+    </div>
+}

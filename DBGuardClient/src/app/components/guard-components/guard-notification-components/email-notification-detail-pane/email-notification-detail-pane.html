@@ -4,25 +4,31 @@
         <li>
             <div class="emails-list">
                 <strong>To emails: </strong>
-                @for(email of emailNotificationConfig().toEmails; track $index){
-                    <a [href]="'mailto:' + email">{{ email }}</a>
-                }
+                <div class="emails">
+                    @for(email of emailNotificationConfig().toEmails; track $index){
+                        <a [href]="'mailto:' + email">{{ email }}</a>
+                    }
+                </div>
             </div>
             </li>
         <li>
             <div class="emails-list">
                 <strong>CC emails: </strong>
-                @for(email of emailNotificationConfig().ccEmails; track $index){
-                    <a [href]="'mailto:' + email">{{ email }}</a>
-                }
+                <div class="emails">
+                    @for(email of emailNotificationConfig().ccEmails; track $index){
+                        <a [href]="'mailto:' + email">{{ email }}</a>
+                    }
+                </div>
             </div>
         </li>
         <li>
             <div class="emails-list">
-                <strong>BCC emails: </strong>    
-                @for(email of emailNotificationConfig().bccEmails; track $index){
-                    <a [href]="'mailto:' + email">{{ email }}</a>
-                }
+                <strong>BCC emails: </strong>  
+                <div class="emails">
+                    @for(email of emailNotificationConfig().bccEmails; track $index){
+                        <a [href]="'mailto:' + email">{{ email }}</a>
+                    }
+                </div>  
             </div>
     </ul>
     <div class="email-details">

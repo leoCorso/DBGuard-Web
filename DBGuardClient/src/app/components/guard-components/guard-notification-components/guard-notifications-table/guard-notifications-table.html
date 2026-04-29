@@ -1,6 +1,6 @@
 <div class="data-table">
     <p-table class="preview-table" #previewTable [lazy]="true" [lazyLoadOnInit]="true"
-        (onLazyLoad)="loadPreviewData($event)" [showCurrentPageReport]="true"
+        (onLazyLoad)="loadPreviewData($event)" scrollHeight="flex" [showCurrentPageReport]="true"
         currentPageReportTemplate="{totalRecords} records across {totalPages} pages" [scrollable]="true"
         [value]="dataItems()" [showGridlines]="true" [resizableColumns]="true" sortMode="multiple"
         columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"

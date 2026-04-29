@@ -10,18 +10,18 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DBGuardAPI.Migrations
+namespace DBGuardAPI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260420203819_AddedGuardReferenceToNotiTrans")]
-    partial class AddedGuardReferenceToNotiTrans
+    [Migration("20260429165806_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -232,6 +232,10 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("guard_value");
 
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
                     b.Property<int>("PreviousGuardState")
                         .HasColumnType("integer")
                         .HasColumnName("previous_guard_state");
@@ -265,9 +269,17 @@ namespace DBGuardAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("create_date");
+
                     b.Property<int>("GuardId")
                         .HasColumnType("integer")
                         .HasColumnName("guard_id");
+
+                    b.Property<DateTimeOffset>("LastEdited")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_edited");
 
                     b.Property<int>("NotificationProviderId")
                         .HasColumnType("integer")
@@ -302,6 +314,10 @@ namespace DBGuardAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text")
+                        .HasColumnName("error_message");
+
                     b.Property<int>("GuardChangeTransactionId")
                         .HasColumnType("integer")
                         .HasColumnName("guard_change_transaction_id");
@@ -317,6 +333,10 @@ namespace DBGuardAPI.Migrations
                     b.Property<int>("NotificationType")
                         .HasColumnType("integer")
                         .HasColumnName("notification_type");
+
+                    b.Property<bool>("Successful")
+                        .HasColumnType("boolean")
+                        .HasColumnName("successful");
 
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamp with time zone")
@@ -395,6 +415,14 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp");
 
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("create_date");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_id");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
@@ -407,6 +435,10 @@ namespace DBGuardAPI.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
+
+                    b.Property<DateTimeOffset>("LastEdited")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_edited");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
@@ -453,6 +485,9 @@ namespace DBGuardAPI.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_asp_net_users");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_asp_net_users_created_by_user_id");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -772,12 +807,14 @@ namespace DBGuardAPI.Migrations
                 {
                     b.HasBaseType("DBGuardAPI.Data.Models.NotificationTransactions.NotificationTransaction");
 
-                    b.Property<string>("BCCEmails")
-                        .HasColumnType("text")
+                    b.PrimitiveCollection<List<string>>("BCCEmails")
+                        .IsRequired()
+                        .HasColumnType("text[]")
                         .HasColumnName("bcc_emails");
 
-                    b.Property<string>("CCEmails")
-                        .HasColumnType("text")
+                    b.PrimitiveCollection<List<string>>("CCEmails")
+                        .IsRequired()
+                        .HasColumnType("text[]")
                         .HasColumnName("cc_emails");
 
                     b.Property<string>("EmailBody")
@@ -790,9 +827,9 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email_subject");
 
-                    b.Property<string>("ToEmails")
+                    b.PrimitiveCollection<List<string>>("ToEmails")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("text[]")
                         .HasColumnName("to_emails");
 
                     b.ToTable("notification_transactions", (string)null);
@@ -836,6 +873,11 @@ namespace DBGuardAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("smtp_server");
+
+                    b.Property<string>("SenderEmail")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("sender_email");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -885,7 +927,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.DatabaseConnection", "DatabaseConnection")
                         .WithMany("Guards")
                         .HasForeignKey("DatabaseConnectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_guards_database_connections_database_connection_id");
 
@@ -925,7 +967,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", "NotificationProvider")
                         .WithMany("GuardNotifications")
                         .HasForeignKey("NotificationProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_guard_notifications_notification_providers_notification_pro");
 
@@ -950,8 +992,9 @@ namespace DBGuardAPI.Migrations
                         .HasConstraintName("fk_notification_transactions_guards_guard_id");
 
                     b.HasOne("DBGuardAPI.Data.Models.GuardNotifications.GuardNotification", "GuardNotification")
-                        .WithMany()
+                        .WithMany("NotificationTransactions")
                         .HasForeignKey("GuardNotificationId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .HasConstraintName("fk_notification_transactions_guard_notifications_guard_notific");
 
                     b.Navigation("Guard");
@@ -969,6 +1012,17 @@ namespace DBGuardAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("fk_notification_providers_asp_net_users_created_by_user_id");
+
+                    b.Navigation("CreatedByUser");
+                });
+
+            modelBuilder.Entity("DBGuardAPI.Data.Models.User", b =>
+                {
+                    b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
+                        .WithMany("CreatedUsers")
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_asp_net_users_asp_net_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -1051,6 +1105,11 @@ namespace DBGuardAPI.Migrations
                     b.Navigation("NotificationTransactions");
                 });
 
+            modelBuilder.Entity("DBGuardAPI.Data.Models.GuardNotifications.GuardNotification", b =>
+                {
+                    b.Navigation("NotificationTransactions");
+                });
+
             modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", b =>
                 {
                     b.Navigation("GuardNotifications");
@@ -1058,6 +1117,8 @@ namespace DBGuardAPI.Migrations
 
             modelBuilder.Entity("DBGuardAPI.Data.Models.User", b =>
                 {
+                    b.Navigation("CreatedUsers");
+
                     b.Navigation("DatabaseConnections");
 
                     b.Navigation("Guards");

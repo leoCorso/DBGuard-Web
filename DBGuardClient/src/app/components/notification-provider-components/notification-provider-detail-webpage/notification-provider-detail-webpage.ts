@@ -5,17 +5,19 @@ import { Card } from 'primeng/card';
 import { GuardNotificationsTable } from '../../guard-components/guard-notification-components/guard-notifications-table/guard-notifications-table';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
 import { environment } from '../../../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from '../../../services/auth-service';
+import { TooltipModule } from 'primeng/tooltip';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-notification-provider-detail-webpage',
-  imports: [NotificationProviderDetailPane, Card, GuardNotificationsTable, Button, ButtonGroup, ConfirmPopup],
+  imports: [NotificationProviderDetailPane, Card, GuardNotificationsTable, Button, ButtonGroup, ConfirmPopup, TooltipModule, Toast],
   templateUrl: './notification-provider-detail-webpage.html',
   styleUrl: './notification-provider-detail-webpage.scss',
 })
@@ -26,6 +28,7 @@ export class NotificationProviderDetailWebpage implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private dialogService = inject(DialogService);
   private httpClient = inject(HttpClient);
+  private messageService = inject(MessageService);
   public authService = inject(AuthService);
 
   ngOnInit(): void {
@@ -70,5 +73,14 @@ export class NotificationProviderDetailWebpage implements OnInit {
         notificationProviderIdToEdit: this.providerId()
       }
     });
+  }
+  public testProvider(): void {
+    const url = [environment.api.uri, 'NotificationProviders', 'TestNotificationProvider'].join('/');
+    const params = new HttpParams().set('providerId', this.providerId()!);
+    this.httpClient.post(url, {}, { params: params }).subscribe({
+      next: () => {
+        this.messageService.add({summary: 'Provider working', detail: 'The provider is working and can be used to send notifications', key: 'provider-toast', severity: 'success'});
+      }
+    })
   }
 }

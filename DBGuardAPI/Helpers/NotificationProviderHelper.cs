@@ -21,6 +21,7 @@ namespace DBGuardAPI.Helpers
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
                     Port = email.Port,
+                    SenderEmail = email.SenderEmail
                 },
                 _ => throw new InvalidOperationException()
             };

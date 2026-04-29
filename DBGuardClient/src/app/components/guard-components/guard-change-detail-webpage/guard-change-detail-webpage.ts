@@ -18,10 +18,11 @@ import { GuardNotificationTransactionsTable } from '../guard-notification-compon
 import { GuardChangeDetailPane } from '../guard-change-detail-pane/guard-change-detail-pane';
 import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-guard-change-detail-webpage',
-  imports: [GuardChangeDetailPane, Card, GuardNotificationTransactionsTable, GuardDetailPane],
+  imports: [GuardChangeDetailPane, Card, GuardNotificationTransactionsTable, GuardDetailPane, ProgressSpinner],
   templateUrl: './guard-change-detail-webpage.html',
   styleUrl: './guard-change-detail-webpage.scss',
 })
@@ -30,7 +31,7 @@ export class GuardChangeDetailWebpage implements OnInit {
   private router = inject(Router);
   private httpClient = inject(HttpClient);
   private messageService = inject(MessageService);
-
+  public loadingChangeDetail = signal<boolean>(false);
   public changeHistoryId = signal<number | null>(null);
   public changeHistoryDetail = signal<GuardChangeTransactionDTO | null>(null);
   public guardDetail = signal<GuardDetailDTO | null>(null);
@@ -45,6 +46,7 @@ export class GuardChangeDetailWebpage implements OnInit {
   }
 
   private getChangeDetailInfo(): void {
+    this.loadingChangeDetail.set(true);
     const url = [environment.api.uri, 'Guards', 'GetGuardChangeTransactions'].join('/');
     const params = new HttpParams()
     .set('filters', `id==${this.changeHistoryId()!}`)
@@ -58,6 +60,7 @@ export class GuardChangeDetailWebpage implements OnInit {
         }
         const changeHistoryDetail = data.dataItems[0];
         this.changeHistoryDetail.set(changeHistoryDetail);
+        this.loadingChangeDetail.set(false);
         if(this.changeHistoryDetail()?.guardId){
           this.getGuardDetails();
         }

@@ -183,7 +183,8 @@ namespace DBGuardAPI.Controllers
             }
             try
             {
-                string password = _credentialProtector.Decrypt(connection.Password);
+                
+                string? password = connection.Password is not null ? _credentialProtector.Decrypt(connection.Password) : null;
                 string connectionString = QueryHelper.BuildConnectionString(connection!.DatabaseEngine, connection.EndPoint, connection.DatabaseName, connection.Username, password);
                 QueryHelper.ValidateDatabaseConnection(connection.DatabaseEngine, connectionString);
             }

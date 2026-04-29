@@ -1,6 +1,8 @@
-﻿using DBGuardAPI.Data.DTOs.NotificationsDTOs;
+﻿using System.Data;
+using DBGuardAPI.Data.DTOs.NotificationsDTOs;
 using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Models;
+using DBGuardAPI.Data.Models.NotificationTransactions;
 using DBGuardAPI.Data.Views;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -41,10 +43,44 @@ namespace DBGuardAPI.Controllers
                     Timestamp = trans.Timestamp,
                     GuardNotificationId = trans.GuardNotificationId,
                     GuardChangeTransactionId = trans.GuardChangeTransactionId,
-                    NotificationType = trans.NotificationType
+                    NotificationType = trans.NotificationType,
+                    Successful = trans.Successful,
+                    ErrorMessage = trans.ErrorMessage
                 })
                 .AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<NotificationTransactionDTO>(sieveParams, query);
+        }
+
+        [HttpGet(nameof(GetNotificationTransactionDetail))]
+        public async Task<ActionResult<NotificationTransactionDTO>> GetNotificationTransactionDetail([FromQuery] int transactionId)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            NotificationTransaction? notificationTransaction = await context.NotificationTransactions.FindAsync(transactionId);
+            if(notificationTransaction is null)
+            {
+                _logger.LogWarning("A notification transaction was requested with a non-existing id {TransactionId}", transactionId);
+                return NotFound();
+            }
+            return notificationTransaction switch
+            {
+                EmailNotificationTransaction emailTransaction => new EmailNotificationTransactionDTO
+                {
+                    Id = emailTransaction.Id,
+                    Timestamp = emailTransaction.Timestamp,
+                    GuardId = emailTransaction.GuardId,
+                    GuardNotificationId = emailTransaction.GuardNotificationId,
+                    NotificationType = emailTransaction.NotificationType,
+                    GuardChangeTransactionId = emailTransaction.GuardChangeTransactionId,
+                    Successful = emailTransaction.Successful,
+                    ErrorMessage = emailTransaction.ErrorMessage,
+                    EmailSubject = emailTransaction.EmailSubject,
+                    EmailBody = emailTransaction.EmailBody,
+                    ToEmails = emailTransaction.ToEmails,
+                    CcEmails = emailTransaction.CCEmails,
+                    BccEmails = emailTransaction.BCCEmails
+                },
+                _ => throw new NotImplementedException()
+            };
         }
     }
 }

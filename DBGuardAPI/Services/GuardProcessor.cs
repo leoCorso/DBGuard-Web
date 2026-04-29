@@ -153,7 +153,7 @@ namespace DBGuardAPI.Services
             if (sendNotification)
             {
                 List<GuardNotification> notifications = await context.GuardNotifications.Where(n => n.GuardId == guardId).ToListAsync();
-                await _notificationService.ProcesNotifications(notifications, message);
+                await _notificationService.ProcesNotifications(notifications, guard, changeTransaction, message);
             }
         }
     }

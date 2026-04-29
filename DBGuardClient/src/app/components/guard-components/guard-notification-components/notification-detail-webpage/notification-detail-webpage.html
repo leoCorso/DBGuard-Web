@@ -1,6 +1,26 @@
+<p-toast key="notification-toast" position="bottom-right"></p-toast>
+<p-confirmpopup></p-confirmpopup>
 <div class="cards">
-    <p-card header="Notification config">
-        <app-notification-detail-pane [notificationDetail]="notificationDetail()!"></app-notification-detail-pane>
+    <p-card>
+        <ng-template #header>
+            <div class="card-header">
+                <h3>Notification config</h3>
+                <p-buttongroup>
+                    <p-button (onClick)="testNotification()" [text]="true" label="Test" icon="pi pi-play" severity="contrast" pTooltip="Test by manually sending notification"></p-button>
+                    <p-button (onClick)="editGuardNotification()" [text]="true" label="Edit" icon="pi pi-pencil"></p-button>
+                    <p-button (onClick)="deleteClicked($event)" [text]="true" label="Delete" icon="pi pi-trash" severity="danger"></p-button>
+                </p-buttongroup>
+            </div>
+        </ng-template>
+        @if (loadingNotificationTransaction()) {
+            <div class="loading-container">
+                <p-progressspinner></p-progressspinner>
+                <em>Loading notification transactions</em>
+            </div>
+        }
+        @else {
+            <app-notification-detail-pane [notificationDetail]="notificationDetail()!"></app-notification-detail-pane>
+        }
     </p-card>
     <p-card header="Notification provider">
         <app-notification-provider-detail-pane [notificationProviderId]="notificationDetail()!.notificationProviderId"></app-notification-provider-detail-pane>

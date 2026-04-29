@@ -37,12 +37,32 @@
         <ng-template #body let-notification let-rowIndex="rowIndex">
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
-                <td>{{ notification.id }}</td>
+                <td>
+                    <p-button [label]="notification.id" [link]="true" [routerLink]="['/guards/notification-transaction-detail', notification.id]"></p-button>
+                </td>
                 <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-                <td>{{ notification.guardId ?? 'NULL' }}</td>
-                <td>{{ notification.guardNotificationId ?? 'NULL' }}</td>
+                <td>
+                    @if (notification.guardId) {
+                        <p-button [label]="notification.guardId" [link]="true" [routerLink]="['/guards/detail', notification.guardId]"></p-button>
+                    }
+                    @else {
+                        <p-tag value="Deleted" severity="danger"></p-tag>
+                    }
+                </td>
+                <td>
+                    @if (notification.guardNotificationId) {
+                        <p-button [label]="notification.guardNotificationId" [link]="true" [routerLink]="['/guards/notification-config-detail', notification.guardNotificationId]"></p-button>
+                    }
+                    @else {
+                        <p-tag value="Deleted" severity="danger"></p-tag>
+                    }
+                </td>
                 <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
-                <td>{{ notification.guardChangeTransactionId }}</td>
+                <td><p-button [link]="true" [label]="notification.guardChangeTransactionId" [routerLink]="['/guards/history-detail', notification.guardChangeTransactionId]"></p-button></td>
+                <td>
+                    <p-tag [value]="notification.successful ? 'Sent' : 'Failed'" [severity]="notification.successful ? 'success' : 'danger'"></p-tag>
+                </td>
+                <td>{{ notification.errorMessage ?? 'None' }}</td>
             </tr>
         </ng-template>
     </p-table>

@@ -37,6 +37,7 @@ namespace DBGuardAPI.Helpers
                 EmailNotification email => new CreateEmailNotificationDTO
                 {
                     Id = email.Id,
+                    GuardId = email.GuardId,
                     EmailSubject = email.EmailSubject,
                     EmailBody = email.EmailBody,
                     Emails = GuardNotificationHelper.StringifyEmailContacts(email.ToEmails, email.CCEmails, email.BCCEmails),

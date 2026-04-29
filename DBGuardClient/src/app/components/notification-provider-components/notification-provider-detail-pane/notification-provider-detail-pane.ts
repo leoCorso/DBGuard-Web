@@ -11,10 +11,11 @@ import { EmailProviderDetailPane } from '../email-provider-detail-pane/email-pro
 import { Divider } from 'primeng/divider';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { merge, Subject, takeUntil } from 'rxjs';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-notification-provider-detail-pane',
-  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule],
+  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, ProgressSpinner],
   templateUrl: './notification-provider-detail-pane.html',
   styleUrl: './notification-provider-detail-pane.scss',
 })
@@ -27,6 +28,7 @@ export class NotificationProviderDetailPane implements OnInit, OnDestroy {
   public getEnumLabel = getEnumLabel;
   public notificationTypes = NotificationType;
   private destroy = new Subject<void>();
+  public loadingProvider = signal<boolean>(false);
 
   ngOnInit(): void {
     this.loadDetailInfo();
@@ -43,11 +45,13 @@ export class NotificationProviderDetailPane implements OnInit, OnDestroy {
     this.destroy.complete();
   }
   private loadDetailInfo(): void {
+    this.loadingProvider.set(true);
     const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
     const params = new HttpParams().set('id', this.notificationProviderId());
     this.httpClient.get<NotificationProviderDTO>(url, { params: params }).subscribe({
       next: (providerInfo: NotificationProviderDTO) => {
         this.providerDetails.set(providerInfo);
+        this.loadingProvider.set(false);
       }
     })
   }

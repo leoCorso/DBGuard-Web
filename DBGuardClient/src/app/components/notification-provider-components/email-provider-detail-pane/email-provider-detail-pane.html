@@ -13,4 +13,6 @@
             <p-button [icon]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" (onClick)="showPassword.set(!showPassword())"></p-button>
         </div>
     }
+    <span class="email-key">Sender email</span>
+    <span class="email-value"><a [href]="'mailto:' + emailProviderDetails().senderEmail">{{ emailProviderDetails().senderEmail }}</a></span>
 </div>
