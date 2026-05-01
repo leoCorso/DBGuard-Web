@@ -27,13 +27,14 @@ import { Subject, takeUntil } from 'rxjs';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
 import { RadioButton } from 'primeng/radiobutton';
 import { Checkbox } from 'primeng/checkbox';
+import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
 
 @Component({
   selector: 'app-create-guard',
-  imports: [Card, Tag, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, Listbox, FormsModule, Checkbox],
+  imports: [Card, Tag, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
+    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, Listbox, FormsModule, Checkbox],
   templateUrl: './create-guard.html',
   styleUrl: './create-guard.scss',
 })
@@ -83,6 +84,7 @@ export class CreateGuard implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.createDbConnectionRef?.close();
   }
 
   private getCreateGuardReferenceData(): void {

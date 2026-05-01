@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { environment } from '../../../../environments/environment.development';
@@ -9,7 +9,7 @@ import { Card } from 'primeng/card';
 import { GuardsDetailTable } from '../../guard-components/guards-detail-table/guards-detail-table';
 import { ButtonGroup } from 'primeng/buttongroup';
 import { Button } from 'primeng/button';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateDbConnection } from '../create-db-connection/create-db-connection';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopup } from 'primeng/confirmpopup';
@@ -23,7 +23,7 @@ import { Toast } from 'primeng/toast';
   templateUrl: './db-connections-detail-webpage.html',
   styleUrl: './db-connections-detail-webpage.scss',
 })
-export class DbConnectionsDetailWebpage implements OnInit {
+export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private dialogService = inject(DialogService);
@@ -31,8 +31,8 @@ export class DbConnectionsDetailWebpage implements OnInit {
   private confirmService = inject(ConfirmationService);
   private httpClient = inject(HttpClient);
   private messageService = inject(MessageService);
-
   public dbConnectionId = signal<number | null>(null);
+  private editDbConnectionDialog?: DynamicDialogRef<CreateDbConnection> | null;
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -42,8 +42,11 @@ export class DbConnectionsDetailWebpage implements OnInit {
     }
     this.dbConnectionId.set(parseInt(id!));
   }
+  ngOnDestroy(): void {
+    this.editDbConnectionDialog?.close();
+  }
   public editDbConnection(): void {
-    this.dialogService.open(CreateDbConnection, {
+    this.editDbConnectionDialog = this.dialogService.open(CreateDbConnection, {
       header: 'Edit Database Connection',
       maximizable: true,
       resizable: true,

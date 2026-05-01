@@ -7,6 +7,7 @@ using MimeKit;
 using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Data.Models.NotificationTransactions;
 using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+using DBGuardAPI.Helpers;
 
 namespace DBGuardAPI.Services
 {
@@ -254,6 +255,7 @@ $$"""
                 email.To.Add(MailboxAddress.Parse(bcc));
             }
             email.Subject = $"[Test] {emailNotification.EmailSubject}";
+            string guardStateColor = GuardStateColorMapper.Map(emailNotification.Guard!.GuardState);
             BodyBuilder bodyBuilder = new()
             {
                 HtmlBody =
@@ -313,7 +315,7 @@ $$"""
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Guard State</td>
                   <td style="padding: 10px 0; vertical-align:top;">
-                    <span style="display:inline-block; background-color:#e53935; color:#ffffff; font-size:12px; font-weight:bold; padding: 3px 10px; border-radius:12px;">
+                    <span style="display:inline-block; background-color:{{guardStateColor}}; color:#ffffff; font-size:12px; font-weight:bold; padding: 3px 10px; border-radius:12px;">
                       {{emailNotification.Guard!.GuardState}}
                     </span>
                   </td>

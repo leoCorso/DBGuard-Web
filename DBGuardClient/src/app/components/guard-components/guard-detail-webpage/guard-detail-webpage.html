@@ -2,6 +2,20 @@
 <p-toast key="guard-run-toast" position="bottom-right"></p-toast>
 <div class="cards">
     <p-card>
+        <ng-template #header>
+            <div class="card-header">
+                <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
+                @if (authService.hasRoles(['Admin'])) {
+                    <p-buttongroup>
+                        <p-confirmpopup></p-confirmpopup>
+                        <p-button (onClick)="runGuard()" [text]="true" severity="contrast" icon="pi pi-play" label="Run" pTooltip="Run the guard manually"></p-button>
+                        <p-button (onClick)="editGuardClicked()" label="Edit guard" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
+                        <p-button (onClick)="onDeleteGuard($event)" label="Delete guard" icon="pi pi-trash" severity="danger" [rounded]="true"
+                            [text]="true"></p-button>
+                    </p-buttongroup>
+                }
+            </div>
+        </ng-template>
         @if(showLoadingSpinner()){
             <div class="loading-container">
                 <p-progressspinner>
@@ -11,26 +25,14 @@
             </div>
         }
         @else {
-            <ng-template #header>
-                <div class="card-header">
-                    <h1>{{ guardDetail()?.guardName ?? 'Unnamed' }}</h1>
-                    @if (authService.hasRoles(['Admin'])) {
-                        <p-buttongroup>
-                            <p-confirmpopup></p-confirmpopup>
-                            <p-button (onClick)="runGuard()" [text]="true" severity="contrast" icon="pi pi-play" label="Run" pTooltip="Run the guard manually"></p-button>
-                            <p-button (onClick)="editGuardClicked()" label="Edit guard" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
-                            <p-button (onClick)="onDeleteGuard($event)" label="Delete guard" icon="pi pi-trash" severity="danger" [rounded]="true"
-                                [text]="true"></p-button>
-                        </p-buttongroup>
-                    }
-                </div>
-            </ng-template>
             <app-guard-detail-pane [guardDetail]="guardDetail()!"></app-guard-detail-pane>
         }
     </p-card>
-    <p-card header="Database connection info">
-        <app-db-connection-detail-pane [guardId]="guardId()!" [databaseConnectionId]="guardDetail()!.databaseConnectionId"></app-db-connection-detail-pane>
-    </p-card>
+    @if(guardDetail()?.databaseConnectionId){
+        <p-card header="Database connection info">
+            <app-db-connection-detail-pane [guardId]="guardId()!" [databaseConnectionId]="guardDetail()!.databaseConnectionId"></app-db-connection-detail-pane>
+        </p-card>
+    }
     <p-card header="Guard notifications">
         <app-guard-notifications-table [guardId]="guardId()!"></app-guard-notifications-table>
     </p-card>

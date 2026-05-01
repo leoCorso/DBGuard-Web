@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { EmailNotificationDetailPane } from '../email-notification-detail-pane/email-notification-detail-pane';
 import { Card } from 'primeng/card';
@@ -18,9 +18,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ConfirmPopup } from 'primeng/confirmpopup';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateGuard } from '../../create-guard/create-guard';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { EntityChangeService } from '../../../../services/entity-change-service';
 
 @Component({
   selector: 'app-notification-detail-webpage',
@@ -28,7 +29,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
   templateUrl: './notification-detail-webpage.html',
   styleUrl: './notification-detail-webpage.scss',
 })
-export class NotificationDetailWebpage implements OnInit {
+export class NotificationDetailWebpage implements OnInit, OnDestroy {
   private httpClient = inject(HttpClient);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
@@ -38,6 +39,8 @@ export class NotificationDetailWebpage implements OnInit {
   public notificationConfigId = signal<number | null>(null);
   public notificationDetail = signal<NotificationDetailDTO | null>(null);
   public loadingNotificationTransaction = signal<boolean>(true);
+  private editGuardDialog?: DynamicDialogRef<CreateGuard> | null;
+  private entityChangeService = inject(EntityChangeService);
 
   ngOnInit(): void {
       const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -45,7 +48,15 @@ export class NotificationDetailWebpage implements OnInit {
         this.router.navigate(['/guards/configured-notifications']);
       }
       this.notificationConfigId.set(Number(id));
+      this.entityChangeService.guardEdited.subscribe(guardId => {
+        if(this.notificationDetail()?.guardId === guardId){
+          this.loadInitialData();
+        }
+      })
       this.loadInitialData();
+  }
+  ngOnDestroy(): void {
+    this.editGuardDialog?.close();
   }
   private loadInitialData(): void {
     this.loadingNotificationTransaction.set(true);
@@ -61,7 +72,7 @@ export class NotificationDetailWebpage implements OnInit {
       })
   }
   public editGuardNotification(): void {
-    this.dialogService.open(CreateGuard, {
+    this.editGuardDialog = this.dialogService.open(CreateGuard, {
       header: 'Edit guard',
       draggable: true,
       resizable: true,

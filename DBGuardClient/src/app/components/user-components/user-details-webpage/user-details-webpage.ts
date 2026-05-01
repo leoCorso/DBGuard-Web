@@ -11,7 +11,7 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateUser } from '../create-user/create-user';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { Subject, takeUntil } from 'rxjs';
@@ -22,14 +22,14 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './user-details-webpage.html',
   styleUrl: './user-details-webpage.scss',
 })
-export class UserDetailsWebpage implements OnInit {
+export class UserDetailsWebpage implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private httpClient = inject(HttpClient);
   private confirmationService = inject(ConfirmationService);
   private dialogService = inject(DialogService);
   public userId = signal<string | null>(null);
-
+  private editUserDialog?: DynamicDialogRef<CreateUser> | null;
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if(id === null){
@@ -37,8 +37,11 @@ export class UserDetailsWebpage implements OnInit {
     }
     this.userId.set(id!);
   }
+  ngOnDestroy(): void {
+    this.editUserDialog?.close();
+  }
   public editUser(): void {
-    this.dialogService.open(CreateUser, {
+    this.editUserDialog = this.dialogService.open(CreateUser, {
       header: 'Edit user',
       draggable: true,
       resizable: true,

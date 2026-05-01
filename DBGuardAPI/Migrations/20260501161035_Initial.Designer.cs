@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DBGuardAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260429220721_Initial")]
+    [Migration("20260501161035_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -359,6 +359,46 @@ namespace DBGuardAPI.Migrations
                     b.HasDiscriminator<int>("NotificationType");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("DBGuardAPI.Data.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_revoked");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("token");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_refresh_tokens");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
+
+                    b.ToTable("refresh_tokens", (string)null);
                 });
 
             modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", b =>
@@ -1003,6 +1043,18 @@ namespace DBGuardAPI.Migrations
                     b.Navigation("GuardNotification");
                 });
 
+            modelBuilder.Entity("DBGuardAPI.Data.Models.RefreshToken", b =>
+                {
+                    b.HasOne("DBGuardAPI.Data.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", b =>
                 {
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
@@ -1123,6 +1175,8 @@ namespace DBGuardAPI.Migrations
                     b.Navigation("Guards");
 
                     b.Navigation("NotificationProviders");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

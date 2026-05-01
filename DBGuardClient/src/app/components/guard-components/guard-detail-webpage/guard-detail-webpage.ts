@@ -13,7 +13,7 @@ import { ButtonGroup } from 'primeng/buttongroup';
 import { BehaviorSubject, debounceTime, Subject, takeUntil } from 'rxjs';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -52,6 +52,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   private destroy = new Subject<void>();
   private messageService = inject(MessageService);
   private entityChangeService = inject(EntityChangeService);
+  private editGuardDialogRef?: DynamicDialogRef<CreateGuard> | null;
 
   ngOnInit(): void {
     const guardId = this.activatedRoute.snapshot.paramMap.get('id');
@@ -80,9 +81,10 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.editGuardDialogRef?.close();
   }
   public editGuardClicked(): void {
-    this.dialogService.open(CreateGuard, {
+    this.editGuardDialogRef = this.dialogService.open(CreateGuard, {
       header: 'Edit guard',
       closable: true,
       draggable: true,

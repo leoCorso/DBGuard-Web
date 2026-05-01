@@ -1,9 +1,10 @@
+<!--  Emails list with remove button -->
 <div class="emails-list">
     <p-listbox [checkbox]="true" [multiple]="true" [(ngModel)]="selectedEmailAddresses" [options]="emails()"
         emptyMessage="No emails added">
 
     </p-listbox>
-    <p-button (onClick)="removeEmailAddresses()" label="Remove" icon="pi pi-trash" severity="danger" [text]="true"
+    <p-button (onClick)="removeSelectedEmailAddresses()" label="Remove" icon="pi pi-trash" severity="danger" [text]="true"
         pTooltip="Remove selected emails" [disabled]="selectedEmailAddresses().length === 0"></p-button>
 </div>
 <form [formGroup]="emailNotificationFormGroup" class="email-inputs">
@@ -34,9 +35,9 @@
         <textarea id="email-body" pTextarea fluid formControlName="emailBody"></textarea>
     </p-floatlabel>
     <div style="display: flex; gap: .5rem;">
-        <p-button (onClick)="addEmailNotification()" pTooltip="Add notification" [label]="editIndex() !== undefined ? 'Save' : 'Add'" icon="pi pi-plus"
+        <p-button (onClick)="saveEmailNotification()" pTooltip="Add notification" [label]="emailNotificationToEdit() !== undefined ? 'Save' : 'Add'" icon="pi pi-plus"
             [rounded]="true" [outlined]="true" [disabled]="emailNotificationFormGroup.invalid"></p-button>
-        <p-button (onClick)="cancelForm.emit()" label="Cancel" severity="danger" [rounded]="true" pTooltip="Cancel form changes"></p-button>
+        <p-button (onClick)="cancelNotification.emit()" label="Cancel" severity="danger" [rounded]="true" pTooltip="Cancel form changes"></p-button>
     </div>
 
 </form>

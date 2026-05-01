@@ -141,13 +141,17 @@ namespace DBGuardAPI.Controllers
             switch(newProvider)
             {
                 case CreateEmailNotificationProviderDTO emailNotificationProviderDTO:
+                    if(string.IsNullOrWhiteSpace(emailNotificationProviderDTO.SMTPServer) || string.IsNullOrWhiteSpace(emailNotificationProviderDTO.Username) || string.IsNullOrWhiteSpace(emailNotificationProviderDTO.Password) || string.IsNullOrWhiteSpace(emailNotificationProviderDTO.SenderEmail))
+                    {
+                        return BadRequest();
+                    }
                     provider = new EmailProvider
                     {
-                        SMTPServer = emailNotificationProviderDTO.SMTPServer,
+                        SMTPServer = emailNotificationProviderDTO.SMTPServer.Trim(),
                         Port = emailNotificationProviderDTO.Port,
-                        Username = emailNotificationProviderDTO.Username,
+                        Username = emailNotificationProviderDTO.Username.Trim(),
                         Password = _credentialProtector.Encrypt(emailNotificationProviderDTO.Password),
-                        SenderEmail = emailNotificationProviderDTO.SenderEmail,
+                        SenderEmail = emailNotificationProviderDTO.SenderEmail.Trim(),
                         CreatedByUserId = user.Id
                     };
                     break;
@@ -225,10 +229,14 @@ namespace DBGuardAPI.Controllers
             switch (providerToEdit)
             {
                 case EmailProvider emailProvider when updatedProvider is CreateEmailNotificationProviderDTO emailUpdatedProvider:
-                    emailProvider.SMTPServer = emailUpdatedProvider.SMTPServer;
+                    if (string.IsNullOrWhiteSpace(emailProvider.SMTPServer) || string.IsNullOrWhiteSpace(emailProvider.Username) || string.IsNullOrWhiteSpace(emailProvider.Password) || string.IsNullOrWhiteSpace(emailProvider.SenderEmail))
+                    {
+                        return BadRequest();
+                    }
+                    emailProvider.SMTPServer = emailUpdatedProvider.SMTPServer.Trim();
                     emailProvider.Port = emailUpdatedProvider.Port;
-                    emailProvider.Username = emailUpdatedProvider.Username;
-                    emailProvider.SenderEmail = emailUpdatedProvider.SenderEmail;
+                    emailProvider.Username = emailUpdatedProvider.Username.Trim();
+                    emailProvider.SenderEmail = emailUpdatedProvider.SenderEmail.Trim();
                     emailProvider.Password = _credentialProtector.Encrypt(emailUpdatedProvider.Password);
                     break;
                 default:

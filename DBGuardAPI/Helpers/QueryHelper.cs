@@ -49,7 +49,7 @@ namespace DBGuardAPI.Helpers
         {
             var builder = new SqliteConnectionStringBuilder(connectionString);
             var dataSource = builder.DataSource;
-            if (string.IsNullOrEmpty(dataSource))
+            if (string.IsNullOrWhiteSpace(dataSource))
             {
                 throw new InvalidOperationException("SQLite connection string must specify a data source");
             }

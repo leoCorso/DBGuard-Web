@@ -42,8 +42,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     //options.Lockout.MaxFailedAccessAttempts = 3;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders()
-    .AddTokenProvider<RefreshTokenProvider>("RefreshTokenProvider");
+    .AddDefaultTokenProviders();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,12 +59,15 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecurityKey"]!))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecurityKey"]!)),
+        ClockSkew = TimeSpan.Zero
     };
 });
+
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
     .SetApplicationName(nameof(builder.Environment.ApplicationName));
+
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddHostedService<MonitorService>();
 builder.Services.AddSingleton<CredentialProtector>();
@@ -72,15 +75,17 @@ builder.Services.AddTransient<GuardProcessor>();
 builder.Services.AddTransient<NotificationService>();
 builder.Services.AddScoped<SieveProcessor>();
 builder.Services.AddScoped<ISieveCustomFilterMethods, GuardFilters>();
-
 builder.Services.AddScoped<EntityViewGetter>();
+builder.Services.AddScoped<RefreshTokenService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Dev", builder =>
     {
         builder.WithOrigins("http://localhost:5000", "http://localhost:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -96,7 +101,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("Dev");
+    app.UseCors(policyName: "Dev");
     app.MapOpenApi();
 }
 

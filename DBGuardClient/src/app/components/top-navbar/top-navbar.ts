@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Menubar } from 'primeng/menubar';
@@ -18,7 +18,8 @@ export class TopNavbar {
   private bpObserver = inject(BreakpointObserver);
   private bpResult = toSignal(this.bpObserver.observe([Breakpoints.Handset]));
   public isMobile = computed(() => this.bpResult()?.matches ?? false);
-  
+  public toggleLogin = output<void>();
+
   public menuItems: MenuItem[] = [
     {
       label: 'Home',

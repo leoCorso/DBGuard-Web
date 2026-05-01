@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { NotificationProviderDetailPane } from '../notification-provider-detail-pane/notification-provider-detail-pane';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card } from 'primeng/card';
@@ -6,7 +6,7 @@ import { GuardNotificationsTable } from '../../guard-components/guard-notificati
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
 import { environment } from '../../../../environments/environment.development';
@@ -21,7 +21,7 @@ import { Toast } from 'primeng/toast';
   templateUrl: './notification-provider-detail-webpage.html',
   styleUrl: './notification-provider-detail-webpage.scss',
 })
-export class NotificationProviderDetailWebpage implements OnInit {
+export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
   public providerId = signal<number | null>(null);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
@@ -30,6 +30,7 @@ export class NotificationProviderDetailWebpage implements OnInit {
   private httpClient = inject(HttpClient);
   private messageService = inject(MessageService);
   public authService = inject(AuthService);
+  private editProviderDialog?: DynamicDialogRef<CreateNotificationProvider> | null;
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -37,6 +38,9 @@ export class NotificationProviderDetailWebpage implements OnInit {
       this.router.navigate(['/providers/view-all']);
     }
     this.providerId.set(parseInt(id!));
+  }
+  ngOnDestroy(): void {
+    this.editProviderDialog?.close();
   }
   public deleteProviderClicked(event: Event): void {
     this.confirmationService.confirm({
@@ -64,7 +68,7 @@ export class NotificationProviderDetailWebpage implements OnInit {
     });
   }
   public editProvider(): void {
-    this.dialogService.open(CreateNotificationProvider, {
+    this.editProviderDialog = this.dialogService.open(CreateNotificationProvider, {
       header: 'Edit provider',
       draggable: true,
       closable: true,

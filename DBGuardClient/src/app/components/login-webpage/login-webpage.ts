@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
@@ -8,7 +8,7 @@ import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../services/auth-service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from 'primeng/message';
 
 @Component({
@@ -17,9 +17,10 @@ import { Message } from 'primeng/message';
   templateUrl: './login-webpage.html',
   styleUrl: './login-webpage.scss',
 })
-export class LoginWebpage {
+export class LoginWebpage implements OnInit {
   public authService = inject(AuthService);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   public returnUrl?: string;
 
   constructor(){
@@ -30,6 +31,9 @@ export class LoginWebpage {
         this.router.navigate([returnUrl]);
       }
     });
+  }
+  ngOnInit(): void {
+    this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] ?? '/';
   }
   public loginForm = new FormGroup({
     username: new FormControl<string | null>(null, [Validators.required]),
@@ -42,6 +46,10 @@ export class LoginWebpage {
     if(!username || !password){
       return;
     }
-    this.authService.login(username, password);
+    this.authService.login(username, password).subscribe({
+      next: () => {
+        this.router.navigate([this.returnUrl]);
+      }
+    })
   }
 }

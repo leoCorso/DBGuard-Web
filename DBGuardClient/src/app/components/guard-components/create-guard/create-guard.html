@@ -1,4 +1,4 @@
-<form class="guard-form" [formGroup]="guardFormGroup">
+<form class="guard-form" [formGroup]="guardFormGroup" (ngSubmit)="addGuard()">
     <div class="activation-status">
         <div class="notify-option">
             <label for="is-active">Is active</label>
@@ -113,6 +113,6 @@
         <p-checkbox [binary]="true" inputId="validate-guard" formControlName="validateGuard" pTooltip="When selected it will ensure connection and query are valid"></p-checkbox>
     </div>
     <div class="bottom-btns">
-        <p-button (onClick)="addGuard()" [label]="guardToEdit() ? 'Save' : 'Add'" icon="pi pi-save" [rounded]="true" [disabled]="guardFormGroup.invalid"></p-button>
+        <p-button type="submit" [label]="guardToEdit() ? 'Save' : 'Add'" icon="pi pi-save" [rounded]="true" [disabled]="guardFormGroup.invalid"></p-button>
     </div>
 </form>

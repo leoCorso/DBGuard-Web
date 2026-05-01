@@ -14,8 +14,8 @@ namespace DBGuardAPI.Helpers
                 CreateEmailNotificationDTO emailNotification => new EmailNotification
                 {
                     NotificationProviderId = newNotification.NotificationProvider.Id,
-                    EmailSubject = emailNotification.EmailSubject,
-                    EmailBody = emailNotification.EmailBody,
+                    EmailSubject = emailNotification.EmailSubject.Trim(),
+                    EmailBody = emailNotification.EmailBody.Trim(),
                     ToEmails = GuardNotificationHelper.ParseEmailContacts(emailNotification.Emails).Where(email => email.Type == "to").Select(email => email.EmaiLAddress).ToList(),
                     CCEmails = GuardNotificationHelper.ParseEmailContacts(emailNotification.Emails).Where(email => email.Type == "cc").Select(email => email.EmaiLAddress).ToList(),
                     BCCEmails = GuardNotificationHelper.ParseEmailContacts(emailNotification.Emails).Where(email => email.Type == "bcc").Select(email => email.EmaiLAddress).ToList()

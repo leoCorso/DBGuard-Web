@@ -134,11 +134,11 @@ namespace DBGuardAPI.Controllers
                     return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})" });
                 }
             }
-            if (string.IsNullOrEmpty(newConnection.Endpoint))
+            if (string.IsNullOrWhiteSpace(newConnection.Endpoint))
             {
                 return BadRequest(new { Message = "The database endpoint cannot be null or empty" });
             }
-            if (string.IsNullOrEmpty(newConnection.DatabaseName))
+            if (string.IsNullOrWhiteSpace(newConnection.DatabaseName))
             {
                 return BadRequest(new { Message = "The database name cannot be null or empty" });
             }
@@ -152,10 +152,10 @@ namespace DBGuardAPI.Controllers
             }
             DatabaseConnection newConnObject = new()
             {
-                EndPoint = newConnection.Endpoint,
+                EndPoint = newConnection.Endpoint.Trim(),
                 DatabaseEngine = newConnection.DatabaseEngine,
-                DatabaseName = newConnection.DatabaseName,
-                Username = newConnection.Username,
+                DatabaseName = newConnection.DatabaseName.Trim(),
+                Username = newConnection.Username?.Trim(),
                 Password = newConnection.Password is not null ? _credentialProtector.Encrypt(newConnection.Password) : null,
                 CreatedByUserId = user.Id
             };
@@ -215,11 +215,11 @@ namespace DBGuardAPI.Controllers
             {
                 return Conflict(new { Message = "This database connection already exists" });
             }
-            if (string.IsNullOrEmpty(updatedConnection.Endpoint))
+            if (string.IsNullOrWhiteSpace(updatedConnection.Endpoint))
             {
                 return BadRequest(new { Message = "The database endpoint cannot be empty or null" });
             }
-            if (string.IsNullOrEmpty(updatedConnection.DatabaseName))
+            if (string.IsNullOrWhiteSpace(updatedConnection.DatabaseName))
             {
                 return BadRequest(new { Message = "The database name cannot be empty or null" });
             }
@@ -243,10 +243,10 @@ namespace DBGuardAPI.Controllers
                     return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not modify connection to the database. ({ex.Message})" });
                 }
             }
-            connection.EndPoint = updatedConnection.Endpoint;
+            connection.EndPoint = updatedConnection.Endpoint.Trim();
             connection.DatabaseEngine = updatedConnection.DatabaseEngine;
-            connection.DatabaseName = updatedConnection.DatabaseName;
-            connection.Username = updatedConnection.Username;
+            connection.DatabaseName = updatedConnection.DatabaseName.Trim();
+            connection.Username = updatedConnection.Username?.Trim();
             if(connection.Password is not null)
             {
                 connection.Password = _credentialProtector.Encrypt(connection.Password);

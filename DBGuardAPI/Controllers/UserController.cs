@@ -11,11 +11,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Bcpg;
 using Sieve.Models;
+using static DBGuardAPI.Services.RefreshTokenService;
 
 namespace DBGuardAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController: ControllerBase
     {
         private readonly UserManager<User> _userManager;
@@ -24,7 +26,8 @@ namespace DBGuardAPI.Controllers
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly EntityViewGetter _entityViewGetter;
         private readonly ILogger<UserController> _logger;
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, JwtService jwtService, EntityViewGetter entityViewGetter, IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<UserController> logger) 
+        private readonly RefreshTokenService _refreshTokenService;
+        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, JwtService jwtService, EntityViewGetter entityViewGetter, IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<UserController> logger, RefreshTokenService refreshTokenService) 
         {
             _userManager = userManager;   
             _signInManager = signInManager;
@@ -32,6 +35,7 @@ namespace DBGuardAPI.Controllers
             _entityViewGetter = entityViewGetter;
             _dbContextFactory = dbContextFactory;
             _logger = logger;
+            _refreshTokenService = refreshTokenService;
         }
         [HttpGet(nameof(GetUsers))]
         [Authorize(Roles = RoleNames.Admin)]
@@ -127,78 +131,125 @@ namespace DBGuardAPI.Controllers
             };
         }
         [HttpPost(nameof(Login))]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthResult>> Login(LoginRequest loginRequest)
         {
             var signInResult = await _signInManager.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, isPersistent: false, lockoutOnFailure: false);
             User? user = await _userManager.FindByNameAsync(loginRequest.Username);
             if(user is null)
             {
-                return Unauthorized(new AuthResult
+                return new AuthResult
                 {
                     Success = false,
                     Message = "No user exists"
-                });
-            }
-            if (signInResult.Succeeded)
-            {
-                var secToken = await _jwtService.GetTokenAsync(user);
-                var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
-                var refreshToken = await _userManager.GenerateUserTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
-                await _userManager.SetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken", refreshToken);
-
-                return new AuthResult
-                {
-                    UserId = user.Id,
-                    Success = true,
-                    AccessToken = jwt,
-                    RefreshToken = refreshToken
                 };
             }
-            else
+            if (!signInResult.Succeeded)
             {
-                return Unauthorized(new AuthResult
+                return new AuthResult
                 {
                     Success = false,
                     Message = "Invalid password"
-                });
+                };
             }
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var secToken = await _jwtService.GetTokenAsync(user);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
+            RefreshToken refreshToken = await _refreshTokenService.GenerateRefreshToken(user);
+            // Store refresh token in HttpOnly cookie for security
+            Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = refreshToken.Expires
+            });
+
+            return new AuthResult
+            {
+                Success = true,
+                AccessToken = jwt,
+                Expiration = secToken.ValidTo,
+                Username = user.UserName,
+                Roles = roles.ToList()
+            };
+
         }
-        [Authorize]
-        [HttpPost] 
+        [HttpPost(nameof(LogOut))] 
         public async Task<ActionResult> LogOut()
         {
             User? user = await _userManager.GetUserAsync(User);
             if(user is null)
             {
-                return BadRequest();
+                _logger.LogError("A user logout was attempted for an invalid user");
+                return NotFound();
             }
-            await _userManager.RemoveAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
+            string? token = Request.Cookies["refreshToken"]; // Get refresh token in cookie
+            // Revoke refresh token in database
+            if (token is not null)
+            {
+                await _refreshTokenService.RevokeRefreshToken(token);
+            }
+            // Tell browser to remove refresh token
+            Response.Cookies.Delete("refreshToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            }); 
+
             return Ok();
         }
-        [HttpPost(nameof(ProcessUserRefreshToken))]
-        public async Task<ActionResult<AuthResult>> ProcessUserRefreshToken(RefreshTokenRequest request)
+        [HttpPost(nameof(RefreshToken))]
+        [AllowAnonymous]
+        public async Task<ActionResult<AuthResult>> RefreshToken()
         {
-            User? user = await _userManager.FindByIdAsync(request.UserId);
-            if(user is null)
+            string? token = Request.Cookies["refreshToken"];
+            if (token is null)
             {
-                return Unauthorized();
+                return new AuthResult
+                {
+                    Success = false,
+                    Message = "No refresh token provided"
+                };
             }
-            bool isValid = await _userManager.VerifyUserTokenAsync(user, "RefreshTokenProvider", "RefreshToken", request.RefreshToken);
-            if (!isValid)
+            RefreshToken? refreshToken = await _refreshTokenService.GetRefreshToken(token);
+            if (refreshToken is null)
             {
-                return Unauthorized();
+                return new AuthResult
+                {
+                    Success = false,
+                    Message = "Invalid refresh token"
+                };
             }
-            await _userManager.RemoveAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
-            var secToken = await _jwtService.GetTokenAsync(user);
-            var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
-            var refreshToken = await _userManager.GenerateUserTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
-            await _userManager.SetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken", refreshToken);
+            await _refreshTokenService.RevokeRefreshToken(token);
+            User? user = await _userManager.FindByIdAsync(refreshToken.UserId);
+            if (user is null)
+            {
+                return new AuthResult
+                {
+                    Success = false
+                };
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            RefreshToken newToken = await _refreshTokenService.GenerateRefreshToken(user);
+            Response.Cookies.Append("refreshToken", newToken.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = newToken.Expires
+            });
+            JwtSecurityToken accessToken = await _jwtService.GetTokenAsync(user);
+
             return new AuthResult
             {
-                UserId = user.Id,
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
+                Expiration = accessToken.ValidTo,
                 Success = true,
-                RefreshToken = refreshToken,
-                AccessToken = jwt
+                Username = user.UserName,
+                Roles = roles.ToList()
             };
         }
         [HttpPost(nameof(PostUser))]
@@ -206,7 +257,18 @@ namespace DBGuardAPI.Controllers
         public async Task<ActionResult<UserDTO>> PostUser(CreateUserDTO newUser)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            if(await context.Users.AnyAsync(user => user.UserName == newUser.Username))
+            string newUsername = newUser.Username.Trim();
+            string normalizedNewUsername = newUser.Username.ToUpperInvariant().Trim();
+
+            if(normalizedNewUsername == "ADMIN")
+            {
+                return Conflict(new { Message = "The username \"admin\" is reserved" });
+            }
+            if (string.IsNullOrWhiteSpace(newUser.Username))
+            {
+                return BadRequest();
+            }
+            if(await context.Users.AnyAsync(user => user.NormalizedUserName == normalizedNewUsername))
             {
                 return Conflict(new { Message = "Another user already has this username" });
             }
@@ -218,7 +280,7 @@ namespace DBGuardAPI.Controllers
 
             User user = new()
             {
-                UserName = newUser.Username,
+                UserName = newUsername,
                 CreatedByUserId = currentUser.Id
             };
             await _userManager.CreateAsync(user, newUser.Password);
@@ -227,7 +289,7 @@ namespace DBGuardAPI.Controllers
             return new UserDTO
             {
                 Id = user.Id,
-                Username = user.UserName,
+                Username = newUsername,
                 CreateDate = user.CreateDate,
                 LastEdited = user.LastEdited,
                 CreatedByUserId = user.CreatedByUserId,
@@ -253,7 +315,13 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A user edit was requested with an invalid user id {UserId}", editedUser.Id);
                 return NotFound();
             }
-            userToEdit.UserName = editedUser.Username;
+            string normalizedUsername = editedUser.Username.ToUpperInvariant().Trim();
+
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            if (await context.Users.AsNoTracking().AnyAsync(user => user.Id != userToEdit.Id && user.NormalizedUserName == normalizedUsername)){
+                return Conflict(new { Message = "This username is already in use" });
+            }
+            userToEdit.UserName = editedUser.Username.Trim();
             await _userManager.UpdateAsync(userToEdit);
             // Remove user from roles not in new object
             var currentUserRoles = await _userManager.GetRolesAsync(userToEdit);
@@ -268,13 +336,12 @@ namespace DBGuardAPI.Controllers
                 await _userManager.RemovePasswordAsync(userToEdit);
                 await _userManager.AddPasswordAsync(userToEdit, editedUser.Password);
             }
-            using var context = await _dbContextFactory.CreateDbContextAsync();
             User userDTO = await context.Users.Where(user => user.Id == userToEdit.Id).Include(user => user.CreatedByUser).AsNoTracking().FirstAsync();
 
             return CreatedAtAction(nameof(GetUserDetails), new { UserId = userDTO.Id }, new UserDTO
             {
                 Id = userToEdit.Id,
-                Username = userToEdit.UserName,
+                Username = userToEdit.UserName.Trim(),
                 CreateDate = userToEdit.CreateDate,
                 LastEdited = userDTO.LastEdited,
                 CreatedByUserId = userDTO.CreatedByUserId,

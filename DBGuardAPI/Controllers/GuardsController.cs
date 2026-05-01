@@ -243,7 +243,10 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A post guard request was received with a non-existing database connection {DBConnectionId}", newGuard.DatabaseConnection.Id);
                 return NotFound(new { Message = $"No database connection exists with the specified id (${newGuard.DatabaseConnection.Id})" });
             }
-
+            if(string.IsNullOrWhiteSpace(newGuard.TriggerQuery) || string.IsNullOrWhiteSpace(newGuard.CountColumn))
+            {
+                return BadRequest();
+            }
             try
             {
                 string? password = null;
@@ -272,10 +275,10 @@ namespace DBGuardAPI.Controllers
                 // Create guard
                 Guard guard = new()
                 {
-                    GuardName = newGuard.GuardName,
-                    GuardDescription = newGuard.GuardDescription,
+                    GuardName = newGuard.GuardName?.Trim(),
+                    GuardDescription = newGuard.GuardDescription?.Trim(),
                     CreatedByUserId = user.Id,
-                    TriggerQuery = newGuard.TriggerQuery,
+                    TriggerQuery = newGuard.TriggerQuery.Trim(),
                     CountColumn = newGuard.CountColumn,
                     TriggerOperator = newGuard.TriggerOperator,
                     TriggerValue = newGuard.TriggerValue,
@@ -339,10 +342,14 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A guard edit was attempted with non-existing guard id {GuardId}", guardEdits.Id);
                 return NotFound();
             }
-            guard.GuardName = guardEdits.GuardName;
-            guard.GuardDescription = guardEdits.GuardDescription;
+            if (string.IsNullOrWhiteSpace(guardEdits.TriggerQuery) || string.IsNullOrWhiteSpace(guardEdits.CountColumn))
+            {
+                return BadRequest();
+            }
+            guard.GuardName = guardEdits.GuardName?.Trim();
+            guard.GuardDescription = guardEdits.GuardDescription?.Trim();
             guard.LastEditedDate = DateTimeOffset.UtcNow;
-            guard.TriggerQuery = guardEdits.TriggerQuery;
+            guard.TriggerQuery = guardEdits.TriggerQuery.Trim();
             guard.CountColumn = guardEdits.CountColumn;
             guard.TriggerOperator = guardEdits.TriggerOperator;
             guard.TriggerValue = guardEdits.TriggerValue;
@@ -353,6 +360,11 @@ namespace DBGuardAPI.Controllers
             guard.NotifyOnTrigger = guardEdits.NotifyOnTrigger;
             guard.RunPeriodInMinutes = guardEdits.RunPeriodInMinutes;
 
+            // Remove notifications not in guard
+            List<GuardNotification> notificationToRemove = guard.GuardNotifications
+                .Where(notification =>  !guardEdits.Notifications.Where(editedNotification => editedNotification.Id is not null).Select(editedNotification => editedNotification.Id).Contains(notification.Id))
+                .ToList();
+            context.GuardNotifications.RemoveRange(notificationToRemove);
             // Add new notifications
             List<GuardNotification> newNotifications = guardEdits.Notifications.Where(notification => notification.Id is null).Select(GuardNotificationHelper.MapToEntity).ToList();
             foreach(GuardNotification notification in newNotifications)
@@ -362,7 +374,6 @@ namespace DBGuardAPI.Controllers
             //Update edited notifications
             List<CreateNotificationDTO> editedNotifications = guardEdits.Notifications.Where(notification => notification.Id is not null).ToList();
             List<GuardNotification> notificationsToEdit = guard.GuardNotifications.Where(notifications => editedNotifications.Select(edited => edited.Id!.Value).ToHashSet().Contains(notifications.Id)).ToList();
-
             foreach(CreateNotificationDTO editedNotification in editedNotifications)
             {
                 GuardNotification notificationToEdit = notificationsToEdit.Where(noti => noti.Id == editedNotification.Id!.Value).First();
@@ -378,6 +389,10 @@ namespace DBGuardAPI.Controllers
             foreach(GuardNotification editedNotification in notificationsToEdit)
             {
                 _logger.LogInformation("A notification was edited {NotificationId}", editedNotification.Id);
+            }
+            foreach(GuardNotification removedNotification in notificationToRemove)
+            {
+                _logger.LogInformation("A notification was removed {NotificationId}", removedNotification.Id);
             }
             return CreatedAtAction(nameof(GetGuardDetail), new { id = guard.Id }, new SimpleGuardDTO
             {

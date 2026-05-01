@@ -1,4 +1,4 @@
-<form class="db-conn-form" [formGroup]="dbConnectionForm">
+<form class="db-conn-form" [formGroup]="dbConnectionForm" (ngSubmit)="saveConnectionForm()">
     <div>
         <p-floatlabel variant="on">
             <label for="endpoint">Endpoint</label>
@@ -38,7 +38,7 @@
         <p-checkbox [binary]="true" inputId="validate-conn" formControlName="validateConnection" pTooltip="When selected it will ensure connection is valid"></p-checkbox>
     </div>
     <div class="bottom-section">
-        <p-button (onClick)="saveConnectionForm()" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid"></p-button>
+        <p-button type="submit" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid"></p-button>
     </div>
         @if (loading()) {
             <div class="loading-spinner">

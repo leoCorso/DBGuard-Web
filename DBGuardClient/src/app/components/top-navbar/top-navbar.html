@@ -8,6 +8,6 @@
 
     </ng-template>
     <ng-template #end>
-        <p-button [rounded]="true" severity="contrast" [outlined]="true" [label]="authService.loggedIn() ? 'logout' : 'login'" (onClick)="authService.logout()"></p-button>
+        <p-button [rounded]="true" severity="contrast" [outlined]="true" [label]="authService.loggedIn() ? 'logout' : 'login'" (onClick)="toggleLogin.emit()"></p-button>
     </ng-template>
 </p-menubar>

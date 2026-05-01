@@ -1,4 +1,4 @@
-<form [formGroup]="userForm" class="user-form">
+<form [formGroup]="userForm" class="user-form" (ngSubmit)="saveUser()">
     <div>
         <p-floatlabel variant="on">
             <label for="username">Username</label>
@@ -40,5 +40,5 @@
         <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
     <app-form-control-error [formControlInput]="userForm" [customMessage]="[{ key:'passwordMismatch', message:'Passwords do not match'}]"></app-form-control-error>
-    <p-button [label]="userIdToEdit() ? 'Save' : 'Create'" icon="pi pi-save" [rounded]="true" (onClick)="saveUser()" [disabled]="userForm.invalid"></p-button>
+    <p-button [label]="userIdToEdit() ? 'Save' : 'Create'" icon="pi pi-save" [rounded]="true" type="submit" [disabled]="userForm.invalid"></p-button>
 </form>

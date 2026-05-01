@@ -1,5 +1,5 @@
 import { NotificationType } from "../enums/notification-type";
-import { CreateEmailGuardNotificationDTO, CreateGuardNotificationDTO } from "../interfaces/notification-dto";
+import { CreateEmailGuardNotificationDTO, CreateGuardNotificationDTO, CreateGuardNotificationDTOWIndex } from "../interfaces/notification-dto";
 import { NotificationProviderDTO, EmailProviderDTO, TextProviderDTO } from "../interfaces/notification-provider-dto";
 
 export function isEmailProvider(n: NotificationProviderDTO): n is EmailProviderDTO {

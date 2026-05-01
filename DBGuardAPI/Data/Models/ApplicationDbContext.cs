@@ -15,6 +15,13 @@ namespace DBGuardAPI.Data.Models
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<RefreshToken>(refreshToken =>
+            {
+                refreshToken.HasOne(rt => rt.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            });
             builder.Entity<User>(user =>
             {
                 user.HasQueryFilter(u => u.IsActive);
@@ -111,6 +118,7 @@ namespace DBGuardAPI.Data.Models
         public DbSet<GuardChangeTransaction> GuardChangeTransactions { get; set; }
         public DbSet<NotificationProvider> NotificationProviders { get; set; }
         public DbSet<NotificationTransaction> NotificationTransactions { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     }
 }

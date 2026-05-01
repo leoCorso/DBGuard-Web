@@ -8,7 +8,8 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { requestErrorInterceptor } from './interceptors/request-error-interceptor';
-import { tokenInterceptor } from './interceptors/token-interceptor';
+import { accessTokenInterceptor } from './interceptors/token-interceptor';
+import { refreshTokenInterceptor } from './interceptors/refresh-token-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +23,6 @@ export const appConfig: ApplicationConfig = {
     DialogService,
     MessageService,
     ConfirmationService,
-    provideHttpClient(withInterceptors([requestErrorInterceptor, tokenInterceptor]))
+    provideHttpClient(withInterceptors([requestErrorInterceptor, accessTokenInterceptor, refreshTokenInterceptor]))
   ]
 };

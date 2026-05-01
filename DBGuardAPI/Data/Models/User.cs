@@ -15,5 +15,6 @@ namespace DBGuardAPI.Data.Models
         public ICollection<User> CreatedUsers { get; set; } = [];
         public ICollection<DatabaseConnection> DatabaseConnections { get; set; } = [];
         public ICollection<NotificationProvider> NotificationProviders { get; set; } = [];
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     }
 }

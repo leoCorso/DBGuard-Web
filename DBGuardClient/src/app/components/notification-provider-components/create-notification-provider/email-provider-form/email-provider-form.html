@@ -1,4 +1,4 @@
-<form [formGroup]="emailProviderForm" class="email-form">
+<form [formGroup]="emailProviderForm" class="email-form" (ngSubmit)="addEmailProvider()">
     <div>
         <p-floatlabel variant="on">
             <input type="text" pInputText fluid id="smtp-server" formControlName="smtpServer">
@@ -11,30 +11,34 @@
             <p-inputnumber formControlName="port" fluid id="port" [useGrouping]="false"></p-inputnumber>
             <label for="port">Port</label>
         </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
     <div>
         <p-floatlabel variant="on">
             <input pInputText type="text" fluid id="username" formControlName="username">
             <label for="username">Username</label>
         </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
     <div>
         <p-floatlabel variant="on">
             <p-password id="password" fluid formControlName="password" [feedback]="false" [toggleMask]="true"></p-password>
             <label for="password">Password</label>
         </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
     <div>
         <p-floatlabel variant="on">
             <input id="sender-email" fluid formControlName="senderEmail" pInputText/>
             <label for="sender-email">Sender email</label>
         </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
     <div style="display: flex;gap: .5rem;">
         <label for="verify-provider">Verify provider:</label>
         <p-checkbox pTooltip="When selected it will test connection to provider" [binary]="true" formControlName="verifyProvider" name="verify-provider" inputId="verify-provider"></p-checkbox>
     </div>
     <div>
-        <p-button (onClick)="addEmailProvider()" [label]="emailProviderToEdit() ? 'Save' : 'Add'" icon="pi pi-plus" [rounded]="true" [disabled]="emailProviderForm.invalid"></p-button>
+        <p-button type="submit" [label]="emailProviderToEdit() ? 'Save' : 'Add'" icon="pi pi-plus" [rounded]="true" [disabled]="emailProviderForm.invalid"></p-button>
     </div>
 </form>

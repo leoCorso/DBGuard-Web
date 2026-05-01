@@ -1,99 +1,80 @@
+<!-- Show the created notifications -->
 <div class="notifications-list">
-    <!-- Notifications -->
-    <p-listbox [(ngModel)]="selectedNotifications" [checkbox]="true" [multiple]="true" dataKey="index"
-        emptyMessage="No notifications added"
-        [options]="indexedNotifications()">
+    <!-- List showing the added notifications -->
+    <p-listbox [(ngModel)]="selectedNotifications" [checkbox]="true" [multiple]="true" dataKey="index" emptyMessage="No notifications added" [options]="indexedNotifications()">
         <ng-template #item let-notification>
-            @if (notification.notificationType === 0) {
-            <p-tag value="Email notification"></p-tag>
-            <ul>
-                <li><strong>Email count: {{ notification.emails.length }}</strong></li>
-                <li><strong>Subject: {{ notification.emailSubject }}</strong></li>
-            </ul>
-            }
-            @else if(notification.notificationType === 1){
-            text
+            <!-- Render notification item for emails -->
+            @switch(notification.notificationType){
+                @case (notificationProvidersEnum.Email) {
+                    <p-tag value="Email notification"></p-tag>
+                    <ul>
+                        <li><strong>Email count: {{ notification.emails.length }}</strong></li>
+                        <li><strong>Subject: {{ notification.emailSubject }}</strong></li>
+                    </ul>
+                }
             }
         </ng-template>
     </p-listbox>
+    <!-- Edit and delete buttons -->
     <div>
         <p-button (onClick)="editGuardNotification()" icon="pi pi-pencil" pTooltip="Edit select notification" [outlined]="true" [disabled]="selectedNotifications().length !== 1"></p-button>
-        <p-button (onClick)="removeNotification()" icon="pi pi-trash" pTooltip="Remove notification" [outlined]="true" severity="danger"
-            [disabled]="selectedNotifications().length === 0"></p-button>
+        <p-button (onClick)="removeGuardNotification()" icon="pi pi-trash" pTooltip="Remove notification" [outlined]="true" severity="danger" [disabled]="selectedNotifications().length === 0"></p-button>
     </div>
+    <!-- Notification provider selection -->
     <p-inputgroup style="margin-bottom: 1rem;">
         <p-floatlabel variant="on">
             <p-select fluid id="notification-provider" [options]="currentProviders()" [showClear]="true"
-                [formControl]="notificationProvider" appendTo="body">
+                [formControl]="notificationProviderSelection" appendTo="body">
                 <ng-template #selectedItem let-selectedOption>
-                    @if(isEmailProvider(selectedOption)){
-                    <div class="provider-item">
-                        <p-tag style="margin-bottom: 1rem;" value="Email provider" [rounded]="true"
-                            severity="info"></p-tag>
-                        <ul>
-                            <li><strong>Id:</strong>{{ selectedOption.id }}</li>
-                            <li><strong>Username:</strong>{{ selectedOption.username }}</li>
-                            <li><strong>SMTP Server:</strong>{{ selectedOption.smtpServer }}</li>
-                            <li><strong>Port:</strong>{{ selectedOption.port }}</li>
-
-                        </ul>
-                    </div>
-                    }
-                    @else if(isTextProvider(selectedOption)){
-                    <div class="provider-item">
-                        <p-tag style="margin-bottom: 1rem;" value="Text provider" [rounded]="true"></p-tag>
-                        <ul>
-                            <li><strong>Id:</strong>{{ selectedOption.id }}</li>
-                            <li><strong>Username:</strong>{{ selectedOption.phoneNumber }}</li>
-
-                        </ul>
-                    </div>
+                    <!-- Display provider item selection depending on type -->
+                    @switch(selectedOption.providerType){
+                        @case (notificationProvidersEnum.Email) {
+                            <div class="provider-item">
+                                <p-tag style="margin-bottom: 1rem;" value="Email provider" [rounded]="true"
+                                    severity="info"></p-tag>
+                                <ul>
+                                    <li><strong>Id:</strong>{{ selectedOption.id }}</li>
+                                    <li><strong>Username:</strong>{{ selectedOption.username }}</li>
+                                    <li><strong>SMTP Server:</strong>{{ selectedOption.smtpServer }}</li>
+                                    <li><strong>Port:</strong>{{ selectedOption.port }}</li>
+        
+                                </ul>
+                            </div>
+                        }
                     }
                 </ng-template>
                 <ng-template #item let-provider>
-                    @if(isEmailProvider(provider)){
-                    <div class="provider-item">
-                        <p-tag style="margin-bottom: 1rem;" value="Email provider" [rounded]="true"
-                            severity="info"></p-tag>
-                        <ul>
-                            <li><strong>Id:</strong>{{ provider.id }}</li>
-                            <li><strong>Username:</strong>{{ provider.username }}</li>
-                            <li><strong>SMTP Server:</strong>{{ provider.smtpServer }}</li>
-                            <li><strong>Port:</strong>{{ provider.port }}</li>
-
-                        </ul>
-                    </div>
-                    }
-                    @else if(isTextProvider(provider)){
-                    <div class="provider-item">
-                        <p-tag style="margin-bottom: 1rem;" value="Text provider" [rounded]="true"
-                            severity="info"></p-tag>
-                        <ul>
-                            <li><strong>Id:</strong>{{ provider.id }}</li>
-                            <li><strong>Username:</strong>{{ provider.phoneNumber }}</li>
-
-                        </ul>
-                    </div>
+                    <!-- Display provider item in dropdown depending on type -->
+                    @switch (provider.providerType) {
+                        @case (notificationProvidersEnum.Email) {
+                            <div class="provider-item">
+                                <p-tag style="margin-bottom: 1rem;" value="Email provider" [rounded]="true"
+                                    severity="info"></p-tag>
+                                <ul>
+                                    <li><strong>Id:</strong>{{ provider.id }}</li>
+                                    <li><strong>Username:</strong>{{ provider.username }}</li>
+                                    <li><strong>SMTP Server:</strong>{{ provider.smtpServer }}</li>
+                                    <li><strong>Port:</strong>{{ provider.port }}</li>
+        
+                                </ul>
+                            </div>
+                        }
                     }
                 </ng-template>
             </p-select>
             <label for="notification-provider">Notification provider</label>
         </p-floatlabel>
+        <!-- Add notification button -->
         <p-inputgroup-addon>
             <p-button (onClick)="addNotificationProvider()" pTooltip="Create notification provider" icon="pi pi-plus" [text]="true"></p-button>
         </p-inputgroup-addon>
     </p-inputgroup>
 </div>
-<div>
-    @if (notificationProvider.value) {
-        <!-- Email -->
-        @if (notificationProvider.value.providerType === 0) {
-        <app-create-email-notification [formControl]="notificationForm" (emailMessage)="addEmailNotification($event)" (cancelForm)="cancelFormChanges()"></app-create-email-notification>
-        }
-        <!-- Text -->
-        @else if (notificationProvider.value) {
-        <p>Phone number</p>
-        <p>Text</p>
+<!-- Render notification control depending on notification type -->
+ @if (notificationProviderSelection.value) {
+    @switch(notificationProviderSelection.value.providerType){
+        @case (notificationProvidersEnum.Email) {
+            <app-create-email-notification [notificationProvider]="notificationProviderSelection.value" [emailNotificationToEdit]="emailToEdit()" (notificationAdded)="notificationAdded($event)" (notificationEdited)="notificationEdited($event)" (cancelNotification)="cancelNotification()"></app-create-email-notification>
         }
     }
-</div>
+ }

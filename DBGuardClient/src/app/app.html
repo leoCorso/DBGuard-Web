@@ -4,8 +4,11 @@
     <div class="layout">
         @if (authService.loggedIn()) {
             <div class="navbar">
-                <app-top-navbar></app-top-navbar>
+                <app-top-navbar (toggleLogin)="toggleLogin()"></app-top-navbar>
             </div>
+        }
+        @if (authService.defaultAdminError()) {
+            <p-message [closable]="true" severity="error">{{ authService.defaultAdminError() }}</p-message>
         }
         <div class="below-navbar">
             @if (authService.loggedIn()) {
@@ -16,6 +19,7 @@
             <div class="content">
                 <router-outlet />
                 <p-toast key="request-error" position="bottom-right"></p-toast>
+                
             </div>
         </div>
     </div>
