@@ -1,21 +1,15 @@
-.cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-.email-details {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-}
 .email-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    display: grid;
+    gap: .8rem;
+    grid-template-columns: auto auto;
 }
-.emails-list {
-    display: flex;
-    gap: 1rem;
+.email-key {
+    font-weight: bold;
+    justify-self: end;
+    align-self: center;
+}
+.email-value {
+    align-self: center;
 }
 .emails {
     display: flex;

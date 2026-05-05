@@ -20,11 +20,14 @@ namespace DBGuardAPI.Helpers
                     CCEmails = GuardNotificationHelper.ParseEmailContacts(emailNotification.Emails).Where(email => email.Type == "cc").Select(email => email.EmaiLAddress).ToList(),
                     BCCEmails = GuardNotificationHelper.ParseEmailContacts(emailNotification.Emails).Where(email => email.Type == "bcc").Select(email => email.EmaiLAddress).ToList()
                 },
-                CreateTextGuardNotificationDTO textNotification => new TextNotification
+                CreateHttpNotificationDTO httpNotififcation => new HTTPNotification 
                 {
-                    NotificationProviderId = newNotification.NotificationProvider.Id,
-                    PhoneNumbers = textNotification.PhoneNumbers,
-                    TextMessage = textNotification.TextMessage
+                    NotificationProviderId = httpNotififcation.NotificationProvider.Id,
+                    URL = httpNotififcation.URL,
+                    RequestHeaders = httpNotififcation.RequestHeaders,
+                    QueryParameters = httpNotififcation.QueryParams,
+                    BodyType = httpNotififcation.BodyType,
+                    BodyData = httpNotififcation.BodyData
                 },
                 _ => throw new NotSupportedException($"Type {newNotification.NotificationType} is not yet supported")
             };
@@ -40,15 +43,21 @@ namespace DBGuardAPI.Helpers
                     GuardId = email.GuardId,
                     EmailSubject = email.EmailSubject,
                     EmailBody = email.EmailBody,
+                    NotificationType = email.NotificationType,
                     Emails = GuardNotificationHelper.StringifyEmailContacts(email.ToEmails, email.CCEmails, email.BCCEmails),
                     NotificationProvider = NotificationProviderHelper.MapToDTO(email.NotificationProvider!)
                 },
-                TextNotification text => new CreateTextGuardNotificationDTO
+                HTTPNotification http => new CreateHttpNotificationDTO
                 {
-                    Id = text.Id,
-                    PhoneNumbers = text.PhoneNumbers,
-                    TextMessage = text.TextMessage,
-                    NotificationProvider = NotificationProviderHelper.MapToDTO(text.NotificationProvider!)
+                    Id = http.Id,
+                    GuardId = http.GuardId,
+                    NotificationType = http.NotificationType,
+                    URL = http.URL,
+                    RequestHeaders = http.RequestHeaders,
+                    QueryParams = http.QueryParameters,
+                    BodyType = http.BodyType,
+                    BodyData = http.BodyData,
+                    NotificationProvider = NotificationProviderHelper.MapToDTO(http.NotificationProvider!)
                 },
                 _ => throw new InvalidOperationException()
             };
@@ -72,6 +81,22 @@ namespace DBGuardAPI.Helpers
                     BCCEmails = emailDetail.BCCEmails,
                     CreatedByUserId = emailDetail.Guard!.CreatedByUserId,
                     CreatedByUsername = emailDetail.Guard.CreatedByUser!.UserName!
+                },
+                HTTPNotification httpDetail => new HttpNotificationDetailDTO
+                {
+                    Id = httpDetail.Id,
+                    GuardId = httpDetail.GuardId,
+                    NotificationType = httpDetail.NotificationType,
+                    NotificationProviderId = httpDetail.NotificationProviderId,
+                    CreateDate = httpDetail.CreateDate,
+                    LastEdited = httpDetail.LastEdited,
+                    URL = httpDetail.URL,
+                    RequestHeaders = httpDetail.RequestHeaders,
+                    QueryParameters = httpDetail.QueryParameters,
+                    BodyType = httpDetail.BodyType,
+                    BodyData = httpDetail.BodyData,
+                    CreatedByUserId = httpDetail.Guard!.CreatedByUserId,
+                    CreatedByUsername = httpDetail.Guard.CreatedByUser!.UserName!
                 },
                 _ => throw new NotSupportedException("This notification type is not supported")
             };
@@ -124,6 +149,13 @@ namespace DBGuardAPI.Helpers
                     emailNotification.ToEmails = GuardNotificationHelper.ParseEmailContacts(editedEmail.Emails).Where(email => email.Type == "to").Select(email => email.EmaiLAddress).ToList();
                     emailNotification.CCEmails = GuardNotificationHelper.ParseEmailContacts(editedEmail.Emails).Where(email => email.Type == "cc").Select(email => email.EmaiLAddress).ToList();
                     emailNotification.BCCEmails = GuardNotificationHelper.ParseEmailContacts(editedEmail.Emails).Where(email => email.Type == "bcc").Select(email => email.EmaiLAddress).ToList();
+                    break;
+                case HTTPNotification httpNotification when newNotificationValues is CreateHttpNotificationDTO editedHttp:
+                    httpNotification.URL = editedHttp.URL;
+                    httpNotification.RequestHeaders = editedHttp.RequestHeaders;
+                    httpNotification.QueryParameters = editedHttp.QueryParams;
+                    httpNotification.BodyType = editedHttp.BodyType;
+                    httpNotification.BodyData = editedHttp.BodyData;
                     break;
                 // Handle other types
                 default:

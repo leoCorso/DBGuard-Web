@@ -12,10 +12,11 @@ import { Divider } from 'primeng/divider';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { merge, Subject, takeUntil } from 'rxjs';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Tag } from 'primeng/tag';
 
 @Component({
   selector: 'app-notification-provider-detail-pane',
-  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, ProgressSpinner],
+  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, ProgressSpinner, Tag],
   templateUrl: './notification-provider-detail-pane.html',
   styleUrl: './notification-provider-detail-pane.scss',
 })

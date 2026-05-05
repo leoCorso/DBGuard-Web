@@ -11,10 +11,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { isEmailProvider } from '../../../helper-functions/type-guards';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { Message } from 'primeng/message';
 
 @Component({
   selector: 'app-create-notification-provider',
-  imports: [Select, FloatLabel, ReactiveFormsModule, EmailProviderForm],
+  imports: [Select, FloatLabel, ReactiveFormsModule, EmailProviderForm, Message],
   templateUrl: './create-notification-provider.html',
   styleUrl: './create-notification-provider.scss',
 })
@@ -27,6 +28,7 @@ export class CreateNotificationProvider implements OnInit {
   private httpClient = inject(HttpClient);
   private dialogRef = inject(DynamicDialogRef<NotificationProviderDTO>);
   private entityChangeService = inject(EntityChangeService);
+  public notificationTypes = NotificationType;
 
   ngOnInit(): void {
     if(this.notificationProviderIdToEdit()){

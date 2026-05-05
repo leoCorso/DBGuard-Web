@@ -23,7 +23,10 @@
 
 @switch (notificationDetail().notificationType) {
     <!-- Email -->
-    @case (0) {
+    @case (notificationTypes.Email) {
         <app-email-notification-detail-pane [emailNotificationConfig]="emailNotificationDetail()!"></app-email-notification-detail-pane>
+    }
+    @case (notificationTypes.Http) {
+        <app-http-notification-detail-pane [httpNotificationDetail]="httpNotificationDetail()!"></app-http-notification-detail-pane>
     }
 }

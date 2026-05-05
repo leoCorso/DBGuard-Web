@@ -6,7 +6,7 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
 {
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "providerType")]
     [JsonDerivedType(typeof(EmailProviderDTO), (int)NotificationType.Email)]
-    [JsonDerivedType(typeof(TextProviderDTO), (int)NotificationType.Text)]
+    [JsonDerivedType(typeof(HTTPProviderDTO), (int)NotificationType.HTTP)]
     public class NotificationProviderDTO
     {
         [Sieve(CanSort = true, CanFilter = true)]
@@ -18,9 +18,9 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
         [Sieve(CanSort = true, CanFilter = true)]
         public DateTimeOffset LastEdited { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CreatedByUserId { get; set; }
+        public string? CreatedByUserId { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CreatedByUsername { get; set; }
+        public string? CreatedByUsername { get; set; }
 
     }
     public class EmailProviderDTO : NotificationProviderDTO
@@ -31,8 +31,8 @@ namespace DBGuardAPI.Data.DTOs.NotificationProviderDTOs
         public string? Password { get; set; }
         public required string SenderEmail { get; set; }
     }
-    public class TextProviderDTO : NotificationProviderDTO
+    public class HTTPProviderDTO: NotificationProviderDTO
     {
-        public required string PhoneNumber { get; set; }
+        public HTTPAction HTTPActionType { get; set; }
     }
 }

@@ -12,6 +12,13 @@
                         <li><strong>Subject: {{ notification.emailSubject }}</strong></li>
                     </ul>
                 }
+                @case(notificationProvidersEnum.Http){
+                    <p-tag value="Http notification"></p-tag>
+                    <ul>
+                        <li><strong>Method: {{ getEnumLabel(httpActionTypes, notification.actionType) }}</strong></li>
+                        <li><strong>URL: {{ notification.url }}</strong></li>
+                    </ul>
+                }
             }
         </ng-template>
     </p-listbox>
@@ -41,6 +48,11 @@
                                 </ul>
                             </div>
                         }
+                        @case (notificationProvidersEnum.Http){
+                            <div class="provider-item">
+                                <p-tag value="Http"></p-tag>
+                            </div>
+                        }
                     }
                 </ng-template>
                 <ng-template #item let-provider>
@@ -55,8 +67,12 @@
                                     <li><strong>Username:</strong>{{ provider.username }}</li>
                                     <li><strong>SMTP Server:</strong>{{ provider.smtpServer }}</li>
                                     <li><strong>Port:</strong>{{ provider.port }}</li>
-        
                                 </ul>
+                            </div>
+                        }
+                        @case (notificationProvidersEnum.Http) {
+                            <div class="provider-item">
+                                <p-tag value="Http"></p-tag>
                             </div>
                         }
                     }
@@ -74,7 +90,10 @@
  @if (notificationProviderSelection.value) {
     @switch(notificationProviderSelection.value.providerType){
         @case (notificationProvidersEnum.Email) {
-            <app-create-email-notification [notificationProvider]="notificationProviderSelection.value" [emailNotificationToEdit]="emailToEdit()" (notificationAdded)="notificationAdded($event)" (notificationEdited)="notificationEdited($event)" (cancelNotification)="cancelNotification()"></app-create-email-notification>
+            <app-create-email-notification [notificationProvider]="notificationProviderSelection.value" [notificationToEdit]="emailToEdit()" (notificationAdded)="notificationAdded($event)" (notificationEdited)="notificationEdited($event)" (cancelForm)="cancelNotification()"></app-create-email-notification>
+        }
+        @case (notificationProvidersEnum.Http){
+            <app-create-http-notification [notificationProvider]="notificationProviderSelection.value" [notificationToEdit]="httpNotificationToEdit()" (notificationAdded)="notificationAdded($event)" (notificationEdited)="notificationEdited($event)" (cancelForm)="cancelNotification()"></app-create-http-notification>
         }
     }
  }

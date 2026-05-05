@@ -16,6 +16,15 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
         public required string EmailBody { get; set; }
         public List<string> Emails { get; set; } = [];
     }
+    public class CreateHttpNotificationDTO: CreateNotificationDTO
+    {
+        public required string URL { get; set; }
+        public HTTPAction ActionType { get; set; }
+        public Dictionary<string, string?> QueryParams { get; set; } = [];
+        public Dictionary<string, string?> RequestHeaders { get; set; } = [];
+        public HTTPBodyType? BodyType { get; set; }
+        public string? BodyData { get; set; }
+    }
     public class CreateTextGuardNotificationDTO: CreateNotificationDTO
     {
         public List<string> PhoneNumbers { get; set; } = [];

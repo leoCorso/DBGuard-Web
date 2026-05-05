@@ -1,6 +1,7 @@
 ﻿using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
 using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Models;
+using DBGuardAPI.Data.Models.NotificationProviders;
 using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Data.StaticData;
 using DBGuardAPI.Helpers;
@@ -58,12 +59,21 @@ namespace DBGuardAPI.Controllers
                     CreateDate = email.CreateDate,
                     LastEdited = email.LastEditedDate,
                     CreatedByUserId = email.CreatedByUserId,
-                    CreatedByUsername = email.CreatedByUser!.UserName!,
+                    CreatedByUsername = email.CreatedByUser?.UserName!,
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
                     Port = email.Port,
                     Password = await _userManager.IsInRoleAsync(user, RoleNames.Admin) ? _credentialProtector.Decrypt(email.Password) : null,
                     SenderEmail = email.SenderEmail
+                },
+                HTTPProvider http => new HTTPProviderDTO
+                {
+                    Id = http.Id,
+                    NotificationType = http.ProviderType,
+                    CreateDate = http.CreateDate,
+                    LastEdited = http.LastEditedDate,
+                    CreatedByUserId = http.CreatedByUserId,
+                    CreatedByUsername = http.CreatedByUser?.UserName!
                 }
             };
         }

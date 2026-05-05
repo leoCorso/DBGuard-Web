@@ -1,3 +1,5 @@
+import { HTTPAction } from "../enums/http-action";
+import { HttpBodyType } from "../enums/http-body-type";
 import { NotificationType } from "../enums/notification-type";
 import { NotificationProviderDTO } from "./notification-provider-dto";
 
@@ -15,26 +17,21 @@ export interface CreateEmailGuardNotificationDTO extends CreateGuardNotification
     emailBody: string,
     emails: string[], // [type:email;type:email]
 }
+export interface CreateHTTPGuardNotificationDTO extends CreateGuardNotificationDTO {
+    url: string,
+    actionType: HTTPAction,
+    queryParams: Record<string, string | null>,
+    requestHeaders: Record<string, string | null>,
+    bodyType?: HttpBodyType,
+    bodyData?: string
+}
 export interface CreateEmailGuardNotificationDTOWIndex extends CreateEmailGuardNotificationDTO {
     index: number
 }
-
-export interface CreateTextGuardNotificationDTO extends CreateGuardNotificationDTO {
-    phoneNumbers: string[],
-    textMessage: string
-}
-export interface CreateTextGuardNotificationDTOWIndex {
+export interface CreateHTTPGuardNotificationDTOWIndex extends CreateHTTPGuardNotificationDTO {
     index: number
 }
-export interface NotificationFormItem {
-    id?: number,
-    index?: number
-}
-export interface EmailNotificationFormInfo extends NotificationFormItem {
-    emailSubject: string,
-    emailBody: string,
-    emails: string[], // [type:email;type:email]
-}
+
 export interface NotificationTransactionDTO {
     id: number,
     timestamp: Date,
@@ -68,6 +65,13 @@ export interface EmailNotificationDetailDTO extends NotificationDetailDTO {
     toEmails: string[],
     ccEmails: string[],
     bccEmails: string[]
+}
+export interface HttpNotificationDetailDTO extends NotificationDetailDTO {
+    url: string,
+    requestHeaders: Record<string, string | null>,
+    queryParameters: Record<string, string | null>,
+    bodyType?: HttpBodyType,
+    bodyData?: string
 }
 export interface GuardNotificationDTO {
     id: number,

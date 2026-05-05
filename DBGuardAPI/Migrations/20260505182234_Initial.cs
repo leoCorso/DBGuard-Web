@@ -201,14 +201,13 @@ namespace DBGuardAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     create_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_edited_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    created_by_user_id = table.Column<string>(type: "text", nullable: false),
+                    created_by_user_id = table.Column<string>(type: "text", nullable: true),
                     provider_type = table.Column<int>(type: "integer", nullable: false),
                     smtp_server = table.Column<string>(type: "text", nullable: true),
                     username = table.Column<string>(type: "text", nullable: true),
                     password = table.Column<string>(type: "text", nullable: true),
                     port = table.Column<int>(type: "integer", nullable: true),
-                    sender_email = table.Column<string>(type: "text", nullable: true),
-                    phone_number = table.Column<string>(type: "text", nullable: true)
+                    sender_email = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -339,8 +338,11 @@ namespace DBGuardAPI.Migrations
                     to_emails = table.Column<List<string>>(type: "text[]", nullable: true),
                     cc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
                     bcc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
-                    phone_numbers = table.Column<List<string>>(type: "text[]", nullable: true),
-                    text_message = table.Column<string>(type: "text", nullable: true)
+                    url = table.Column<string>(type: "text", nullable: true),
+                    request_headers = table.Column<Dictionary<string, string>>(type: "jsonb", nullable: true),
+                    query_parameters = table.Column<Dictionary<string, string>>(type: "jsonb", nullable: true),
+                    body_type = table.Column<int>(type: "integer", nullable: true),
+                    body_data = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -377,8 +379,13 @@ namespace DBGuardAPI.Migrations
                     to_emails = table.Column<List<string>>(type: "text[]", nullable: true),
                     cc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
                     bcc_emails = table.Column<List<string>>(type: "text[]", nullable: true),
-                    phone_numbers = table.Column<string>(type: "text", nullable: true),
-                    text_message = table.Column<string>(type: "text", nullable: true)
+                    url = table.Column<string>(type: "text", nullable: true),
+                    request_headers = table.Column<Dictionary<string, string>>(type: "jsonb", nullable: true),
+                    query_parameters = table.Column<Dictionary<string, string>>(type: "jsonb", nullable: true),
+                    body_type = table.Column<int>(type: "integer", nullable: true),
+                    body_data = table.Column<string>(type: "text", nullable: true),
+                    response_code = table.Column<int>(type: "integer", nullable: true),
+                    response_message = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -1,0 +1,171 @@
+<form class="http-form" [formGroup]="httpForm">
+    <div>
+        <p-inputgroup>
+            <p-floatlabel>
+                <label for="url">URL</label>
+                <input type="text" pInputText id="url" fluid formControlName="url">
+            </p-floatlabel>
+            <p-inputgroup-addon>
+                <p-select formControlName="actionType" appendTo="body" [options]="enumToOptions(httpActions)"></p-select>
+            </p-inputgroup-addon>
+        </p-inputgroup>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-select id="body-type" [options]="enumToOptions(bodyTypes)" formControlName="bodyType" fluid [showClear]="true"></p-select>
+            <label for="body-type">Body type</label>
+        </p-floatlabel>
+    </div>
+    @if (httpForm.get('bodyType')?.value !== null) {
+        <div>
+            <p-floatlabel variant="on">
+                <label for="body-data">Body data</label>
+                <textarea id="body-data" fluid pTextarea formControlName="bodyData"></textarea>
+            </p-floatlabel>
+        </div>
+    }
+</form>
+
+<!-- Request headers -->
+<p-card header="Request headers">
+    @if (requestHeaders.length === 0) {
+        <em>No request headers added</em>
+    }
+    @else {
+        <p-table [value]="requestHeaders" editMode="row" [showGridlines]="true" [stripedRows]="true">
+           <ng-template #header>
+               <tr>
+                   <th>Header key</th>
+                   <th>Header value</th>
+               </tr>
+           </ng-template>
+           <ng-template #body let-header let-editing="editing" let-ri="rowIndex">
+               <tr [pEditableRow]="header">
+                   <td>
+                       <p-cellEditor>
+                           <ng-template #input>
+                               <input type="text" pInputText [(ngModel)]="header.key" >
+                           </ng-template>
+                        <ng-template #output>
+                               {{ header.key }}
+                           </ng-template>
+                       </p-cellEditor>
+                   </td>
+                   <td>
+                       <p-cellEditor>
+                           <ng-template #input>
+                               <input type="text" pInputText [(ngModel)]="header.value">
+                           </ng-template>
+                           <ng-template #output>
+                               {{ header.value }}
+                           </ng-template>
+                       </p-cellEditor>
+                   </td>
+                   <td>
+                       <div class="flex items-center justify-center gap-2">
+                           <p-buttongroup>
+                               @if(!editing){
+                                   <p-button pInitEditableRow icon="pi pi-pencil" (onClick)="onKeyEditInit(header, ri, 'header')" [text]="true" [rounded]="true" severity="secondary"></p-button>
+                               }
+                               @if (editing) {
+                                   <p-button pSaveEditableRow icon="pi pi-check" (onClick)="onKeyEditSave(header, ri, 'header')" [text]="true" [rounded]="true" severity="secondary"></p-button>
+                                   <p-button pSaveEditableRow icon="pi pi-times" (onClick)="onKeyEditCancel(header, ri, 'header')" [text]="true" [rounded]="true" severity="secondary"></p-button>
+                               }
+                               <p-button (onClick)="onRemoveKey(ri, 'header')" icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true"></p-button>
+                           </p-buttongroup>
+                       </div>
+                   </td>
+               </tr>
+           </ng-template>
+        </p-table>
+    
+    }
+    <form class="header-form" [formGroup]="requestHeaderForm" (ngSubmit)="addKey('header')">
+       <p-inputgroup>
+           <p-floatlabel variant="on">
+               <input id="header-key" type="text" fluid formControlName="key" pInputText>
+               <label for="header-key">Header key</label>
+           </p-floatlabel>
+           <p-floatlabel variant="on">
+               <input id="header-value" type="text" pInputText fluid formControlName="value">
+               <label for="header-value">Header value</label>
+           </p-floatlabel>
+   
+       </p-inputgroup>
+       <p-button type="submit" label="Add header" [disabled]="requestHeaderForm.invalid"></p-button>
+    </form>
+</p-card>
+<!-- Query parameters -->
+<p-card header="Query parameters">
+    @if (queryParameters.length === 0) {
+        <em>No query parameters added</em>
+    }
+    @else {
+        <p-table [value]="queryParameters" editMode="row" [showGridlines]="true" [stripedRows]="true">
+           <ng-template #header>
+               <tr>
+                   <th>Query key</th>
+                   <th>Query value</th>
+               </tr>
+           </ng-template>
+           <ng-template #body let-queryParam let-editing="editing" let-ri="rowIndex">
+               <tr [pEditableRow]="queryParam">
+                   <td>
+                       <p-cellEditor>
+                           <ng-template #input>
+                               <input type="text" pInputText [(ngModel)]="queryParam.key" >
+                           </ng-template>
+                        <ng-template #output>
+                               {{ queryParam.key }}
+                           </ng-template>
+                       </p-cellEditor>
+                   </td>
+                   <td>
+                       <p-cellEditor>
+                           <ng-template #input>
+                               <input type="text" pInputText [(ngModel)]="queryParam.value">
+                           </ng-template>
+                           <ng-template #output>
+                               {{ queryParam.value }}
+                           </ng-template>
+                       </p-cellEditor>
+                   </td>
+                   <td>
+                       <div class="flex items-center justify-center gap-2">
+                           <p-buttongroup>
+                               @if(!editing){
+                                   <p-button pInitEditableRow icon="pi pi-pencil" (onClick)="onKeyEditInit(queryParam, ri, 'query')" [text]="true" [rounded]="true" severity="secondary"></p-button>
+                               }
+                               @if (editing) {
+                                   <p-button pSaveEditableRow icon="pi pi-check" (onClick)="onKeyEditSave(queryParam, ri, 'query')" [text]="true" [rounded]="true" severity="secondary"></p-button>
+                                   <p-button pSaveEditableRow icon="pi pi-times" (onClick)="onKeyEditCancel(queryParam, ri, 'query')" [text]="true" [rounded]="true" severity="secondary"></p-button>
+                               }
+                               <p-button (onClick)="onRemoveKey(ri, 'query')" icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true"></p-button>
+                           </p-buttongroup>
+                       </div>
+                   </td>
+               </tr>
+           </ng-template>
+        </p-table>
+    
+    }
+    <form class="header-form" [formGroup]="queryParameterForm" (ngSubmit)="addKey('query')">
+       <p-inputgroup>
+           <p-floatlabel variant="on">
+               <input id="header-key" type="text" fluid formControlName="key" pInputText>
+               <label for="header-key">Parameter key</label>
+           </p-floatlabel>
+           <p-floatlabel variant="on">
+               <input id="header-value" type="text" pInputText fluid formControlName="value">
+               <label for="header-value">Parameter value</label>
+           </p-floatlabel>
+   
+       </p-inputgroup>
+       <p-button type="submit" label="Add parameter" [disabled]="queryParameterForm.invalid"></p-button>
+    </form>
+</p-card>
+<p-buttongroup>
+    <p-button [label]="notificationToEdit() ? 'Save' : 'Create'" (onClick)="saveNotification()" icon="pi pi-save" [text]="true" [disabled]="httpForm.invalid"></p-button>
+    <p-button label="Cancel" severity="danger" (onClick)="cancelForm.emit()" [text]="true"></p-button>
+</p-buttongroup>

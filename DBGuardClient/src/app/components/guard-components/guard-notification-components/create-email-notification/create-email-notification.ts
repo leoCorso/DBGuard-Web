@@ -11,6 +11,7 @@ import { Button } from 'primeng/button';
 import { Select } from 'primeng/select';
 import { NotificationType } from '../../../../enums/notification-type';
 import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
+import { CreateNotification } from '../create-notification/create-notification';
 
 @Component({
   selector: 'app-create-email-notification',
@@ -18,15 +19,9 @@ import { NotificationProviderDTO } from '../../../../interfaces/notification-pro
   templateUrl: './create-email-notification.html',
   styleUrl: './create-email-notification.scss',
 })
-export class CreateEmailNotification implements OnInit {
-  // Emissions
-  public notificationAdded = output<CreateEmailGuardNotificationDTO>(); // Emitted with new notification values
-  public notificationEdited = output<CreateEmailGuardNotificationDTOWIndex>();
-  public cancelNotification = output<void>(); // Emitted to cancel add or edit
+export class CreateEmailNotification extends CreateNotification<CreateEmailGuardNotificationDTO, CreateEmailGuardNotificationDTOWIndex> implements OnInit {
   
   // Input
-  public emailNotificationToEdit = input<CreateEmailGuardNotificationDTOWIndex>(); // Passed from parent if we're editing
-  public notificationProvider = input.required<NotificationProviderDTO>();
   // Form controls
   public emailNotificationFormGroup = new FormGroup({
     emailSubject: new FormControl<string | null>(null, [Validators.required]),
@@ -42,14 +37,14 @@ export class CreateEmailNotification implements OnInit {
   public selectedEmailAddresses = signal<string[]>([]);
 
   ngOnInit(): void {
-    if(this.emailNotificationToEdit()){
-      if(this.emailNotificationToEdit()?.emails){
-        this.emails.set(this.emailNotificationToEdit()!.emails)
+    if(this.notificationToEdit()){
+      if(this.notificationToEdit()?.emails){
+        this.emails.set(this.notificationToEdit()!.emails)
       }
       this.emailNotificationFormGroup.patchValue({
-        emailSubject: this.emailNotificationToEdit()?.emailSubject,
-        emailBody: this.emailNotificationToEdit()?.emailBody,
-        emails: this.emailNotificationToEdit()?.emails
+        emailSubject: this.notificationToEdit()?.emailSubject,
+        emailBody: this.notificationToEdit()?.emailBody,
+        emails: this.notificationToEdit()?.emails
       });
     }
   }
@@ -77,13 +72,13 @@ export class CreateEmailNotification implements OnInit {
     this.emailAddressInput.get('emailAddress')?.reset();  // Reset email input
   }
 
-  public saveEmailNotification(): void {
+  public saveNotification(): void {
     const values = this.emailNotificationFormGroup.value;
-    if(this.emailNotificationToEdit()){
+    if(this.notificationToEdit()){
       const editedNotification: CreateEmailGuardNotificationDTOWIndex = {
-        id: this.emailNotificationToEdit()?.id,
-        guardId: this.emailNotificationToEdit()?.guardId,
-        index: this.emailNotificationToEdit()!.index,
+        id: this.notificationToEdit()?.id,
+        guardId: this.notificationToEdit()?.guardId,
+        index: this.notificationToEdit()!.index,
         emailSubject: values.emailSubject!,
         emailBody: values.emailBody!,
         emails: values.emails!,

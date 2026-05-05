@@ -1,3 +1,4 @@
+import { HTTPAction } from "../enums/http-action"
 import { NotificationType } from "../enums/notification-type"
 
 export interface NotificationProviderDTO {
@@ -15,8 +16,8 @@ export interface EmailProviderDTO extends NotificationProviderDTO {
     password?: string,
     senderEmail: string
 }
-export interface TextProviderDTO extends NotificationProviderDTO {
-    phoneNumber: string
+export interface HTTPProviderDTO extends NotificationProviderDTO {
+    httpActionType: HTTPAction
 }
 export interface CreateNotificationProviderDTO {
     id?: number,

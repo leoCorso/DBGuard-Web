@@ -3,6 +3,6 @@
     public enum NotificationType
     {
         Email,
-        Text
+        HTTP,
     }
 }

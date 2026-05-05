@@ -412,7 +412,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -821,19 +820,32 @@ namespace DBGuardAPI.Migrations
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("DBGuardAPI.Data.Models.GuardNotifications.TextNotification", b =>
+            modelBuilder.Entity("DBGuardAPI.Data.Models.GuardNotifications.HTTPNotification", b =>
                 {
                     b.HasBaseType("DBGuardAPI.Data.Models.GuardNotifications.GuardNotification");
 
-                    b.PrimitiveCollection<List<string>>("PhoneNumbers")
-                        .IsRequired()
-                        .HasColumnType("text[]")
-                        .HasColumnName("phone_numbers");
+                    b.Property<string>("BodyData")
+                        .HasColumnType("text")
+                        .HasColumnName("body_data");
 
-                    b.Property<string>("TextMessage")
+                    b.Property<int>("BodyType")
+                        .HasColumnType("integer")
+                        .HasColumnName("body_type");
+
+                    b.Property<Dictionary<string, string>>("QueryParameters")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("query_parameters");
+
+                    b.Property<Dictionary<string, string>>("RequestHeaders")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("request_headers");
+
+                    b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("text_message");
+                        .HasColumnName("url");
 
                     b.ToTable("guard_notifications", (string)null);
 
@@ -874,21 +886,51 @@ namespace DBGuardAPI.Migrations
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("DBGuardAPI.Data.Models.NotificationTransactions.TextNotificationTransaction", b =>
+            modelBuilder.Entity("DBGuardAPI.Data.Models.NotificationTransactions.HTTPNotificationTransaction", b =>
                 {
                     b.HasBaseType("DBGuardAPI.Data.Models.NotificationTransactions.NotificationTransaction");
 
-                    b.Property<string>("PhoneNumbers")
-                        .IsRequired()
+                    b.Property<string>("BodyData")
                         .HasColumnType("text")
-                        .HasColumnName("phone_numbers");
+                        .HasColumnName("body_data");
 
-                    b.Property<string>("TextMessage")
+                    b.Property<int>("BodyType")
+                        .HasColumnType("integer")
+                        .HasColumnName("body_type");
+
+                    b.Property<Dictionary<string, string>>("QueryParameters")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("query_parameters");
+
+                    b.Property<Dictionary<string, string>>("RequestHeaders")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("request_headers");
+
+                    b.Property<int>("ResponseCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("response_code");
+
+                    b.Property<string>("ResponseMessage")
+                        .HasColumnType("text")
+                        .HasColumnName("response_message");
+
+                    b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("text_message");
+                        .HasColumnName("url");
 
                     b.ToTable("notification_transactions", (string)null);
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("DBGuardAPI.Data.Models.NotificationProviders.HTTPProvider", b =>
+                {
+                    b.HasBaseType("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider");
+
+                    b.ToTable("notification_providers", (string)null);
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -924,20 +966,6 @@ namespace DBGuardAPI.Migrations
                     b.ToTable("notification_providers", (string)null);
 
                     b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.TextProvider", b =>
-                {
-                    b.HasBaseType("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("phone_number");
-
-                    b.ToTable("notification_providers", (string)null);
-
-                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("DBGuardAPI.Data.Models.DatabaseConnection", b =>
@@ -1058,7 +1086,6 @@ namespace DBGuardAPI.Migrations
                         .WithMany("NotificationProviders")
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
                         .HasConstraintName("fk_notification_providers_asp_net_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");

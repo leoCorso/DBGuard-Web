@@ -2,6 +2,7 @@
 using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Data.Enums;
 using System.Security.Cryptography.X509Certificates;
+using DBGuardAPI.Data.Models.NotificationProviders;
 namespace DBGuardAPI.Helpers
 {
     public static class NotificationProviderHelper
@@ -17,11 +18,20 @@ namespace DBGuardAPI.Helpers
                     CreateDate = email.CreateDate,
                     LastEdited = email.LastEditedDate,
                     CreatedByUserId = email.CreatedByUserId,
-                    CreatedByUsername = email.CreatedByUser!.UserName!,
+                    CreatedByUsername = email.CreatedByUser?.UserName!,
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
                     Port = email.Port,
                     SenderEmail = email.SenderEmail
+                },
+                HTTPProvider http => new HTTPProviderDTO
+                {
+                    Id = http.Id,
+                    NotificationType = http.ProviderType,
+                    CreateDate = http.CreateDate,
+                    LastEdited = http.LastEditedDate,
+                    CreatedByUserId = http.CreatedByUserId,
+                    CreatedByUsername = http.CreatedByUser?.UserName!
                 },
                 _ => throw new InvalidOperationException()
             };

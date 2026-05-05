@@ -39,4 +39,8 @@
     <PackageReference Include="Sieve" Version="2.5.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

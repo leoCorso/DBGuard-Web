@@ -5,6 +5,8 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
 {
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "NotificationType")]
     [JsonDerivedType(typeof(EmailNotificationDetailDTO), (int)NotificationType.Email)]
+    [JsonDerivedType(typeof(HttpNotificationDetailDTO), (int)NotificationType.HTTP)]
+
     public class NotificationDetailDTO
     {
         public int Id { get; set; }
@@ -23,5 +25,13 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
         public List<string> ToEmails { get; set; } = [];
         public List<string> CCEmails { get; set; } = [];
         public List<string> BCCEmails { get; set; } = [];
+    }
+    public class HttpNotificationDetailDTO: NotificationDetailDTO
+    {
+        public required string URL { get; set; }
+        public Dictionary<string, string?> RequestHeaders { get; set; } = [];
+        public Dictionary<string, string?> QueryParameters { get; set; } = [];
+        public HTTPBodyType? BodyType { get; set; } // The body type
+        public string? BodyData { get; set; } // The body data
     }
 }

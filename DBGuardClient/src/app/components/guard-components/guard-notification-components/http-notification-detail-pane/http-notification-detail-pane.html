@@ -1,0 +1,33 @@
+<h3>HTTP notification info</h3>
+<div class="http-info">
+    <span class="http-key">URL:</span>
+    <span class="http-value">
+        <a [href]="httpNotificationDetail().url" target="_blank">{{ httpNotificationDetail().url }}</a>
+    </span>
+    <span class="http-key">Request headers:</span>
+    <span class="http-value">
+        {{ mapToArray(httpNotificationDetail().requestHeaders).map(item => `${item.key}: ${item.value}`).join(', ') }}
+    </span>
+    <span class="http-key">Query parameters:</span>
+    <span class="http-value">
+        {{ mapToArray(httpNotificationDetail().queryParameters).map(item => `${item.key}: ${item.value}`).join(', ') }}
+    </span>
+    <span class="http-key">Body type:</span>
+    <span class="http-value">
+        @if(httpNotificationDetail().bodyType){
+            {{ getEnumLabel(httpBodyTypes, httpNotificationDetail().bodyType!) }}
+        }
+        @else {
+            <p-tag value="None" severity="info"></p-tag>
+        }
+    </span>
+    <span class="http-key">Body data:</span>
+    <span class="http-value">
+        @if (httpNotificationDetail().bodyData) {
+            {{ httpNotificationDetail().bodyData! }}
+        }
+        @else {
+            <em>No body data</em>
+        }
+    </span>
+</div>

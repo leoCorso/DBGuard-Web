@@ -23,7 +23,7 @@ namespace DBGuardAPI.JsonConverters
             return notificationType switch
             {
                 NotificationType.Email => JsonSerializer.Deserialize<CreateEmailNotificationDTO>(json, options),
-                NotificationType.Text => JsonSerializer.Deserialize<CreateTextGuardNotificationDTO>(json, options),
+                NotificationType.HTTP => JsonSerializer.Deserialize<CreateHttpNotificationDTO>(json, options),
                 _ => throw new NotSupportedException($"NotificationType {notificationType} is not supported")
             };
         }

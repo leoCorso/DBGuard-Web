@@ -1,4 +1,4 @@
 export enum NotificationType {
     Email = 0,
-    Text = 1
+    Http = 1
 }

@@ -1,5 +1,6 @@
 ﻿using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models.GuardNotifications;
+using DBGuardAPI.Data.Models.NotificationProviders;
 using DBGuardAPI.Data.Models.NotificationTransactions;
 using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Data.Views;
@@ -59,7 +60,7 @@ namespace DBGuardAPI.Data.Models
             {
                 notificationProvider.HasDiscriminator<NotificationType>(nameof(NotificationProvider.ProviderType))
                 .HasValue<EmailProvider>(NotificationType.Email)
-                .HasValue<TextProvider>(NotificationType.Text);
+                .HasValue<HTTPProvider>(NotificationType.HTTP);
                 notificationProvider.HasMany(sp => sp.GuardNotifications)
                     .WithOne(gn => gn.NotificationProvider)
                     .HasForeignKey(gn => gn.NotificationProviderId)
@@ -90,7 +91,7 @@ namespace DBGuardAPI.Data.Models
             {
                 notificationTransactions.HasDiscriminator<NotificationType>(nameof(NotificationTransaction.NotificationType))
                 .HasValue<EmailNotificationTransaction>(NotificationType.Email)
-                .HasValue<TextNotificationTransaction>(NotificationType.Text);
+                .HasValue<HTTPNotificationTransaction>(NotificationType.HTTP);
 
                 notificationTransactions.HasOne(nt => nt.GuardChangeTransaction)
                     .WithMany(gct => gct.NotificationTransactions)
@@ -98,16 +99,34 @@ namespace DBGuardAPI.Data.Models
                     .IsRequired(false)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+            builder.Entity<HTTPNotificationTransaction>(httpTransaction =>
+            {
+                httpTransaction
+                    .Property(ht => ht.RequestHeaders)
+                    .HasColumnType("jsonb");
+                httpTransaction
+                    .Property(ht => ht.QueryParameters)
+                    .HasColumnType("jsonb");
+            });
             builder.Entity<GuardNotification>(guardNotification =>
             {
                 guardNotification.HasDiscriminator<NotificationType>(nameof(GuardNotification.NotificationType))
                 .HasValue<EmailNotification>(NotificationType.Email)
-                .HasValue<TextNotification>(NotificationType.Text);
+                .HasValue<HTTPNotification>(NotificationType.HTTP);
                 guardNotification
                 .HasMany(gn => gn.NotificationTransactions)
                 .WithOne(nt => nt.GuardNotification)
                 .HasForeignKey(nt => nt.GuardNotificationId)
                 .OnDelete(DeleteBehavior.SetNull);
+            });
+            builder.Entity<HTTPNotification>(httpNotification =>
+            {
+                httpNotification
+                .Property(hn => hn.RequestHeaders)
+                .HasColumnType("jsonb");
+                httpNotification
+                .Property(hn => hn.QueryParameters)
+                .HasColumnType("jsonb");
             });
             base.OnModelCreating(builder);
         }
