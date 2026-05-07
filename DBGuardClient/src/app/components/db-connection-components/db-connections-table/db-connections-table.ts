@@ -43,8 +43,7 @@ export class DbConnectionsTable extends PreviewTable<DatabaseConnectionDTO> impl
   public getEnumLabel = getEnumLabel;
   public databaseEngine = DatabaseEngine;
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     this.listenToEntityChanges();
     this.initFilterInputs();
     this.configureFilters();
@@ -63,7 +62,7 @@ export class DbConnectionsTable extends PreviewTable<DatabaseConnectionDTO> impl
       const filter: FilterValue = {
         field: 'createdByUserId',
         value: this.createdByUserId(),
-        operator: 'equals',
+        operator: '==',
         type: 'text'
       }
       filters.push(filter);

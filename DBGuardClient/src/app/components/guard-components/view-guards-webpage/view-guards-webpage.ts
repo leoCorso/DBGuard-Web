@@ -18,6 +18,7 @@ import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { ViewGuardItem } from '../view-guard-item/view-guard-item';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-view-guards-webpage',
@@ -41,8 +42,7 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
   ];
   public override sortControl = new FormControl<SortValue>({field: 'createDate', order: -1});
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     merge(this.entityChangeService.guardCreated, this.entityChangeService.guardEdited).pipe(takeUntil(this.destroy)).subscribe({
       next: () => {
         const event = this.dataView.createLazyLoadMetadata();
@@ -59,7 +59,6 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
     this.filterVisible = !this.filterVisible;
   }
   public loadDataPage(event: DataViewLazyLoadEvent): void {
-    this.loadingEvent.next(true);
     const url = [environment.api.uri, 'Guards', 'GetGuardsView'].join('/');
     this.page.update(() => Math.floor(event.first / event.rows) + 1);
     const sort = this.sortControl.value;
@@ -81,18 +80,16 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
     if(pageSize){
       params = this.paramsBuilder.addPagination(this.page(), pageSize, params);
     }
-    this.httpClient.get<PagedResponse<GuardView>>(url, { params: params }).subscribe({
+    this.httpClient.get<PagedResponse<GuardView>>(url, { params: params }).pipe(withDelayedLoading((val) => this.showSpinner.set(val))).subscribe({
       next: (pagedResponse: PagedResponse<GuardView>) => {
         this.page.set(pagedResponse.pageNumber);
         this.dataItems.set(pagedResponse.dataItems);
         this.totalPages.set(pagedResponse.totalPages);
         this.totalItems.set(pagedResponse.totalItems);
         this.pageSize.set(pagedResponse.pageSize);
-        this.loadingEvent.next(false);
         this.errorState.set(false);
       },
       error: () => {
-        this.loadingEvent.next(false);
         this.errorState.set(true);
       }
     });

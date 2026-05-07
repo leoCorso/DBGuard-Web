@@ -7,5 +7,6 @@
         public required string Password { get; set; }
         public required string ConfirmPassword { get; set; }
         public List<string> Roles { get; set; } = [];
+        public bool IsActive { get; set; } = true;
     }
 }

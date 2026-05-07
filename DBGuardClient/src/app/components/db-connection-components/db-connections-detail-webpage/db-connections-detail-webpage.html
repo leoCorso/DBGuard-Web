@@ -7,9 +7,9 @@
                 <h2>Database connection info</h2>
                 @if (authService.hasRoles(['Admin'])) {
                     <p-buttongroup>
-                        <p-button (onClick)="testDatabaseConnection()" label="Check connection" [text]="true" severity="contrast" icon="pi pi-play" pTooltip="Check the health of the database connection"></p-button>
+                        <p-button [loading]="testingConnection()" (onClick)="testDatabaseConnection()" label="Check connection" [text]="true" severity="contrast" icon="pi pi-play" pTooltip="Check the health of the database connection"></p-button>
                         <p-button (onClick)="editDbConnection()" label="Edit connection" icon="pi pi-pencil" [rounded]="true" [text]="true"></p-button>
-                        <p-button (onClick)="onDeleteConnection($event)" label="Delete connection" icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"></p-button>
+                        <p-button [loading]="deletingConnection()" (onClick)="onDeleteConnection($event)" label="Delete connection" icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"></p-button>
                     </p-buttongroup>
                 }
             </div>

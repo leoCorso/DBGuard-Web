@@ -6,7 +6,7 @@
                 <h3>User details</h3>
                 <p-buttongroup>
                     <p-button (onClick)="editUser()" label="Edit" [text]="true" icon="pi pi-pencil"></p-button>
-                    <p-button (onClick)="deleteUserClicked($event)" label="Delete" [text]="true" icon="pi pi-trash" severity="danger"></p-button>
+                    <p-button [loading]="deletingUser()" (onClick)="deleteUserClicked($event)" label="Delete" [text]="true" icon="pi pi-trash" severity="danger"></p-button>
                 </p-buttongroup>
             </div>
         </ng-template>

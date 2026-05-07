@@ -22,12 +22,10 @@ import { Tag } from 'primeng/tag';
 })
 export class NotificationProviderDetailPane implements OnInit, OnDestroy {
   public notificationProvider = input.required<NotificationProviderDTO>();
-  private entityChangeService = inject(EntityChangeService);
   public emailProviderDetails = computed(() => this.notificationProvider() as EmailProviderDTO);
   public getEnumLabel = getEnumLabel;
   public notificationTypes = NotificationType;
   private destroy = new Subject<void>();
-  public loadingProvider = signal<boolean>(false);
 
   ngOnInit(): void {
 

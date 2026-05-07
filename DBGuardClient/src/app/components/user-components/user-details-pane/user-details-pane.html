@@ -12,6 +12,10 @@
         </span>
         <span class="user-key">Username:</span>
         <span class="user-value">{{ userDetails()?.username }}</span>
+        <span class="user-key">Status</span>
+        <span class="user-value">
+            <p-tag [value]="userDetails()?.isActive ? 'Active' : 'Inactive'" [severity]="userDetails()?.isActive ? 'success' : 'danger'"></p-tag>
+        </span>
         <span class="user-key">Created At:</span>
         <span class="user-value">{{ userDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
         <span class="user-key">Last edited:</span>

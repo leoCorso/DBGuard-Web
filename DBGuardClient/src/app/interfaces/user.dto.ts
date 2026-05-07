@@ -4,7 +4,8 @@ export interface UserDTO {
     createDate: Date,
     lastEdited: Date,
     createdByUserId?: number,
-    createdByUsername?: string
+    createdByUsername?: string,
+    isActive: boolean
 }
 
 export interface UserDetailDTO {
@@ -14,14 +15,16 @@ export interface UserDetailDTO {
     lastEdited: Date,
     createdByUserId?: number,
     createdByUsername?: string,
-    roles: string[]
+    roles: string[],
+    isActive: boolean
 }
 export interface CreateUserDTO {
     id?: string,
     username: string,
     password: string,
     confirmPassword: string,
-    roles: string[]
+    roles: string[],
+    isActive: boolean
 }
 export interface CreateUserReferenceData {
     roles: string[]

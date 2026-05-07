@@ -11,7 +11,7 @@ import { TableModule } from 'primeng/table';
 import { FilterItem } from '../../../shared/filter-item/filter-item';
 import { DatePipe } from '@angular/common';
 import { EntityChangeService } from '../../../../services/entity-change-service';
-import { takeUntil } from 'rxjs';
+import { merge, takeUntil } from 'rxjs';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { RouterLink, RouterModule } from "@angular/router";
@@ -48,8 +48,13 @@ export class GuardNotificationsTable extends PreviewTable<GuardNotificationDTO> 
 
   public override filtersConfig: FilterConfig[] = [];
   
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
+    merge(this.entityChanges.guardCreated, this.entityChanges.guardEdited, this.entityChanges.guardDeleted).pipe(takeUntil(this.destroy)).subscribe({
+      next: () => {
+        const event = this.viewItemsTable.createLazyLoadMetadata();
+        this.loadPreviewData(event);
+      }
+    })
     this.initFilterInputs();
     this.configureFilters();
   }

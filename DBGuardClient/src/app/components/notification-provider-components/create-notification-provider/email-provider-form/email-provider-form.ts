@@ -1,4 +1,4 @@
-import { Component, input, OnInit, output } from '@angular/core';
+import { Component, input, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateEmailNotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 import { InputText } from 'primeng/inputtext';
@@ -10,6 +10,7 @@ import { NotificationType } from '../../../../enums/notification-type';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { TooltipModule } from 'primeng/tooltip';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-email-provider-form',
@@ -19,8 +20,9 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class EmailProviderForm implements OnInit {
   public emailProviderToEdit = input<CreateEmailNotificationProviderDTO>();
-
   public createEmailProvider = output<CreateEmailNotificationProviderDTO>();
+  public savingProvider = input.required<boolean>();
+  
   public emailProviderForm = new FormGroup({
     smtpServer: new FormControl<string | null>(null, [Validators.required]),
     port: new FormControl<number>(587, [Validators.required]),

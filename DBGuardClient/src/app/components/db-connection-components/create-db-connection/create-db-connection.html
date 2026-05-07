@@ -37,13 +37,9 @@
         <label for="validate-conn">Validate connection:</label>
         <p-checkbox [binary]="true" inputId="validate-conn" formControlName="validateConnection" pTooltip="When selected it will ensure connection is valid"></p-checkbox>
     </div>
+
     <div class="bottom-section">
-        <p-button type="submit" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid"></p-button>
+        <p-button [loading]="savingConnection()" type="submit" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine"></p-button>
     </div>
-        @if (loading()) {
-            <div class="loading-spinner">
-                <p-progress-spinner style="height: 30px;width: 30px;"ariaLabel="Creating connection" />
-                <p style="font-size: x-small;text-align: center;">Testing connection</p>
-            </div>
-        }
+
 </form>

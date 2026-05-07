@@ -23,18 +23,20 @@ import { Tag } from 'primeng/tag';
 import { Card } from 'primeng/card';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateDbConnection } from '../../db-connection-components/create-db-connection/create-db-connection';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil, tap, timer } from 'rxjs';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { RadioButton } from 'primeng/radiobutton';
 import { Checkbox } from 'primeng/checkbox';
 import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-create-guard',
   imports: [Card, Tag, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
-    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, Listbox, FormsModule, Checkbox],
+    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, Listbox, FormsModule, Checkbox, ProgressSpinner],
   templateUrl: './create-guard.html',
   styleUrl: './create-guard.scss',
 })
@@ -45,7 +47,7 @@ export class CreateGuard implements OnInit, OnDestroy {
 
   public databaseConnections = signal<SimpleDatabaseConnectionDTO[]>([]);
   public notificationProviders = signal<NotificationProviderDTO[]>([]);
-
+  public creatingGuard = signal<boolean>(false);
   private httpClient = inject(HttpClient);
   private guardService = inject(EntityChangeService);
   public enumOptions = enumToOptions(GuardOperator);
@@ -113,6 +115,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     });
   }
   public addGuard(): void {
+    this.creatingGuard.set(true);
     const values = this.guardFormGroup.value;
     if(!values){
       return;
@@ -138,7 +141,9 @@ export class CreateGuard implements OnInit, OnDestroy {
     this.guardToEdit() ? url.push('PutGuard') : url.push('PostGuard');
     const urlString = url.join('/');
     const request = this.guardToEdit() ? this.httpClient.put<SimpleGuardDTO>(urlString, guard) : this.httpClient.post<SimpleGuardDTO>(urlString, guard);
-    request.subscribe({
+    
+
+    request.pipe(finalize(() => this.creatingGuard.set(false))).subscribe({
       next: (newGuard: SimpleGuardDTO) => {
         if(this.guardToEdit()){
           this.guardService.guardEdited.next(newGuard.id);

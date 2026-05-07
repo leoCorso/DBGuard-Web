@@ -16,10 +16,13 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Toast } from 'primeng/toast';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { NotificationType } from '../../../enums/notification-type';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-notification-provider-detail-webpage',
-  imports: [NotificationProviderDetailPane, Card, GuardNotificationsTable, Button, ButtonGroup, ConfirmPopup, TooltipModule, Toast],
+  imports: [NotificationProviderDetailPane, Card, GuardNotificationsTable, Button, ButtonGroup, ConfirmPopup, TooltipModule, Toast, ProgressSpinner],
   templateUrl: './notification-provider-detail-webpage.html',
   styleUrl: './notification-provider-detail-webpage.scss',
 })
@@ -35,7 +38,10 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
   private editProviderDialog?: DynamicDialogRef<CreateNotificationProvider> | null;
   public notificationProvider = signal<NotificationProviderDTO | null>(null);
   public notificationTypes = NotificationType;
-  
+  public loadingProvider = signal<boolean>(false);
+  public deletingProvider = signal<boolean>(false);
+  public testingProvider = signal<boolean>(false);
+
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if(id === null){
@@ -66,9 +72,10 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteProvider(): void {
+    this.deletingProvider.set(true);
     const url = [environment.api.uri, 'NotificationProviders', 'DeleteProvider'].join('/');
     const params = new HttpParams().set('providerId', this.providerId()!);
-    this.httpClient.delete(url, { params: params }).subscribe(() => {
+    this.httpClient.delete(url, { params: params }).pipe(finalize(() => this.deletingProvider.set(false))).subscribe(() => {
       this.router.navigate(['/providers/view-all']);
     });
   }
@@ -84,9 +91,10 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
     });
   }
   public testProvider(): void {
+    this.testingProvider.set(true);
     const url = [environment.api.uri, 'NotificationProviders', 'TestNotificationProvider'].join('/');
     const params = new HttpParams().set('providerId', this.providerId()!);
-    this.httpClient.post(url, {}, { params: params }).subscribe({
+    this.httpClient.post(url, {}, { params: params }).pipe(finalize(() => this.testingProvider.set(false))).subscribe({
       next: () => {
         this.messageService.add({summary: 'Provider working', detail: 'The provider is working and can be used to send notifications', key: 'provider-toast', severity: 'success'});
       }
@@ -95,7 +103,7 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
   private loadProviderDetail(): void {
     const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
     const params = new HttpParams().set('id', this.providerId()!);
-    this.httpClient.get<NotificationProviderDTO>(url, { params: params }).subscribe({
+    this.httpClient.get<NotificationProviderDTO>(url, { params: params }).pipe(withDelayedLoading((val) => this.loadingProvider.set(val))).subscribe({
       next: (providerInfo: NotificationProviderDTO) => {
         this.notificationProvider.set(providerInfo);
       }

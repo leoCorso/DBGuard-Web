@@ -5,7 +5,7 @@ import { CreateNotification } from '../create-notification/create-notification';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpBodyType } from '../../../../enums/http-body-type';
 import { HTTPAction } from '../../../../enums/http-action';
-import { Textarea } from 'primeng/textarea';
+import { TextareaModule  } from 'primeng/textarea';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -22,7 +22,7 @@ import { mapToArray, mapToRecords } from '../../../../helper-functions/http-noti
 import { Popover } from 'primeng/popover'
 @Component({
   selector: 'app-create-http-notification',
-  imports: [InputTextModule, Textarea, InputGroup, InputGroupAddon, FloatLabel, Message, ReactiveFormsModule, Select, 
+  imports: [InputTextModule, TextareaModule , InputGroup, InputGroupAddon, FloatLabel, Message, ReactiveFormsModule, Select, 
     TableModule, FormsModule, Button, ButtonGroup, Card, Popover],
   templateUrl: './create-http-notification.html',
   styleUrl: './create-http-notification.scss',

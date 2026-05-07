@@ -17,6 +17,8 @@ import { Data } from '@angular/router';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { Tooltip, TooltipModule } from "primeng/tooltip";
 import { Checkbox } from 'primeng/checkbox';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-create-db-connection',
@@ -30,7 +32,7 @@ export class CreateDbConnection implements OnInit {
   private dbConnectionToEdit = signal<CreateDatabaseConnectionDTO | null>(null);
   public databaseEngines = enumToOptions(DatabaseEngine, {PostgreSQL: 'PostgreSQL', SQLite: 'SQLite', SQLServer: 'SQL Server', MySql: 'MySQL'});
   private httpClient = inject(HttpClient);
-  public loading = signal<boolean>(false);
+  public savingConnection = signal<boolean>(false);
   public dbConnectionForm = new FormGroup({
     endpoint: new FormControl<string | null>(null, [Validators.required]),
     databaseEngine: new FormControl<DatabaseEngine | null>(null, [Validators.required]),
@@ -48,7 +50,7 @@ export class CreateDbConnection implements OnInit {
     }
   }
   public saveConnectionForm(): void {
-    this.loading.set(true);
+    this.savingConnection.set(true);
     const formValues = this.dbConnectionForm.value;
 
     let newConnection: CreateDatabaseConnectionDTO = {
@@ -65,7 +67,7 @@ export class CreateDbConnection implements OnInit {
     this.dbConnectionToEditId() ? url.push("PutDatabaseConnection") : url.push('PostDatabaseConnection');
     const urlString = url.join('/');
     const request = this.dbConnectionToEditId() ? this.httpClient.put<DatabaseConnectionDTO>(urlString, newConnection) : this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection);
-    request.subscribe({
+    request.pipe(finalize(() => this.savingConnection.set(false))).subscribe({
       next: (newConnection: DatabaseConnectionDTO) => {
         if(this.dbConnectionToEditId()){
           this.entityChangeService.dbConnectionEdited.next(newConnection.id!);
@@ -74,10 +76,7 @@ export class CreateDbConnection implements OnInit {
           this.entityChangeService.dbConnectionCreated.next(newConnection.id!);
         }
         this.dialogRef.close(newConnection);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
+        this.savingConnection.set(false);
       }
     });
   }

@@ -16,6 +16,8 @@ import { ConfirmPopup } from 'primeng/confirmpopup';
 import { AuthService } from '../../../services/auth-service';
 import { TooltipModule } from 'primeng/tooltip';
 import { Toast } from 'primeng/toast';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-db-connections-detail-webpage',
@@ -33,6 +35,8 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   public dbConnectionId = signal<number | null>(null);
   private editDbConnectionDialog?: DynamicDialogRef<CreateDbConnection> | null;
+  public deletingConnection = signal<boolean>(false);
+  public testingConnection = signal<boolean>(false);
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -76,18 +80,20 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteConnection(): void {
+    this.deletingConnection.set(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'DeleteDatabaseConnection'].join('/');
     const params = new HttpParams().set('connectionId', this.dbConnectionId()!);
-    this.httpClient.delete(url, { params: params }).subscribe({
+    this.httpClient.delete(url, { params: params }).pipe(finalize(() => this.deletingConnection.set(false))).subscribe({
       next: () => {
         this.router.navigate(['/db-connections/view-all']);
       }
     });
   }
   public testDatabaseConnection(): void {
+    this.testingConnection.set(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'TestDatabaseConnection'].join('/');
     const params = new HttpParams().set('connectionId', this.dbConnectionId()!);
-    this.httpClient.post(url, {}, {params: params}).subscribe({
+    this.httpClient.post(url, {}, {params: params}).pipe(finalize(() => this.testingConnection.set(false))).subscribe({
       next: () => {
         this.messageService.add({summary: 'Healthy', detail: 'Database connection is healthy', severity: 'success', key: 'test-db-toast'});
       }

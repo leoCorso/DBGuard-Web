@@ -1,6 +1,6 @@
 import { Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
-import { BehaviorSubject, debounce, debounceTime, merge, single, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, debounce, debounceTime, finalize, merge, single, Subject, takeUntil } from 'rxjs';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
@@ -14,6 +14,7 @@ import { Password } from 'primeng/password';
 import { Tooltip } from "primeng/tooltip";
 import { DatePipe } from '@angular/common';
 import { RouterLink, RouterModule } from "@angular/router";
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-db-connection-detail-pane',
@@ -31,8 +32,7 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
   public getEnumLabel = getEnumLabel;
   public databaseEngines = DatabaseEngine;
   private destroy = new Subject<void>();
-  public showLoadingUi = signal<boolean>(true);
-  public loadingSignal = new BehaviorSubject<boolean>(true);
+  public showLoadingUi = signal<boolean>(false);
   public viewPassword = signal<boolean>(false);
 
   ngOnInit(): void {
@@ -43,7 +43,6 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
         }
       }
     });
-    this.loadingSignal.pipe(debounceTime(500), takeUntil(this.destroy)).subscribe(loading => this.showLoadingUi.set(loading));
     this.getInfo();
   }
   ngOnDestroy(): void {
@@ -51,16 +50,11 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
     this.destroy.complete();
   }
   private getInfo(): void {    
-    this.loadingSignal.next(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'GetDatabaseConnectionDetail'].join('/');
     const params = new HttpParams().set('databaseConnectionId', this.databaseConnectionId());
-    this.httpClient.get<DatabaseConnectionDTO>(url, { params: params }).subscribe({
+    this.httpClient.get<DatabaseConnectionDTO>(url, { params: params }).pipe(withDelayedLoading((val) => this.showLoadingUi.set(val))).subscribe({
       next: (databaseInfo: DatabaseConnectionDTO) => {
         this.databaseConnectionInfo.set(databaseInfo);
-        this.loadingSignal.next(false);
-      },
-      error: () => {
-        this.loadingSignal.next(false);
       }
     })
   }

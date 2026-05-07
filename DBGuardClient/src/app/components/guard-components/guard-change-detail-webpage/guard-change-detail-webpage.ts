@@ -19,6 +19,7 @@ import { GuardChangeDetailPane } from '../guard-change-detail-pane/guard-change-
 import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-guard-change-detail-webpage',
@@ -46,13 +47,12 @@ export class GuardChangeDetailWebpage implements OnInit {
   }
 
   private getChangeDetailInfo(): void {
-    this.loadingChangeDetail.set(true);
     const url = [environment.api.uri, 'Guards', 'GetGuardChangeTransactions'].join('/');
     const params = new HttpParams()
     .set('filters', `id==${this.changeHistoryId()!}`)
     .set('page', 1)
     .set('pageSize', 1);
-    this.httpClient.get<PagedResponse<GuardChangeTransactionDTO>>(url, { params: params }).subscribe({
+    this.httpClient.get<PagedResponse<GuardChangeTransactionDTO>>(url, { params: params }).pipe(withDelayedLoading((val) => this.loadingChangeDetail.set(val))).subscribe({
       next: (data: PagedResponse<GuardChangeTransactionDTO>) => {
         if(data.totalItems !== 1 || data.pageNumber !== 1 || data.pageSize !== 1){
           this.messageService.add({summary: 'Error', detail: 'Invalid response while getting guard transaction', severity: 'danger', key: 'request-error'});
@@ -60,7 +60,6 @@ export class GuardChangeDetailWebpage implements OnInit {
         }
         const changeHistoryDetail = data.dataItems[0];
         this.changeHistoryDetail.set(changeHistoryDetail);
-        this.loadingChangeDetail.set(false);
         if(this.changeHistoryDetail()?.guardId){
           this.getGuardDetails();
         }

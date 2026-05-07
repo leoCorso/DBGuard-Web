@@ -21,6 +21,7 @@ namespace DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs
         public DateTimeOffset CreateDate { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public DateTimeOffset LastEdited { get; set; }
+        [Sieve(CanSort = true, CanFilter = true)]
         public required string CreatedByUserId { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public required string CreatedByUsername { get; set; }

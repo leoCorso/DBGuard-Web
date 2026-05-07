@@ -12,10 +12,12 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { isEmailProvider } from '../../../helper-functions/type-guards';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { Message } from 'primeng/message';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-create-notification-provider',
-  imports: [Select, FloatLabel, ReactiveFormsModule, EmailProviderForm, Message],
+  imports: [Select, FloatLabel, ReactiveFormsModule, EmailProviderForm, Message, ProgressSpinner],
   templateUrl: './create-notification-provider.html',
   styleUrl: './create-notification-provider.scss',
 })
@@ -29,6 +31,7 @@ export class CreateNotificationProvider implements OnInit {
   private dialogRef = inject(DynamicDialogRef<NotificationProviderDTO>);
   private entityChangeService = inject(EntityChangeService);
   public notificationTypes = NotificationType;
+  public savingNotificationProvider = signal<boolean>(false);
 
   ngOnInit(): void {
     if(this.notificationProviderIdToEdit()){
@@ -36,11 +39,12 @@ export class CreateNotificationProvider implements OnInit {
     }
   }
   public saveProvider(provider: CreateNotificationProviderDTO): void {
+    this.savingNotificationProvider.set(true)
     const url = [environment.api.uri, 'NotificationProviders'];
     this.notificationProviderToEdit() ? url.push('PutNotificationProvider') : url.push('PostNotificationProvider');
     const urlString = url.join('/');
     const request = this.notificationProviderToEdit() ? this.httpClient.put<NotificationProviderDTO>(urlString, provider) : this.httpClient.post<NotificationProviderDTO>(urlString, provider);
-    request.subscribe({
+    request.pipe(finalize(() => this.savingNotificationProvider.set(false))).subscribe({
       next: (newProvider: NotificationProviderDTO) => {
         if(this.notificationProviderToEdit()){
           this.entityChangeService.providerEdited.next(newProvider.id);

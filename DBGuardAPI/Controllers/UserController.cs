@@ -55,7 +55,8 @@ namespace DBGuardAPI.Controllers
                     CreateDate = user.CreateDate,
                     LastEdited = user.LastEdited,
                     CreatedByUserId = user.CreatedByUserId,
-                    CreatedByUsername = user.CreatedByUser != null ? user.CreatedByUser.UserName : null
+                    CreatedByUsername = user.CreatedByUser != null ? user.CreatedByUser.UserName : null,
+                    IsActive = user.IsActive
                 }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<UserDTO>(sieveModel, query);
                 
@@ -95,7 +96,8 @@ namespace DBGuardAPI.Controllers
                 LastEdited = user.LastEdited,
                 CreatedByUserId = user.CreatedByUserId,
                 CreatedByUsername = user.CreatedByUser != null ? user.CreatedByUser.UserName : null,
-                Roles = userRoleNames
+                Roles = userRoleNames,
+                IsActive = user.IsActive
             };
         }
 
@@ -127,7 +129,8 @@ namespace DBGuardAPI.Controllers
                 Username = userToEdit.UserName!,
                 Password = userToEdit.PasswordHash!,
                 ConfirmPassword = userToEdit.PasswordHash!,
-                Roles = roles.ToList()
+                Roles = roles.ToList(),
+                IsActive = userToEdit.IsActive
             };
         }
         [HttpPost(nameof(Login))]
@@ -142,6 +145,14 @@ namespace DBGuardAPI.Controllers
                 {
                     Success = false,
                     Message = "No user exists"
+                };
+            }
+            if (!user.IsActive)
+            {
+                return new AuthResult
+                {
+                    Success = false,
+                    Message = "Account is not active"
                 };
             }
             if (!signInResult.Succeeded)
@@ -232,6 +243,14 @@ namespace DBGuardAPI.Controllers
                     Success = false
                 };
             }
+            if (!user.IsActive)
+            {
+                return new AuthResult
+                {
+                    Success = false,
+                    Message = "Account is not active"
+                };
+            }
             var roles = await _userManager.GetRolesAsync(user);
             RefreshToken newToken = await _refreshTokenService.GenerateRefreshToken(user);
             Response.Cookies.Append("refreshToken", newToken.Token, new CookieOptions
@@ -281,7 +300,8 @@ namespace DBGuardAPI.Controllers
             User user = new()
             {
                 UserName = newUsername,
-                CreatedByUserId = currentUser.Id
+                CreatedByUserId = currentUser.Id,
+                IsActive = newUser.IsActive
             };
             await _userManager.CreateAsync(user, newUser.Password);
             _logger.LogInformation("A user was created {UserId} by {CreatedById}", user.Id, currentUser.Id);
@@ -293,7 +313,8 @@ namespace DBGuardAPI.Controllers
                 CreateDate = user.CreateDate,
                 LastEdited = user.LastEdited,
                 CreatedByUserId = user.CreatedByUserId,
-                CreatedByUsername = currentUser.UserName
+                CreatedByUsername = currentUser.UserName,
+                IsActive = user.IsActive
             };
         }
         [HttpPut(nameof(PutUser))]
@@ -322,6 +343,7 @@ namespace DBGuardAPI.Controllers
                 return Conflict(new { Message = "This username is already in use" });
             }
             userToEdit.UserName = editedUser.Username.Trim();
+            userToEdit.IsActive = editedUser.IsActive;
             await _userManager.UpdateAsync(userToEdit);
             // Remove user from roles not in new object
             var currentUserRoles = await _userManager.GetRolesAsync(userToEdit);

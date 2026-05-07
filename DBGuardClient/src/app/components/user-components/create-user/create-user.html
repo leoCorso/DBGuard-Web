@@ -39,6 +39,10 @@
         </p-floatlabel>
         <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
+    <div style="display: flex;gap:.5rem;">
+        <label for="user-active">Is active:</label>
+        <p-checkbox [binary]="true" inputId="user-active" formControlName="isActive"></p-checkbox>
+    </div>
     <app-form-control-error [formControlInput]="userForm" [customMessage]="[{ key:'passwordMismatch', message:'Passwords do not match'}]"></app-form-control-error>
-    <p-button [label]="userIdToEdit() ? 'Save' : 'Create'" icon="pi pi-save" [rounded]="true" type="submit" [disabled]="userForm.invalid"></p-button>
+    <p-button [loading]="savingUser()" [label]="userIdToEdit() ? 'Save' : 'Create'" icon="pi pi-save" [rounded]="true" type="submit" [disabled]="userForm.invalid"></p-button>
 </form>

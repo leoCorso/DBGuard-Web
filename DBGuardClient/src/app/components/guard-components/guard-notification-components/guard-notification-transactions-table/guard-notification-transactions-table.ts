@@ -51,8 +51,7 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
   public override filtersConfig: FilterConfig[] = [];
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
   
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     this.initFilterInputs();
     this.configureFilters();
     this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({

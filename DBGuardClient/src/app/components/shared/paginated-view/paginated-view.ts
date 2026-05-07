@@ -11,24 +11,20 @@ import { ViewParamsBuilder } from '../../../services/view-params-builder';
   template: '',
   styles: '',
 })
-export abstract class PaginatedView<ViewType> implements OnInit, OnDestroy {
+export abstract class PaginatedView<ViewType> implements OnDestroy {
   public dataItems = signal<ViewType[]>([]);
   public pageSize = signal<number>(5);
   public page = signal<number>(0);
   public totalItems = signal<number>(0);
   public totalPages = signal<number>(0);
   public pageSizeOptions = [5, 30, 50, 100];
-  public loadingEvent = new BehaviorSubject<boolean>(true);
-  public showSpinner = signal<boolean>(true);
+  public showSpinner = signal<boolean>(false);
   public errorState = signal<boolean>(false);
   protected destroy = new Subject<void>();
   public abstract filters: WritableSignal<Map<string, FilterValue> | undefined>;
   protected httpClient= inject(HttpClient);
   protected paramsBuilder = inject(ViewParamsBuilder);
 
-  ngOnInit(): void {
-    this.loadingEvent.pipe(debounceTime(500), takeUntil(this.destroy)).subscribe(loading => this.showSpinner.set(loading));
-  }
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();

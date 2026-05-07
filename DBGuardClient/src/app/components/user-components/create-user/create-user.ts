@@ -13,10 +13,12 @@ import { Message } from 'primeng/message';
 import { passwordMatchValidator } from '../../../form-validators/matching-validator';
 import { FormControlError } from '../../shared/form-control-error/form-control-error';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { finalize } from 'rxjs';
+import { Checkbox } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-create-user',
-  imports: [ReactiveFormsModule, FloatLabel, InputText, Password, MultiSelect, Button, Message, FormControlError],
+  imports: [ReactiveFormsModule, FloatLabel, InputText, Password, MultiSelect, Button, Message, FormControlError, Checkbox],
   templateUrl: './create-user.html',
   styleUrl: './create-user.scss',
 })
@@ -27,11 +29,13 @@ export class CreateUser implements OnInit {
   public referenceData = signal<CreateUserReferenceData | null>(null);
   public userIdToEdit = input<string>();
   public userToEdit = signal<CreateUserDTO | null>(null);
+  public savingUser = signal<boolean>(false);
   public userForm = new FormGroup({
     username: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(255)]),
     password: new FormControl<string | null>(null, [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)]),
     confirmPassword: new FormControl<string | null>(null, [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)]),
-    roles: new FormControl<string[]>([], [Validators.required])
+    roles: new FormControl<string[]>([], [Validators.required]),
+    isActive: new FormControl<boolean>(true, [Validators.required])
   }, [passwordMatchValidator()]);
   ngOnInit(): void {
     this.getReferenceData();
@@ -58,6 +62,7 @@ export class CreateUser implements OnInit {
     })
   }
   public saveUser(): void {
+    this.savingUser.set(true);
     const userValues = this.userForm.value;
     const url = [environment.api.uri, 'User'];
     const user: CreateUserDTO = {
@@ -65,11 +70,12 @@ export class CreateUser implements OnInit {
       username: userValues.username!,
       password: userValues.password!,
       confirmPassword: userValues.confirmPassword!,
-      roles: userValues.roles ?? []
+      roles: userValues.roles ?? [],
+      isActive: userValues.isActive!
     };
     this.userToEdit() ? url.push('PutUser') : url.push('PostUser');
     const request = this.userToEdit() ? this.httpClient.put<UserDTO>(url.join('/'), user) : this.httpClient.post<UserDTO>(url.join('/'), user);
-    request.subscribe({
+    request.pipe(finalize(() => this.savingUser.set(true))).subscribe({
       next: (user: UserDTO) => {
         if(this.userIdToEdit()){
           this.entityChangeService.userEdited.next(user.id);

@@ -10,7 +10,7 @@ import { formatEnumKey, getEnumLabel } from '../../../helper-functions/enum-help
 import { GuardState } from '../../../enums/guard-state';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
-import { BehaviorSubject, debounceTime, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, debounceTime, finalize, Subject, takeUntil } from 'rxjs';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -28,6 +28,7 @@ import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
 import { AuthService } from '../../../services/auth-service';
 import { TooltipModule } from 'primeng/tooltip';
 import { Toast } from 'primeng/toast';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-guard-detail-webpage',
@@ -47,8 +48,9 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   public guardDetail = signal<GuardDetailDTO | null>(null);
   public guardId = signal<number | null>(null);
   private activatedRoute = inject(ActivatedRoute);
-  private loadingEvent = new BehaviorSubject<boolean>(false);
-  public showLoadingSpinner = signal<boolean>(true);
+  public loadingGuardDetail = signal<boolean>(false);
+  public deletingGuard = signal<boolean>(false);
+  public testingGuard = signal<boolean>(false);
   private destroy = new Subject<void>();
   private messageService = inject(MessageService);
   private editGuardDialogRef?: DynamicDialogRef<CreateGuard> | null;
@@ -63,16 +65,13 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
       }
     })
     this.guardId.set(Number(guardId!));
-    this.loadingEvent.pipe(takeUntil(this.destroy), debounceTime(500)).subscribe(state => this.showLoadingSpinner.set(state));
     this.loadDetails();
   }
   private loadDetails(): void {
-    this.loadingEvent.next(true);
     const url =   [environment.api.uri, 'Guards', 'GetGuardDetail', this.guardId()].join('/');
-    this.httpClient.get<GuardDetailDTO>(url).subscribe({
+    this.httpClient.get<GuardDetailDTO>(url).pipe(withDelayedLoading((val) => this.loadingGuardDetail.set(val))).subscribe({
       next: (guardDetail: GuardDetailDTO) => {
         this.guardDetail.set(guardDetail);
-        this.loadingEvent.next(false);
       },
       error: () => this.router.navigate(['/guards/view-all'])
     });
@@ -113,9 +112,10 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteGuard(): void {
+    this.deletingGuard.set(true);
     const url = [environment.api.uri, 'Guards', 'DeleteGuard'].join('/');
     const params = new HttpParams().set('guardId', this.guardId()!);
-    this.httpClient.delete<void>(url, { params: params }).subscribe({
+    this.httpClient.delete<void>(url, { params: params }).pipe(finalize(() => this.deletingGuard.set(false))).subscribe({
       next: () => {
         this.entityChangeService.guardDeleted.next(this.guardId()!);
         this.router.navigate(['/guards/view-all']);
@@ -123,9 +123,10 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     })
   }
   public runGuard(): void {
+    this.testingGuard.set(true);
     const url = [environment.api.uri, 'Guards', 'RunGuardManually'].join('/');
     const params = new HttpParams().set('guardId', this.guardId()!);
-    this.httpClient.post<GuardState>(url, {}, { params: params }).subscribe({
+    this.httpClient.post<GuardState>(url, {}, { params: params }).pipe(finalize(() => this.testingGuard.set(false))).subscribe({
       next: (guardState: GuardState) => {
         this.entityChangeService.guardEdited.next(this.guardId()!);
         this.messageService.add({summary: 'Guard finished', detail: `Guard state: ${getEnumLabel(GuardState, guardState)}`, severity: getGuardStateSeverityTwo(guardState), key: 'guard-run-toast'});

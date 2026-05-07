@@ -5,7 +5,7 @@
     </p-floatlabel>
     @switch(notificationProviderType.value){
         @case(notificationTypes.Email){
-            <app-email-provider-form [emailProviderToEdit]="emailProviderToEdit()" (createEmailProvider)="saveProvider($event)"></app-email-provider-form>
+            <app-email-provider-form [savingProvider]="savingNotificationProvider()" [emailProviderToEdit]="emailProviderToEdit()" (createEmailProvider)="saveProvider($event)"></app-email-provider-form>
         }
         @case (notificationTypes.Http) {
             <p-message>You do not need to configure http providers here. Just use it in notifications.</p-message>

@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { PaginatedView } from '../paginated-view/paginated-view';
 import { Column } from '../../../interfaces/table-items';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
@@ -7,6 +7,8 @@ import { LazyLoadEvent } from 'primeng/api';
 import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-preview-table',
@@ -21,6 +23,7 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
   @ViewChild('previewTable') viewItemsTable!: Table;
   public abstract fetchUrl: string;
   public abstract filtersConfig: FilterConfig[];
+  public initialLoaded = signal<boolean>(false);
   public filtersChanged(filter: FilterValue): void {
     const event = this.viewItemsTable.createLazyLoadMetadata();
     if(filter.value === '' || filter.value === null || filter.value.length === 0) {
@@ -41,7 +44,6 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
   }
 
   public loadPreviewData(event: TableLazyLoadEvent): void {
-      this.loadingEvent.next(true);
       // Gather values
       this.page.update(() => {
         return Math.floor(event.first! / event.rows!) + 1;
@@ -69,17 +71,13 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
         params = this.paramsBuilder.addPagination(this.page(), pageSize, params);
       }
       // Call API
-      this.httpClient.get<PagedResponse<ViewItem>>(this.fetchUrl, { params: params }).subscribe({
+      this.httpClient.get<PagedResponse<ViewItem>>(this.fetchUrl, { params: params }).pipe(withDelayedLoading((val) => this.showSpinner.set(val)), finalize(() => this.initialLoaded.set(true))).subscribe({
         next: (pagedResponse: PagedResponse<ViewItem>) => {
           this.page.set(pagedResponse.pageNumber);
           this.dataItems.set(pagedResponse.dataItems);
           this.totalPages.set(pagedResponse.totalPages);
           this.pageSize.set(pagedResponse.pageSize);
           this.totalItems.set(pagedResponse.totalItems);
-          this.loadingEvent.next(false);
-        },
-        error: () => {
-          this.loadingEvent.next(false);
         }
       }
       );

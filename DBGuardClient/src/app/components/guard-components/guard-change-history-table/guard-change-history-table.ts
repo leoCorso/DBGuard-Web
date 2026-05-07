@@ -64,8 +64,7 @@ export class GuardChangeHistoryTable extends PreviewTable<GuardChangeTransaction
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
   public guardFilter!: FilterValue;
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     this.initFilterInputs();
     this.configureFilters();
     this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({

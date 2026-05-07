@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment.development';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateUser } from '../create-user/create-user';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-details-webpage',
@@ -30,6 +30,7 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   public userId = signal<string | null>(null);
   private editUserDialog?: DynamicDialogRef<CreateUser> | null;
+  public deletingUser = signal<boolean>(false);
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if(id === null){
@@ -68,9 +69,10 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteUser(): void {
+    this.deletingUser.set(true);
     const url = [environment.api.uri, 'User', 'DeleteUser'].join('/');
     const params = new HttpParams().set('userId', this.userId()!);
-    this.httpClient.delete(url, { params: params}).subscribe({
+    this.httpClient.delete(url, { params: params}).pipe(finalize(() => this.deletingUser.set(false))).subscribe({
       next: () => {
         this.router.navigate(['/users/view-all']);
       }

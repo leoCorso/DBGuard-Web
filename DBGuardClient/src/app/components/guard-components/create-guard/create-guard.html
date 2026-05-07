@@ -1,3 +1,4 @@
+
 <form class="guard-form" [formGroup]="guardFormGroup" (ngSubmit)="addGuard()">
     <div class="activation-status">
         <div class="notify-option">
@@ -13,13 +14,13 @@
     </div>
     <div>
         <p-floatlabel variant="on">
-            <textarea fluid id="guard-description" pTextarea formControlName="guardDescription"></textarea>
+            <textarea fluid id="guard-description" pTextarea formControlName="guardDescription" [autoResize]="true"></textarea>
             <label for="guard-description">Guard description</label>
         </p-floatlabel>
     </div>
     <div>
         <p-floatlabel variant="on">
-            <textarea fluid id="trigger-query" pTextarea formControlName="triggerQuery"></textarea>
+            <textarea fluid id="trigger-query" pTextarea formControlName="triggerQuery" [autoResize]="true"></textarea>
             <label for="trigger-query">Trigger query</label>
         </p-floatlabel>
         <p-message variant="simple" size="small" severity="info">Required</p-message>
@@ -63,7 +64,7 @@
                                 </ul>
                         </ng-template>
                         <ng-template #item let-dbConnection>
-                             <ul>
+                                <ul>
                                     <li><strong>Database type: </strong>{{ getEnumLabel(databaseEngine, dbConnection.databaseEngine) }}</li>
                                     <li><strong>Endpoint: </strong>{{ dbConnection.endpoint }}</li>
                                     <li><strong>Database name: </strong>{{ dbConnection.databaseName }}</li>
@@ -113,6 +114,7 @@
         <p-checkbox [binary]="true" inputId="validate-guard" formControlName="validateGuard" pTooltip="When selected it will ensure connection and query are valid"></p-checkbox>
     </div>
     <div class="bottom-btns">
-        <p-button type="submit" [label]="guardToEdit() ? 'Save' : 'Add'" icon="pi pi-save" [rounded]="true" [disabled]="guardFormGroup.invalid"></p-button>
+            <p-button [loading]="creatingGuard()" type="submit" [label]="guardToEdit() ? 'Save' : 'Add'" icon="pi pi-save" [rounded]="true" [disabled]="guardToEdit() && guardFormGroup.pristine || guardFormGroup.invalid"></p-button>
     </div>
+
 </form>

@@ -21,7 +21,7 @@
         <div>
             <p-floatlabel variant="on">
                 <label for="body-data">Body data</label>
-                <textarea id="body-data" fluid pTextarea formControlName="bodyData"></textarea>
+                <textarea pTextarea id="body-data" fluid formControlName="bodyData" [autoResize]="true" ></textarea>
             </p-floatlabel>
             <p-button (onClick)="placeholderBtns.toggle($event)" label="Placeholders" severity="contrast" [outlined]="true"></p-button>
             <p-popover #placeholderBtns>

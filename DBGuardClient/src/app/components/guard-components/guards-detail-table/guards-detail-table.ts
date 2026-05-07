@@ -61,8 +61,7 @@ export class GuardsDetailTable extends PreviewTable<GuardDTO> implements OnInit{
   public formatEnumKey = formatEnumKey;
   public getGuardStateSeverity = getGuardStateSeverity;
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     this.initFilterInputs();
     this.configureFilters();
   }

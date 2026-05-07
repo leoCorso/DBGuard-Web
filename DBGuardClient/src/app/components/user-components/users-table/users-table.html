@@ -41,6 +41,9 @@
                         [routerLink]="['/users/detail', user.id]"></p-button></td>
                 <td>{{ user.username }}</td>
                 <td>
+                    <p-tag [value]="user.isActive ? 'Active' : 'Inactive'" [severity]="user.isActive ? 'success' : 'danger'"></p-tag>
+                </td>
+                <td>
                     @if (user.createdByUserId) {
                         <p-button [link]="true" [label]="user.createdByUsername" [routerLink]="['/users/detail', user.createdByUserId]"></p-button>
                     }

@@ -6,9 +6,9 @@
             <div class="card-header">
                 <h3>Notification config</h3>
                 <p-buttongroup>
-                    <p-button (onClick)="testNotification()" [text]="true" label="Test" icon="pi pi-play" severity="contrast" pTooltip="Test by manually sending notification"></p-button>
+                    <p-button [loading]="testingNotification()" (onClick)="testNotification()" [text]="true" label="Test" icon="pi pi-play" severity="contrast" pTooltip="Test by manually sending notification"></p-button>
                     <p-button (onClick)="editGuardNotification()" [text]="true" label="Edit" icon="pi pi-pencil"></p-button>
-                    <p-button (onClick)="deleteClicked($event)" [text]="true" label="Delete" icon="pi pi-trash" severity="danger"></p-button>
+                    <p-button [loading]="deletingNotification()" (onClick)="deleteClicked($event)" [text]="true" label="Delete" icon="pi pi-trash" severity="danger"></p-button>
                 </p-buttongroup>
             </div>
         </ng-template>

@@ -1,36 +1,28 @@
-@if (loadingProvider()) {
-    <div class="loading-container">
-        <p-progressspinner></p-progressspinner>
-        <em>Loading provider</em>
-    </div>
-}
-@else {
-    <div class="provider-info">
-        <span class="provider-key">Id:</span>
-        <span class="provider-value">
-            <p-button [label]="notificationProvider()!.id.toString()" [outlined]="true" severity="contrast" [routerLink]="['/providers/detail', notificationProvider().id]"></p-button>
-        </span>
-        <span class="provider-key">Create date</span>
-        <span class="provider-value">{{ notificationProvider().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
-        <span class="provider-key">Last edited</span>
-        <span class="provider-value">{{ notificationProvider().lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
-        <span class="provider-key">Notification type</span>
-        <span class="provider-value">{{ getEnumLabel(notificationTypes, notificationProvider().providerType) }}</span>
-        <span class="provider-key">Created by</span>
-        <span class="provider-value">
-            @if (notificationProvider().createdByUserId) {
-                <p-button [outlined]="true" severity="contrast" [label]="notificationProvider().createdByUsername" [routerLink]="['/users/detail', notificationProvider().createdByUserId]"></p-button>
-            }
-            @else {
-                <p-tag severity="info" value="System"></p-tag>
-            }
-        </span>
-    </div>
-    <p-divider></p-divider>
-    @switch (notificationProvider().providerType) {
-        <!-- Email provider -->
-        @case (notificationTypes.Email) {
-            <app-email-provider-detail-pane [emailProviderDetails]="emailProviderDetails()"></app-email-provider-detail-pane>
+<div class="provider-info">
+    <span class="provider-key">Id:</span>
+    <span class="provider-value">
+        <p-button [label]="notificationProvider()!.id.toString()" [outlined]="true" severity="contrast" [routerLink]="['/providers/detail', notificationProvider().id]"></p-button>
+    </span>
+    <span class="provider-key">Create date</span>
+    <span class="provider-value">{{ notificationProvider().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+    <span class="provider-key">Last edited</span>
+    <span class="provider-value">{{ notificationProvider().lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+    <span class="provider-key">Notification type</span>
+    <span class="provider-value">{{ getEnumLabel(notificationTypes, notificationProvider().providerType) }}</span>
+    <span class="provider-key">Created by</span>
+    <span class="provider-value">
+        @if (notificationProvider().createdByUserId) {
+            <p-button [outlined]="true" severity="contrast" [label]="notificationProvider().createdByUsername" [routerLink]="['/users/detail', notificationProvider().createdByUserId]"></p-button>
         }
+        @else {
+            <p-tag severity="info" value="System"></p-tag>
+        }
+    </span>
+</div>
+<p-divider></p-divider>
+@switch (notificationProvider().providerType) {
+    <!-- Email provider -->
+    @case (notificationTypes.Email) {
+        <app-email-provider-detail-pane [emailProviderDetails]="emailProviderDetails()"></app-email-provider-detail-pane>
     }
 }

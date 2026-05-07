@@ -16,5 +16,7 @@ namespace DBGuardAPI.Data.DTOs.UserDTOs
         public string? CreatedByUserId { get; set; }
         [Sieve(CanFilter = true, CanSort = true)]
         public string? CreatedByUsername { get; set; }
+        [Sieve(CanFilter = true, CanSort = true)]
+        public bool IsActive { get; set; }
     }
 }

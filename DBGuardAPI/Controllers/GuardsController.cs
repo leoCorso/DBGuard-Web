@@ -80,6 +80,7 @@ namespace DBGuardAPI.Controllers
         public async Task<ActionResult<GuardDetailDTO>> GetGuardDetail(int id)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
+
             GuardDetailDTO? guardDetail = await context.Guards
                 .Include(guard => guard.CreatedByUser)
                 .Select(guard => new GuardDetailDTO

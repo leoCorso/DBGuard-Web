@@ -25,7 +25,6 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<User>(user =>
             {
-                user.HasQueryFilter(u => u.IsActive);
                 user.HasMany(u => u.Guards)
                     .WithOne(g => g.CreatedByUser)
                     .HasForeignKey(g => g.CreatedByUserId)
@@ -68,7 +67,6 @@ namespace DBGuardAPI.Data.Models
             });
             builder.Entity<Guard>(guard =>
             {
-                guard.HasQueryFilter(g => g.IsActive);
                 guard.HasMany(g => g.GuardNotifications)
                     .WithOne(gn => gn.Guard)
                     .HasForeignKey(gn => gn.GuardId)

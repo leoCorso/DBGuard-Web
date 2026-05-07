@@ -42,8 +42,7 @@ export class NotificationProvidersTable extends PreviewTable<NotificationProvide
   public getEnumLabel = getEnumLabel;
   public notificationType = NotificationType;
   
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     merge(this.entityChangeService.providerCreated, this.entityChangeService.providerEdited).pipe(takeUntil(this.destroy)).subscribe({
       next: () => {
         const event = this.viewItemsTable.createLazyLoadMetadata();
