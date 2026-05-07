@@ -8,6 +8,8 @@ export function getHttpSeverity(action: HTTPAction): 'success' | 'danger' | 'war
             return 'warn';
         case HTTPAction.Put:
             return 'warn';
+        case HTTPAction.Patch:
+            return 'warn';
         case HTTPAction.Delete:
             return 'danger';
     }

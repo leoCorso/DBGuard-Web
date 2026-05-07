@@ -79,6 +79,25 @@ namespace DBGuardAPI.Controllers
                     CcEmails = emailTransaction.CCEmails,
                     BccEmails = emailTransaction.BCCEmails
                 },
+                HTTPNotificationTransaction httpTransaction => new HttpNotificationTransactionDTO
+                {
+                    Id = httpTransaction.Id,
+                    Timestamp = httpTransaction.Timestamp,
+                    GuardId = httpTransaction.GuardId,
+                    GuardNotificationId = httpTransaction.GuardNotificationId,
+                    NotificationType = httpTransaction.NotificationType,
+                    GuardChangeTransactionId = httpTransaction.GuardChangeTransactionId,
+                    Successful = httpTransaction.Successful,
+                    ErrorMessage = httpTransaction.ErrorMessage,
+                    URL = httpTransaction.URL,
+                    HttpMethod = httpTransaction.HttpMethod,
+                    RequestHeaders = httpTransaction.RequestHeaders,
+                    QueryParameters = httpTransaction.QueryParameters,
+                    BodyType = httpTransaction.BodyType,
+                    BodyData = httpTransaction.BodyData,
+                    ResponseCode = httpTransaction.ResponseCode,
+                    ResponseMessage = httpTransaction.ResponseMessage
+                },
                 _ => throw new NotImplementedException()
             };
         }

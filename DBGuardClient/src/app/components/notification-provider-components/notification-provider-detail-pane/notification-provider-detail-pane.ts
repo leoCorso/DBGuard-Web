@@ -21,39 +21,19 @@ import { Tag } from 'primeng/tag';
   styleUrl: './notification-provider-detail-pane.scss',
 })
 export class NotificationProviderDetailPane implements OnInit, OnDestroy {
-  public notificationProviderId = input.required<number>();
-  private httpClient = inject(HttpClient);
+  public notificationProvider = input.required<NotificationProviderDTO>();
   private entityChangeService = inject(EntityChangeService);
-  public providerDetails = signal<NotificationProviderDTO | null>(null);
-  public emailProviderDetails = computed(() => this.providerDetails() as EmailProviderDTO);
+  public emailProviderDetails = computed(() => this.notificationProvider() as EmailProviderDTO);
   public getEnumLabel = getEnumLabel;
   public notificationTypes = NotificationType;
   private destroy = new Subject<void>();
   public loadingProvider = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.loadDetailInfo();
-    this.entityChangeService.providerEdited.pipe(takeUntil(this.destroy)).subscribe({
-      next: (id: number) => {
-        if(id === this.notificationProviderId()){
-          this.loadDetailInfo();
-        }
-      }
-    })
+
   }
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
-  }
-  private loadDetailInfo(): void {
-    this.loadingProvider.set(true);
-    const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
-    const params = new HttpParams().set('id', this.notificationProviderId());
-    this.httpClient.get<NotificationProviderDTO>(url, { params: params }).subscribe({
-      next: (providerInfo: NotificationProviderDTO) => {
-        this.providerDetails.set(providerInfo);
-        this.loadingProvider.set(false);
-      }
-    })
   }
 }

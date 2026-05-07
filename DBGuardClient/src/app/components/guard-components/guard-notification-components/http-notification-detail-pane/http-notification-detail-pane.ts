@@ -4,6 +4,8 @@ import { mapToArray } from '../../../../helper-functions/http-notification-recor
 import { getEnumLabel } from '../../../../helper-functions/enum-helper';
 import { HttpBodyType } from '../../../../enums/http-body-type';
 import { Tag } from 'primeng/tag';
+import { HTTPAction } from '../../../../enums/http-action';
+import { getHttpSeverity } from '../../../../helper-functions/http-severity-mapper';
 
 @Component({
   selector: 'app-http-notification-detail-pane',
@@ -15,5 +17,7 @@ export class HttpNotificationDetailPane {
   public httpNotificationDetail = input.required<HttpNotificationDetailDTO>();
   public mapToArray = mapToArray;
   public getEnumLabel = getEnumLabel;
+  public getHttpSeverity = getHttpSeverity;
   public httpBodyTypes = HttpBodyType;
+  public httpMethods = HTTPAction;
 }

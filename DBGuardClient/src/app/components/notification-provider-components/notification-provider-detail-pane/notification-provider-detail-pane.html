@@ -8,18 +8,18 @@
     <div class="provider-info">
         <span class="provider-key">Id:</span>
         <span class="provider-value">
-            <p-button [label]="providerDetails()!.id.toString()" [outlined]="true" severity="contrast"></p-button>
+            <p-button [label]="notificationProvider()!.id.toString()" [outlined]="true" severity="contrast" [routerLink]="['/providers/detail', notificationProvider().id]"></p-button>
         </span>
         <span class="provider-key">Create date</span>
-        <span class="provider-value">{{ providerDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+        <span class="provider-value">{{ notificationProvider().createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
         <span class="provider-key">Last edited</span>
-        <span class="provider-value">{{ providerDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+        <span class="provider-value">{{ notificationProvider().lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
         <span class="provider-key">Notification type</span>
-        <span class="provider-value">{{ getEnumLabel(notificationTypes, providerDetails()!.providerType) }}</span>
+        <span class="provider-value">{{ getEnumLabel(notificationTypes, notificationProvider().providerType) }}</span>
         <span class="provider-key">Created by</span>
         <span class="provider-value">
-            @if (providerDetails()?.createdByUserId) {
-                <p-button [outlined]="true" severity="contrast" [label]="providerDetails()?.createdByUsername" [routerLink]="['/users/detail', providerDetails()?.createdByUserId]"></p-button>
+            @if (notificationProvider().createdByUserId) {
+                <p-button [outlined]="true" severity="contrast" [label]="notificationProvider().createdByUsername" [routerLink]="['/users/detail', notificationProvider().createdByUserId]"></p-button>
             }
             @else {
                 <p-tag severity="info" value="System"></p-tag>
@@ -27,9 +27,9 @@
         </span>
     </div>
     <p-divider></p-divider>
-    @switch (providerDetails()?.providerType) {
+    @switch (notificationProvider().providerType) {
         <!-- Email provider -->
-        @case (0) {
+        @case (notificationTypes.Email) {
             <app-email-provider-detail-pane [emailProviderDetails]="emailProviderDetails()"></app-email-provider-detail-pane>
         }
     }

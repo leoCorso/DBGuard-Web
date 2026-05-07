@@ -1,6 +1,6 @@
 import { Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
-import { BehaviorSubject, debounce, debounceTime, single, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, debounce, debounceTime, merge, single, Subject, takeUntil } from 'rxjs';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
@@ -27,7 +27,7 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
   public databaseConnectionInfo = signal<DatabaseConnectionDTO | null>(null);
   private httpClient = inject(HttpClient);
   public authService = inject(AuthService);
-  private guardService = inject(EntityChangeService);
+  private entityChangeService = inject(EntityChangeService);
   public getEnumLabel = getEnumLabel;
   public databaseEngines = DatabaseEngine;
   private destroy = new Subject<void>();
@@ -36,9 +36,9 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
   public viewPassword = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
-      next: (guardId) => {
-        if(this.guardId() == guardId){
+    this.entityChangeService.dbConnectionEdited.pipe(takeUntil(this.destroy)).subscribe({
+      next: (dbId) => {
+        if(this.databaseConnectionId() == dbId){
           this.getInfo();
         }
       }

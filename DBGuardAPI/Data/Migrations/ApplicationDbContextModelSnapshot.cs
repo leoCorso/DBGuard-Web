@@ -828,9 +828,13 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body_data");
 
-                    b.Property<int>("BodyType")
+                    b.Property<int?>("BodyType")
                         .HasColumnType("integer")
                         .HasColumnName("body_type");
+
+                    b.Property<int>("HttpMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("http_method");
 
                     b.Property<Dictionary<string, string>>("QueryParameters")
                         .IsRequired()
@@ -894,9 +898,13 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body_data");
 
-                    b.Property<int>("BodyType")
+                    b.Property<int?>("BodyType")
                         .HasColumnType("integer")
                         .HasColumnName("body_type");
+
+                    b.Property<int>("HttpMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("http_method");
 
                     b.Property<Dictionary<string, string>>("QueryParameters")
                         .IsRequired()
@@ -908,7 +916,7 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("jsonb")
                         .HasColumnName("request_headers");
 
-                    b.Property<int>("ResponseCode")
+                    b.Property<int?>("ResponseCode")
                         .HasColumnType("integer")
                         .HasColumnName("response_code");
 

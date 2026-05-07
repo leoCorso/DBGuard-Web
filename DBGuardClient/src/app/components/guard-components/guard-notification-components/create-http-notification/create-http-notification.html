@@ -23,6 +23,14 @@
                 <label for="body-data">Body data</label>
                 <textarea id="body-data" fluid pTextarea formControlName="bodyData"></textarea>
             </p-floatlabel>
+            <p-button (onClick)="placeholderBtns.toggle($event)" label="Placeholders" severity="contrast" [outlined]="true"></p-button>
+            <p-popover #placeholderBtns>
+                <div class="placeholder-btns">
+                    @for (placeholder of guardPlaceHolders; track $index) {
+                        <p-button [text]="true" [label]="placeholder.label" severity="info" (onClick)="addPlaceholderToBody(placeholder.value)"></p-button>
+                    }
+                </div>
+            </p-popover>
         </div>
     }
 </form>
@@ -166,6 +174,6 @@
     </form>
 </p-card>
 <p-buttongroup>
-    <p-button [label]="notificationToEdit() ? 'Save' : 'Create'" (onClick)="saveNotification()" icon="pi pi-save" [text]="true" [disabled]="httpForm.invalid"></p-button>
+    <p-button [label]="notificationToEdit() ? 'Save' : 'Add'" (onClick)="saveNotification()" icon="pi pi-save" [text]="true" [disabled]="httpForm.invalid"></p-button>
     <p-button label="Cancel" severity="danger" (onClick)="cancelForm.emit()" [text]="true"></p-button>
 </p-buttongroup>

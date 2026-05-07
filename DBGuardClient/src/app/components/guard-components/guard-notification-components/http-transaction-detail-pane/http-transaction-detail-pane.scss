@@ -1,0 +1,13 @@
+.http-info {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+}
+.http-key {
+    justify-self: end;
+    align-self: center;
+    font-weight: bold;
+}
+.http-value {
+    align-self: center;
+}

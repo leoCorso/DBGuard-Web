@@ -29,6 +29,7 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
     public class HttpNotificationDetailDTO: NotificationDetailDTO
     {
         public required string URL { get; set; }
+        public HTTPAction HttpMethod { get; set; }
         public Dictionary<string, string?> RequestHeaders { get; set; } = [];
         public Dictionary<string, string?> QueryParameters { get; set; } = [];
         public HTTPBodyType? BodyType { get; set; } // The body type

@@ -22,12 +22,17 @@
             <app-notification-detail-pane [notificationDetail]="notificationDetail()!"></app-notification-detail-pane>
         }
     </p-card>
-    @if (notificationDetail()) {
+    @if (notificationProvider()) {
         <p-card header="Notification provider">
-            <app-notification-provider-detail-pane [notificationProviderId]="notificationDetail()!.notificationProviderId"></app-notification-provider-detail-pane>
+            <app-notification-provider-detail-pane [notificationProvider]="notificationProvider()!"></app-notification-provider-detail-pane>
         </p-card>
     }
     <p-card header="Notification transactions">
         <app-guard-notification-transactions-table [guardNotificationId]="notificationConfigId()!"></app-guard-notification-transactions-table>
     </p-card>
+    @if(guardDetail()){
+        <p-card header="Guard info">
+            <app-guard-detail-pane [guardDetail]="guardDetail()!"></app-guard-detail-pane>
+        </p-card>
+    }
 </div>

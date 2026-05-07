@@ -247,9 +247,17 @@ namespace DBGuardAPI.Controllers
             connection.DatabaseEngine = updatedConnection.DatabaseEngine;
             connection.DatabaseName = updatedConnection.DatabaseName.Trim();
             connection.Username = updatedConnection.Username?.Trim();
-            if(connection.Password is not null)
+            if(string.IsNullOrWhiteSpace(connection.Password) || _credentialProtector.Decrypt(connection.Password) != updatedConnection.Password)
             {
-                connection.Password = _credentialProtector.Encrypt(connection.Password);
+                connection.Password = string.IsNullOrWhiteSpace(updatedConnection.Password) ? null : _credentialProtector.Decrypt(updatedConnection.Password);
+
+            }
+            if (connection.Password is not null)
+            {
+                string currentPassword = _credentialProtector.Decrypt(connection.Password);
+                if (updatedConnection.Password != currentPassword)
+                {
+                }
             }
             await context.SaveChangesAsync();
             _logger.LogInformation("A database connection was edited {ConnectionId}", updatedConnection.Id);

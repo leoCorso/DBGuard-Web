@@ -1,5 +1,6 @@
 import { HTTPAction } from "../enums/http-action";
 import { HttpBodyType } from "../enums/http-body-type";
+import { HttpResponseCodes as HttpResponseCode } from "../enums/http-response-codes";
 import { NotificationType } from "../enums/notification-type";
 import { NotificationProviderDTO } from "./notification-provider-dto";
 
@@ -49,6 +50,16 @@ export interface EmailNotificationTransactionDTO extends NotificationTransaction
     ccEmails: string[],
     bccEmails: string[]
 }
+export interface HttpNotificationTransactionDTO extends NotificationTransactionDTO {
+    url: string,
+    httpMethod: HTTPAction,
+    requestHeaders: Record<string, string | null>,
+    queryParameters: Record<string, string | null>,
+    bodyType?: HttpBodyType,
+    bodyData?: string,
+    responseCode?: HttpResponseCode,
+    responseMessage?: string
+}
 export interface NotificationDetailDTO {
     id: number,
     guardId: number,
@@ -68,6 +79,7 @@ export interface EmailNotificationDetailDTO extends NotificationDetailDTO {
 }
 export interface HttpNotificationDetailDTO extends NotificationDetailDTO {
     url: string,
+    httpMethod: HTTPAction,
     requestHeaders: Record<string, string | null>,
     queryParameters: Record<string, string | null>,
     bodyType?: HttpBodyType,

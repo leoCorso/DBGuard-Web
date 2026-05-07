@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DBGuardAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260505182234_Initial")]
+    [Migration("20260506173907_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -831,9 +831,13 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body_data");
 
-                    b.Property<int>("BodyType")
+                    b.Property<int?>("BodyType")
                         .HasColumnType("integer")
                         .HasColumnName("body_type");
+
+                    b.Property<int>("HttpMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("http_method");
 
                     b.Property<Dictionary<string, string>>("QueryParameters")
                         .IsRequired()
@@ -897,9 +901,13 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body_data");
 
-                    b.Property<int>("BodyType")
+                    b.Property<int?>("BodyType")
                         .HasColumnType("integer")
                         .HasColumnName("body_type");
+
+                    b.Property<int>("HttpMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("http_method");
 
                     b.Property<Dictionary<string, string>>("QueryParameters")
                         .IsRequired()
@@ -911,7 +919,7 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("jsonb")
                         .HasColumnName("request_headers");
 
-                    b.Property<int>("ResponseCode")
+                    b.Property<int?>("ResponseCode")
                         .HasColumnType("integer")
                         .HasColumnName("response_code");
 

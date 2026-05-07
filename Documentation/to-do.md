@@ -6,4 +6,6 @@
 7. Ensure if looking at notification detail and notification is deleted it routes to view-all
 8. Investigate error that occurs when logging in first time after refresh token expires and it continuously sends logout and refresh request
 9. Ensure client is decent for smaller screen sizes
+10. Add loading element when validating new providers, notifications, tests etc
+11. Have guard notification table webpage refresh when new guard is added so it can display new notifications
 

@@ -24,6 +24,7 @@ namespace DBGuardAPI.Helpers
                 {
                     NotificationProviderId = httpNotififcation.NotificationProvider.Id,
                     URL = httpNotififcation.URL,
+                    HttpMethod = httpNotififcation.ActionType,
                     RequestHeaders = httpNotififcation.RequestHeaders,
                     QueryParameters = httpNotififcation.QueryParams,
                     BodyType = httpNotififcation.BodyType,
@@ -53,6 +54,7 @@ namespace DBGuardAPI.Helpers
                     GuardId = http.GuardId,
                     NotificationType = http.NotificationType,
                     URL = http.URL,
+                    ActionType = http.HttpMethod,
                     RequestHeaders = http.RequestHeaders,
                     QueryParams = http.QueryParameters,
                     BodyType = http.BodyType,
@@ -91,6 +93,7 @@ namespace DBGuardAPI.Helpers
                     CreateDate = httpDetail.CreateDate,
                     LastEdited = httpDetail.LastEdited,
                     URL = httpDetail.URL,
+                    HttpMethod = httpDetail.HttpMethod,
                     RequestHeaders = httpDetail.RequestHeaders,
                     QueryParameters = httpDetail.QueryParameters,
                     BodyType = httpDetail.BodyType,
@@ -156,6 +159,7 @@ namespace DBGuardAPI.Helpers
                     httpNotification.QueryParameters = editedHttp.QueryParams;
                     httpNotification.BodyType = editedHttp.BodyType;
                     httpNotification.BodyData = editedHttp.BodyData;
+                    httpNotification.HttpMethod = editedHttp.ActionType;
                     break;
                 // Handle other types
                 default:

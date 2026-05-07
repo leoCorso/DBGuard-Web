@@ -17,7 +17,7 @@
     <span class="transaction-key">Notification id:</span>
     <span class="transaction-value">
         @if (notificationTransactionDetails().guardNotificationId) {
-            <p-button [outlined]="true" severity="contrast" [label]="notificationTransactionDetails().guardNotificationId?.toString()" [routerLink]="['/guards/notfication-config-detail', notificationTransactionDetails().guardNotificationId]"></p-button>
+            <p-button [outlined]="true" severity="contrast" [label]="notificationTransactionDetails().guardNotificationId?.toString()" [routerLink]="['/guards/notification-config-detail', notificationTransactionDetails().guardNotificationId]"></p-button>
         }   
         @else {
             <p-tag value="Deleted" severity="danger"></p-tag>
@@ -39,7 +39,10 @@
 <p-divider></p-divider>
 @switch (notificationTransactionDetails().notificationType) {
     <!-- Email -->
-    @case (0) {
+    @case (notificationTypes.Email) {
         <app-email-transaction-detail-pane [emailTransactionInfo]="emailNotificationTransactionDetails()"></app-email-transaction-detail-pane>
+    }
+    @case(notificationTypes.Http){
+        <app-http-transaction-detail-pane [httpTransactionInfo]="httpNotificationTransactionDetails()!"></app-http-transaction-detail-pane>
     }
 }

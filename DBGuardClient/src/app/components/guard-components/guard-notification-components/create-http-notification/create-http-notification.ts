@@ -19,10 +19,11 @@ import { ButtonGroup } from 'primeng/buttongroup';
 import { Card } from 'primeng/card';
 import { NotificationType } from '../../../../enums/notification-type';
 import { mapToArray, mapToRecords } from '../../../../helper-functions/http-notification-record-helper';
-
+import { Popover } from 'primeng/popover'
 @Component({
   selector: 'app-create-http-notification',
-  imports: [InputTextModule, Textarea, InputGroup, InputGroupAddon, FloatLabel, Message, ReactiveFormsModule, Select, TableModule, FormsModule, Button, ButtonGroup, Card],
+  imports: [InputTextModule, Textarea, InputGroup, InputGroupAddon, FloatLabel, Message, ReactiveFormsModule, Select, 
+    TableModule, FormsModule, Button, ButtonGroup, Card, Popover],
   templateUrl: './create-http-notification.html',
   styleUrl: './create-http-notification.scss',
 })
@@ -51,6 +52,10 @@ export class CreateHttpNotification extends CreateNotification<CreateHTTPGuardNo
   public bodyTypes = HttpBodyType;
   public httpActions = HTTPAction;
   public enumToOptions = enumToOptions;
+  public guardPlaceHolders: { label: string, value: string }[] = 
+  [{ label: 'Guard id', value: "{{_guardId}}" }, { label: 'Guard name', value: '{{_guardName}}' }, { label: 'Timestamp', value: '{{_timestamp}}' },
+  { label: 'Current guard state', value: '{{_currentGuardState}}' }, { label: 'Previous guard state', value: '{{_previousGuardState}}' }, { label: 'Guard query', value: '{{_guardQuery}}' }, { label: 'Guard operator', value: '{{_guardOperator}}' }, { label: 'Guard value', value: '{{_guardValue}}' }, { label: 'Result value', value: '{{_resultValue}}' },
+  { label: 'Change message', value: '{{_changeMessage}}' }, { label: 'Database endpoint', value: '{{_databaseEndpoint}}' }, { label: 'Database engine', value: '{{_databaseEngine}}' }, { label: 'Database name', value: '{{_databaseName}}' }, { label: 'Database username', value: '{{_databaseUsername}}' }];
 
   ngOnInit(): void {
     if(this.notificationToEdit()){
@@ -139,6 +144,13 @@ export class CreateHttpNotification extends CreateNotification<CreateHTTPGuardNo
     const clonedList = type === 'query' ? this.clonedQueryParameters : this.clonedRequestHeaders;
     list.splice(rowIndex, 1);
     clonedList.splice(rowIndex, 1);
+  }
+  public addPlaceholderToBody(key: string): void {
+    let bodyData = this.httpForm.get('bodyData')?.value;
+    bodyData = bodyData ? bodyData.concat(key) : key;
+    this.httpForm.patchValue({
+      bodyData: bodyData
+    });
   }
   public mapToArray = mapToArray;
   public mapToRecords = mapToRecords;

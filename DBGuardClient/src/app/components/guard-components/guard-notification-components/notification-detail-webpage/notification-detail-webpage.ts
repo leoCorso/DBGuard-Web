@@ -22,10 +22,14 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateGuard } from '../../create-guard/create-guard';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { EntityChangeService } from '../../../../services/entity-change-service';
+import { GuardDetailPane } from '../../guard-detail-pane/guard-detail-pane';
+import { GuardDetailDTO } from '../../../../interfaces/guard-dto';
+import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 
 @Component({
   selector: 'app-notification-detail-webpage',
-  imports: [NotificationDetailPane, Card, RouterModule, GuardNotificationTransactionsTable, NotificationProviderDetailPane, ButtonGroup, Button, TooltipModule, Toast, ConfirmPopup, ProgressSpinner],
+  imports: [NotificationDetailPane, Card, RouterModule, GuardNotificationTransactionsTable, 
+    NotificationProviderDetailPane, ButtonGroup, Button, TooltipModule, Toast, ConfirmPopup, ProgressSpinner, GuardDetailPane],
   templateUrl: './notification-detail-webpage.html',
   styleUrl: './notification-detail-webpage.scss',
 })
@@ -39,8 +43,10 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
   public notificationConfigId = signal<number | null>(null);
   public notificationDetail = signal<NotificationDetailDTO | null>(null);
   public loadingNotificationTransaction = signal<boolean>(true);
+  public guardDetail = signal<GuardDetailDTO | null>(null);
   private editGuardDialog?: DynamicDialogRef<CreateGuard> | null;
   private entityChangeService = inject(EntityChangeService);
+  public notificationProvider = signal<NotificationProviderDTO | null>(null);
 
   ngOnInit(): void {
       const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -68,6 +74,8 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
         next: (notificationInfo: GuardNotificationDTO) => {
           this.notificationDetail.set(notificationInfo);
           this.loadingNotificationTransaction.set(false);
+          this.getGuardDetails();
+          this.loadProviderDetail();
         }
       })
   }
@@ -116,5 +124,23 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
         this.messageService.add({summary: 'Notification sent', detail: 'The notification was processed and should be received', key: 'notification-toast', severity: 'success'})
       }
     });
+  }
+  private getGuardDetails(): void {
+    // Called if change has a guard id
+    const url =   [environment.api.uri, 'Guards', 'GetGuardDetail', this.notificationDetail()!.guardId].join('/');
+    this.httpClient.get<GuardDetailDTO>(url).subscribe({
+      next: (guardDetail: GuardDetailDTO) => {
+        this.guardDetail.set(guardDetail);
+      }
+    })
+  }
+  private loadProviderDetail(): void {
+    const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
+    const params = new HttpParams().set('id', this.notificationDetail()?.notificationProviderId!);
+    this.httpClient.get<NotificationProviderDTO>(url, { params: params }).subscribe({
+      next: (providerInfo: NotificationProviderDTO) => {
+        this.notificationProvider.set(providerInfo);
+      }
+    })
   }
 }

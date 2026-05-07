@@ -42,7 +42,15 @@
                 <td>{{ getEnumLabel(notificationType, provider.notificationType) }}</td>
                 <td>{{ provider.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>{{ provider.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-                <td><p-button [label]="provider.createdByUsername" [routerLink]="['/users/detail', provider.createdByUserId]" [link]="true"></p-button></td>
+                <td>
+                    
+                    @if (provider.createdByUsername) {
+                        <p-button [label]="provider.createdByUsername" [routerLink]="['/users/detail', provider.createdByUserId]" [link]="true"></p-button>
+                    }
+                    @else {
+                        <p-tag value="System" severity="info"></p-tag>
+                    }
+                </td>
             </tr>
         </ng-template>
     </p-table>

@@ -1,4 +1,5 @@
-﻿using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+﻿using System.Reflection.Metadata.Ecma335;
+using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
 using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.Models.NotificationProviders;
@@ -109,6 +110,10 @@ namespace DBGuardAPI.Controllers
                 _logger.LogWarning("A get provider to edit request was made on an invalid provider id {ProviderId}", providerId);
                 return NotFound();
             }
+            if(provider.CreatedByUserId is null)
+            {
+                return Conflict(new { Message = "System made providers cannot be edited"});
+            }
             return provider switch
             {
                 EmailProvider email => new CreateEmailNotificationProviderDTO
@@ -121,7 +126,7 @@ namespace DBGuardAPI.Controllers
                     Password = _credentialProtector.Decrypt(email.Password),
                     SenderEmail = email.SenderEmail
                 },
-                _ => throw new InvalidOperationException()
+            _ => throw new InvalidOperationException()
             };
         }
         [Authorize(Roles = RoleNames.Admin)]
@@ -171,7 +176,7 @@ namespace DBGuardAPI.Controllers
             await context.AddAsync(provider);
             await context.SaveChangesAsync();
             _logger.LogInformation("A notification provider was created {ProviderId}", newProvider.Id);
-            NotificationProvider providerToReturn = (await context.NotificationProviders.AsNoTracking().Where(provider => provider.Id == provider.Id).Include(provider => provider.CreatedByUser).FirstOrDefaultAsync())!;
+            NotificationProvider providerToReturn = (await context.NotificationProviders.AsNoTracking().Where(existingProvider => provider.Id == existingProvider.Id).Include(existingProvider => existingProvider.CreatedByUser).FirstOrDefaultAsync())!;
             return NotificationProviderHelper.MapToDTO(providerToReturn);
         }
 
@@ -219,7 +224,10 @@ namespace DBGuardAPI.Controllers
                 _logger.LogWarning("A notification provider edit was attempted with an invalid provider id {ProviderId}", updatedProvider.Id);
                 return NotFound();
             }
-
+            if(providerToEdit.CreatedByUserId is null)
+            {
+                return Conflict(new { Message = "System made providers cannot be edited" });
+            }
             if (updatedProvider.VerifyProvider)
             {
                 try
@@ -270,6 +278,10 @@ namespace DBGuardAPI.Controllers
             {
                 _logger.LogError("A provider deleting was attempted on a non-existing provider {ProviderId}", providerId);
                 return NotFound();
+            }
+            if(providerToDel.CreatedByUserId is null)
+            {
+                return Conflict(new { Message = "System made providers cannot be deleted"});
             }
             // Ensure no notifications are using this provider
             if(await context.GuardNotifications.AnyAsync(notification => notification.NotificationProviderId == providerId))

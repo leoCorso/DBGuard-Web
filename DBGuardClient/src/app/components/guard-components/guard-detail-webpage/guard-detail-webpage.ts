@@ -40,7 +40,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   
   private httpClient = inject(HttpClient);
   private dialogService = inject(DialogService);
-  private guardService = inject(EntityChangeService);
+  private entityChangeService = inject(EntityChangeService);
   public authService = inject(AuthService);
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
@@ -51,12 +51,11 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   public showLoadingSpinner = signal<boolean>(true);
   private destroy = new Subject<void>();
   private messageService = inject(MessageService);
-  private entityChangeService = inject(EntityChangeService);
   private editGuardDialogRef?: DynamicDialogRef<CreateGuard> | null;
 
   ngOnInit(): void {
     const guardId = this.activatedRoute.snapshot.paramMap.get('id');
-    this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
+    this.entityChangeService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
       next: (guardId: number) => {
         if(this.guardId() === guardId){
           this.loadDetails();
@@ -75,7 +74,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
         this.guardDetail.set(guardDetail);
         this.loadingEvent.next(false);
       },
-      error: () => this.router.navigate(['guards/view-guards'])
+      error: () => this.router.navigate(['/guards/view-all'])
     });
   }
   ngOnDestroy(): void {
@@ -89,6 +88,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
       closable: true,
       draggable: true,
       resizable: true,
+      maximizable: true,
       inputValues: {
         guardToEditId: this.guardDetail()!.id
       }
@@ -117,7 +117,8 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     const params = new HttpParams().set('guardId', this.guardId()!);
     this.httpClient.delete<void>(url, { params: params }).subscribe({
       next: () => {
-        this.router.navigate(['guards/view-guards']);
+        this.entityChangeService.guardDeleted.next(this.guardId()!);
+        this.router.navigate(['/guards/view-all']);
       }
     })
   }

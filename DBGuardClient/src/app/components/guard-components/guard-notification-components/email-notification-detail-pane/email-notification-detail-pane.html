@@ -8,22 +8,26 @@
             }
         </div>
     </span>
-    <span class="email-key">CC Emails:</span>
-    <span class="email-value">
-        <div class="emails">
-            @for(email of emailNotificationConfig().ccEmails; track $index){
-            <a [href]="'mailto:' + email">{{ email }}</a>
-            }
-        </div>
-    </span>
-    <span class="email-key">BCC Emails:</span>
-    <span class="email-value">
-        <div class="emails">
-            @for(email of emailNotificationConfig().bccEmails; track $index){
+    @if (emailNotificationConfig().ccEmails.length > 0) {
+        <span class="email-key">CC Emails:</span>
+        <span class="email-value">
+            <div class="emails">
+                @for(email of emailNotificationConfig().ccEmails; track $index){
                 <a [href]="'mailto:' + email">{{ email }}</a>
-            }
-        </div>
-    </span>
+                }
+            </div>
+        </span>
+    }
+    @if(emailNotificationConfig().bccEmails.length > 0){
+        <span class="email-key">BCC Emails:</span>
+        <span class="email-value">
+            <div class="emails">
+                @for(email of emailNotificationConfig().bccEmails; track $index){
+                    <a [href]="'mailto:' + email">{{ email }}</a>
+                }
+            </div>
+        </span>
+    }
     <span class="email-key">Email subject:</span>
     <span class="email-value">{{ emailNotificationConfig().emailSubject }}</span>
     <span class="email-key">Email body:</span>

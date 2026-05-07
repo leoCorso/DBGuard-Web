@@ -9,3 +9,10 @@
     gap: 1rem;
     margin-top: 1rem;
 }
+.placeholder-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 300px;
+    overflow: auto;
+}

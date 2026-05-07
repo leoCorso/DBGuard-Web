@@ -1,13 +1,16 @@
-﻿using DBGuardAPI.Data.Models;
-using DBGuardAPI.Data.Models.GuardNotifications;
-using Microsoft.EntityFrameworkCore;
-using DBGuardAPI.Data.Enums;
-using MailKit.Net.Smtp;
-using MimeKit;
-using DBGuardAPI.Data.Models.ServiceProviders;
-using DBGuardAPI.Data.Models.NotificationTransactions;
+﻿using System.Text;
+using System.Text.Json;
 using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+using DBGuardAPI.Data.Enums;
+using DBGuardAPI.Data.Models;
+using DBGuardAPI.Data.Models.GuardNotifications;
+using DBGuardAPI.Data.Models.NotificationProviders;
+using DBGuardAPI.Data.Models.NotificationTransactions;
+using DBGuardAPI.Data.Models.ServiceProviders;
 using DBGuardAPI.Helpers;
+using MailKit.Net.Smtp;
+using Microsoft.EntityFrameworkCore;
+using MimeKit;
 
 namespace DBGuardAPI.Services
 {
@@ -16,11 +19,13 @@ namespace DBGuardAPI.Services
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly ILogger<NotificationService> _logger;
         private readonly CredentialProtector _credentialProtector;
-        public NotificationService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<NotificationService> logger, CredentialProtector credentialProtector)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public NotificationService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<NotificationService> logger, CredentialProtector credentialProtector, IHttpClientFactory httpClientFactory)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
             _credentialProtector = credentialProtector;
+            _httpClientFactory = httpClientFactory;
         }
         public async Task ProcesNotifications(List<GuardNotification> notifications, Guard guard, GuardChangeTransaction guardChange, string? message = null)
         {
@@ -29,12 +34,17 @@ namespace DBGuardAPI.Services
                 switch (notification)
                 {
                     case EmailNotification emailNotification:
-                        await SendEmailNotification(emailNotification, guard, guardChange, message);
+                        await SendEmailNotification(emailNotification, guard, guardChange);
                         break;
+                    case HTTPNotification httpNotification:
+                        await SendHttpNotification(httpNotification, guard, guardChange);
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 }
             }
         }
-        private async Task SendEmailNotification(EmailNotification notification, Guard guard, GuardChangeTransaction guardChange, string? message = null)
+        private async Task SendEmailNotification(EmailNotification notification, Guard guard, GuardChangeTransaction guardChange)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             NotificationProvider? provider = await context.NotificationProviders.FindAsync(notification.NotificationProviderId);
@@ -234,6 +244,9 @@ $$"""
                 case EmailNotification emailNotification when emailNotification.NotificationProvider is EmailProvider emailProvider:
                     await TestEmailNotification(emailNotification, emailProvider);
                     break;
+                case HTTPNotification httpNotification when httpNotification.NotificationProvider is HTTPProvider httpProvider:
+                    await TestHttpNotification(httpNotification, httpProvider);
+                    break;
                 default:
                     throw new NotSupportedException();
             }
@@ -384,6 +397,210 @@ $$"""
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
             _logger.LogInformation("An email notification was tested {NotificationId}", emailNotification.Id);
+        }
+        private async Task TestHttpNotification(HTTPNotification httpNotification, HTTPProvider httpProvider)
+        {
+     
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            Guard? guard = await context.Guards.FindAsync(httpNotification.GuardId);
+            if(guard is null)
+            {
+                throw new ArgumentException("Could not find guard for notification");
+            }
+            using HttpClient client = _httpClientFactory.CreateClient();
+            // Build URL with query parameters
+            string url = BuildUrlWithQueryParams(httpNotification.URL, httpNotification.QueryParameters);
+            HttpRequestMessage request = new()
+            {
+                Method = ResolveHttpMethod(httpNotification.HttpMethod),
+                RequestUri = new Uri(url)
+            };
+            // Add headers
+            foreach (var header in httpNotification.RequestHeaders)
+            {
+                if (!request.Headers.TryAddWithoutValidation(header.Key, header.Value ?? string.Empty))
+                {
+                    // Log error
+                    _logger.LogError("Error adding request header for http notification {NotificationId} {GuardId} {HeaderKey}", httpNotification.Id, httpNotification.GuardId, header.Key);
+                }
+            }
+            if (httpNotification.BodyData is not null && httpNotification.BodyType is not null)
+            {
+                string bodyData = httpNotification.BodyData;
+                request.Content = BuildHttpBody(httpNotification.BodyType.Value, bodyData);
+            }
+            var response = await client.SendAsync(request);
+
+        }
+        private async Task SendHttpNotification(HTTPNotification notification, Guard guard, GuardChangeTransaction guardChange)
+        {
+            var notificationTransactionBuilder = new HTTPNotificationTransaction
+            {
+                Timestamp = DateTimeOffset.UtcNow,
+                GuardId = guard.Id,
+                GuardNotificationId = notification.Id,
+                NotificationType = NotificationType.HTTP,
+                GuardChangeTransactionId = guardChange.Id,
+                Successful = false,
+                URL = notification.URL,
+                HttpMethod = notification.HttpMethod,
+                BodyType = notification.BodyType
+            };
+
+            try
+            {
+                using HttpClient client = _httpClientFactory.CreateClient();
+                // Build URL with query parameters
+                string url = BuildUrlWithQueryParams(notification.URL, notification.QueryParameters);
+                HttpRequestMessage request = new()
+                {
+                    Method = ResolveHttpMethod(notification.HttpMethod),
+                    RequestUri = new Uri(url)
+                };
+                // Add headers
+                foreach (var header in notification.RequestHeaders)
+                {
+                    if (!request.Headers.TryAddWithoutValidation(header.Key, header.Value ?? string.Empty))
+                    {
+                        // Log error
+                        _logger.LogError("Error adding request header for http notification {NotificationId} {GuardId} {HeaderKey}", notification.Id, notification.GuardId, header.Key);
+                    }
+                }
+                if (notification.BodyData is not null && notification.BodyType is not null)
+                {
+                    string bodyData = ResolveHttpPlaceholders(notification.BodyData, guard, guardChange);
+                    request.Content = BuildHttpBody(notification.BodyType.Value, bodyData);
+                }
+                var response = await client.SendAsync(request);
+
+                // Create transaction
+                notificationTransactionBuilder.Successful = response.IsSuccessStatusCode;
+                notificationTransactionBuilder.BodyData = request.Content is not null ? await request.Content.ReadAsStringAsync() : null;
+                // Request headers
+                notificationTransactionBuilder.RequestHeaders = request.Headers
+                    .ToDictionary(h => h.Key, h => (string?)string.Join(", ", h.Value));
+
+                // Also capture Content headers (Body headers like Content-Type live here, not request.Headers)
+                if (request.Content is not null)
+                {
+                    foreach (var header in request.Content.Headers)
+                        notificationTransactionBuilder.RequestHeaders[header.Key] = string.Join(", ", header.Value);
+                }
+                notificationTransactionBuilder.QueryParameters = ExtractQueryParametersFromUrl(request.RequestUri);
+                notificationTransactionBuilder.ResponseCode = response.StatusCode;
+                notificationTransactionBuilder.ResponseMessage = await response.Content.ReadAsStringAsync();
+
+            }
+            catch (Exception ex) 
+            {
+                notificationTransactionBuilder.Successful = false;
+                notificationTransactionBuilder.ErrorMessage = ex.Message;
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            await context.NotificationTransactions.AddAsync(notificationTransactionBuilder);
+            await context.SaveChangesAsync();
+        }
+        private static HttpMethod ResolveHttpMethod(HTTPAction method) // Maps my enum to Http method class
+        {
+            return method switch
+            {
+                HTTPAction.Get => HttpMethod.Get,
+                HTTPAction.Post => HttpMethod.Post,
+                HTTPAction.Put => HttpMethod.Put,
+                HTTPAction.Patch => HttpMethod.Patch,
+                HTTPAction.Delete => HttpMethod.Delete,
+                _ => throw new NotSupportedException("Invalid http method used")
+            };
+        }
+        private static string BuildUrlWithQueryParams(string baseUrl, Dictionary<string, string?> queryParams)
+        {
+            if (queryParams.Count == 0)
+            {
+                return baseUrl;
+            }
+            string query = string.Join("&", queryParams.Select(kv => $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value ?? string.Empty)}"));
+            string seperator = baseUrl.Contains('?') ? "&" : "?"; // If url contains query params we want to append
+            return $"{baseUrl}{seperator}{query}";
+        }
+        private static string ResolveHttpPlaceholders(string bodyData, Guard guard, GuardChangeTransaction guardChange)
+        {
+            return bodyData
+                .Replace("{{_guardId}}", guardChange.GuardId.ToString())
+                .Replace("{{_guardName}}", guard.GuardName ?? string.Empty)
+                .Replace("{{_timestamp}}", guardChange.Timestamp.ToString())
+                .Replace("{{_currentGuardState}}", guardChange.GuardState.ToString())
+                .Replace("{{_previousGuardState}}", guardChange.PreviousGuardState.ToString())
+                .Replace("{{_guardQuery}}", guardChange.GuardQuery)
+                .Replace("{{_guardOperator}}", guardChange.GuardOperator.ToString())
+                .Replace("{{_guardValue}}", guardChange.GuardValue.ToString())
+                .Replace("{{_resultValue}}", guardChange.ResultValue.ToString())
+                .Replace("{{_changeMessage}}", guardChange.Message ?? string.Empty)
+                .Replace("{{_databaseEndpoint}}", guardChange.DatabaseConnectionEndPoint)
+                .Replace("{{_databaseEngine}}", guardChange.DatabaseConnectionEngine.ToString())
+                .Replace("{{_databaseName}}", guardChange.DatabaseName)
+                .Replace("{{_databaseUsername}}", guardChange.DatabaseConnectionUsername);
+        }
+        private static HttpContent BuildHttpBody(HTTPBodyType bodyType, string bodyData)
+        {
+            return bodyType switch
+            {
+                HTTPBodyType.Raw => BuildRawHttpBody(bodyData),
+                HTTPBodyType.FormURLEncoded => BuildFormEncodedHttpBody(bodyData),
+                HTTPBodyType.FormData => BuildFormDataHttpBody(bodyData),
+                _ => throw new NotSupportedException($"Type of http body {bodyType} {nameof(bodyType)} is not supported")
+            };
+        }
+        private static HttpContent BuildRawHttpBody(string bodyData)
+        {
+            var contentType = bodyData.TrimStart().StartsWith('{') || bodyData.TrimStart().StartsWith('[') ? "application/json" : "text/plain";
+            return new StringContent(bodyData, Encoding.UTF8, contentType);
+        }
+        // x-www-form-urlencoded — expects "key=value&key2=value2" or JSON object string
+        private static HttpContent BuildFormEncodedHttpBody(string bodyData)
+        {
+            var pairs = ParseKeyValuePairs(bodyData);
+            return new FormUrlEncodedContent(pairs);
+        }
+        // multipart/form-data — expects "key=value&key2=value2" or JSON object string
+        private static HttpContent BuildFormDataHttpBody(string bodyData)
+        {
+            var form = new MultipartFormDataContent();
+            foreach (var (key, value) in ParseKeyValuePairs(bodyData))
+                form.Add(new StringContent(value), key);
+            return form;
+        }
+        private static Dictionary<string, string> ParseKeyValuePairs(string bodyData)
+        {
+            var trimmed = bodyData.Trim();
+
+            // JSON object → parse into key/value pairs
+            if (trimmed.StartsWith('{'))
+            {
+                return JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(trimmed)!
+                    .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
+            }
+
+            // Query string format: key=value&key2=value2
+            return trimmed.Split('&')
+                .Select(part => part.Split('=', 2))
+                .Where(parts => parts.Length == 2)
+                .ToDictionary(
+                    parts => Uri.UnescapeDataString(parts[0]),
+                    parts => Uri.UnescapeDataString(parts[1])
+                );
+        }
+        private static Dictionary<string, string?> ExtractQueryParametersFromUrl(Uri? uri)
+        {
+            if (uri is null || string.IsNullOrEmpty(uri.Query))
+                return [];
+
+            return uri.Query.TrimStart('?')
+                .Split('&', StringSplitOptions.RemoveEmptyEntries)
+                .Select(part => part.Split('=', 2))
+                .ToDictionary(
+                    parts => Uri.UnescapeDataString(parts[0]),
+                    parts => parts.Length > 1 ? Uri.UnescapeDataString(parts[1]) : null
+                );
         }
     }
 }

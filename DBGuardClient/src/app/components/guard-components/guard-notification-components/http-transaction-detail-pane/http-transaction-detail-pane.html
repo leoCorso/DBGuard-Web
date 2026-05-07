@@ -1,0 +1,67 @@
+<h3>Http transaction info</h3>
+<div class="http-info">
+    <span class="http-key">Url:</span>
+    <span class="http-value">
+        <a [href]="httpTransactionInfo().url" target="_blank">{{ httpTransactionInfo().url }}</a>
+    </span>
+    <span class="http-key">Http method:</span>
+    <span class="http-value"><p-tag [value]="getEnumLabel(httpMethods, httpTransactionInfo().httpMethod)" [severity]="getHttpSeverity(httpTransactionInfo().httpMethod)"></p-tag></span>
+    <span class="http-key">Request headers:</span>
+    <span class="http-value">
+        @if(httpTransactionInfo().requestHeaders){
+            {{ mapToArray(httpTransactionInfo().requestHeaders).map(item => `${item.key}: ${item.value}`).join(', ') }}
+        }
+        @else {
+            <em>None</em>
+        }
+    </span>
+    <span class="http-key">Query parameters:</span>
+    <span class="http-value">
+        @if (httpTransactionInfo().queryParameters) {
+            {{ mapToArray(httpTransactionInfo().queryParameters).map(item => `${item.key}: ${item.value}`).join(', ') }}
+        }
+        @else {
+            <em>None</em>
+        }
+    </span>
+    <span class="http-key">Body type:</span>
+    <span class="http-value">
+        @if (httpTransactionInfo().bodyType !== undefined) {
+            {{ getEnumLabel(bodyTypes, httpTransactionInfo().bodyType!) }}
+        }
+        @else {
+            <em>No body</em>
+        }
+    </span>
+    <span class="http-key">Body data:</span>
+    <span class="http-value">
+        @if (httpTransactionInfo().bodyData) {
+            {{ httpTransactionInfo().bodyData }}
+        }
+        @else {
+            <em>No body data</em>
+        }
+    </span>
+    <span class="http-key">Response code:</span>
+    <span class="http-value">
+        @if (httpTransactionInfo().responseCode) {
+            {{ getEnumLabel(httpResponseCodes, httpTransactionInfo().responseCode!) }}
+        }
+        @else {
+            <p-tag severity="danger" value="Error"></p-tag>
+        }
+    </span>
+    <span class="http-key">Response message:</span>
+    <span class="http-value">
+        @if (httpTransactionInfo().responseMessage) {
+            <p-button severity="info" [rounded]="true" [outlined]="true" (onClick)="showResponseMessageDialog()" label="View response message"></p-button>
+            <p-dialog header="Response message" [modal]="true" [maximizable]="true" [(visible)]="responseMessageVisible" [style]="{width: '80%'}">
+                <pre style="white-space: pre-wrap; word-break: break-all; font-size: 0.85rem;">{{ prettifyHtml(httpTransactionInfo().responseMessage!) }}</pre>
+
+            </p-dialog>
+        }
+        @else {
+            <em>No response message</em>
+        }
+    </span>
+</div>

@@ -30,13 +30,22 @@
     <span class="change-key"><strong>Trigger value:</strong></span>
     <span class="change-value">{{ changeHistoryDetail().guardValue }}</span>
     <span class="change-key"><strong>Result value:</strong></span>
-    <span class="change-value">{{ changeHistoryDetail().resultValue }}</span>
+    <span class="change-value">
+        @if (changeHistoryDetail().resultValue) {
+            {{ changeHistoryDetail().resultValue }}
+        }
+        @else {
+            <em>None</em>
+        }
+    </span>
     <span class="change-key"><strong>Database connection id</strong></span>
     @if (changeHistoryDetail().databaseConnectionId) {
     <p-button [label]="changeHistoryDetail().databaseConnectionId?.toString()" [outlined]="true" severity="contrast"></p-button>
     }
     @else {
-    <p-tag value="Deleted" severity="danger"></p-tag>
+        <div>
+            <p-tag value="Deleted" severity="danger"></p-tag>
+        </div>
     }
 
     <span class="change-key"><strong>Database endpoint:</strong></span>

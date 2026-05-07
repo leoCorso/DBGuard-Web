@@ -14,7 +14,7 @@
     </span>
     <span class="http-key">Body type:</span>
     <span class="http-value">
-        @if(httpNotificationDetail().bodyType){
+        @if(httpNotificationDetail().bodyType !== undefined){
             {{ getEnumLabel(httpBodyTypes, httpNotificationDetail().bodyType!) }}
         }
         @else {
@@ -30,4 +30,6 @@
             <em>No body data</em>
         }
     </span>
+    <span class="http-key">Http method:</span>
+    <span class="http-value"><p-tag [value]="getEnumLabel(httpMethods, httpNotificationDetail().httpMethod)" [severity]="getHttpSeverity(httpNotificationDetail().httpMethod)"></p-tag></span>
 </div>

@@ -2,7 +2,7 @@
 {
     public enum NotificationType
     {
-        Email,
-        HTTP,
+        Email = 0,
+        HTTP = 1,
     }
 }

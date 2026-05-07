@@ -14,10 +14,11 @@ import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { merge, takeUntil } from 'rxjs';
+import { Tag } from 'primeng/tag';
 
 @Component({
   selector: 'app-notification-providers-table',
-  imports: [TableModule, Button, FilterItem, RouterModule, DatePipe],
+  imports: [TableModule, Button, FilterItem, RouterModule, DatePipe, Tag],
   templateUrl: './notification-providers-table.html',
   styleUrl: './notification-providers-table.scss',
 })

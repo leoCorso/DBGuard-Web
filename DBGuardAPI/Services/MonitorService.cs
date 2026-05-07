@@ -14,17 +14,13 @@ namespace DBGuardAPI.Services
     public class MonitorService: BackgroundService
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-        private readonly CredentialProtector _credentialProtector;
-        private readonly NotificationService _notificationService;
         private readonly ILogger<MonitorService> _logger;
         private readonly SemaphoreSlim _throttle = new SemaphoreSlim(5, 5);
         private readonly GuardProcessor _guardProcessor;
-        public MonitorService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<MonitorService> logger, CredentialProtector credentialProtector, NotificationService notificationService, GuardProcessor guardProcessor)
+        public MonitorService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger<MonitorService> logger, GuardProcessor guardProcessor)
         {
             _dbContextFactory = dbContextFactory;
             _logger = logger;
-            _credentialProtector = credentialProtector;
-            _notificationService = notificationService;
             _guardProcessor = guardProcessor;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

@@ -7,15 +7,21 @@
                 <h3>Notification provider</h3>
                 @if (authService.hasRoles(['Admin'])) {
                     <p-buttongroup>
-                        <p-button [text]="true" label="Test" icon="pi pi-play" severity="contrast" (onClick)="testProvider()" pTooltip="Test the notification provider to ensure it works"></p-button>
-                        <p-button [text]="true" label="Edit" icon="pi pi-pencil" (onClick)="editProvider()"></p-button>
-                        <p-button [text]="true" label="Delete" icon="pi pi-trash" severity="danger" (onClick)="deleteProviderClicked($event)"></p-button>
+                        @if (notificationProvider()?.providerType !== notificationTypes.Http) {
+                            <p-button [text]="true" label="Test" icon="pi pi-play" severity="contrast" (onClick)="testProvider()" pTooltip="Test the notification provider to ensure it works"></p-button>
+                        }
+                        @if (notificationProvider()?.createdByUserId) {
+                            <p-button [text]="true" label="Edit" icon="pi pi-pencil" (onClick)="editProvider()"></p-button>
+                            <p-button [text]="true" label="Delete" icon="pi pi-trash" severity="danger" (onClick)="deleteProviderClicked($event)"></p-button>
+                        }
                     </p-buttongroup>
                 }
             </div>
         </ng-template>
-        <app-notification-provider-detail-pane
-            [notificationProviderId]="providerId()!"></app-notification-provider-detail-pane>
+        @if(notificationProvider()){
+            <app-notification-provider-detail-pane
+                [notificationProvider]="notificationProvider()!"></app-notification-provider-detail-pane>
+        }
     </p-card>
     <p-card header="Notifications using this provider">
         <app-guard-notifications-table [providerId]="providerId()!"></app-guard-notifications-table>

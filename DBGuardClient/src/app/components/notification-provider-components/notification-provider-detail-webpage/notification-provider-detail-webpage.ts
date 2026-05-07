@@ -14,6 +14,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from '../../../services/auth-service';
 import { TooltipModule } from 'primeng/tooltip';
 import { Toast } from 'primeng/toast';
+import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
+import { NotificationType } from '../../../enums/notification-type';
 
 @Component({
   selector: 'app-notification-provider-detail-webpage',
@@ -31,13 +33,16 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   public authService = inject(AuthService);
   private editProviderDialog?: DynamicDialogRef<CreateNotificationProvider> | null;
-
+  public notificationProvider = signal<NotificationProviderDTO | null>(null);
+  public notificationTypes = NotificationType;
+  
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if(id === null){
       this.router.navigate(['/providers/view-all']);
     }
     this.providerId.set(parseInt(id!));
+    this.loadProviderDetail();
   }
   ngOnDestroy(): void {
     this.editProviderDialog?.close();
@@ -84,6 +89,15 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
     this.httpClient.post(url, {}, { params: params }).subscribe({
       next: () => {
         this.messageService.add({summary: 'Provider working', detail: 'The provider is working and can be used to send notifications', key: 'provider-toast', severity: 'success'});
+      }
+    })
+  }
+  private loadProviderDetail(): void {
+    const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
+    const params = new HttpParams().set('id', this.providerId()!);
+    this.httpClient.get<NotificationProviderDTO>(url, { params: params }).subscribe({
+      next: (providerInfo: NotificationProviderDTO) => {
+        this.notificationProvider.set(providerInfo);
       }
     })
   }

@@ -15,7 +15,7 @@
                 @case(notificationProvidersEnum.Http){
                     <p-tag value="Http notification"></p-tag>
                     <ul>
-                        <li><strong>Method: {{ getEnumLabel(httpActionTypes, notification.actionType) }}</strong></li>
+                        <li><strong>Method: <p-tag [value]="getEnumLabel(httpActionTypes, notification.actionType)" [severity]="getHTTPSeverity(notification.actionType)"></p-tag></strong></li>
                         <li><strong>URL: {{ notification.url }}</strong></li>
                     </ul>
                 }

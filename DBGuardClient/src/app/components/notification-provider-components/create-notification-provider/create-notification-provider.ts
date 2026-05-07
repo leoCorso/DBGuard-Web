@@ -64,6 +64,9 @@ export class CreateNotificationProvider implements OnInit {
             break;
         }
         this.notificationProviderType.disable();
+      },
+      error: () => {
+        this.dialogRef.close();
       }
     })
   }

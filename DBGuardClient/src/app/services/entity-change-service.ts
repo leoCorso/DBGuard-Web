@@ -10,6 +10,8 @@ import { Subject } from 'rxjs';
 export class EntityChangeService {
   public guardEdited = new Subject<number>(); // Used to alert components displaying details that guard has been edited
   public guardCreated = new Subject<number>();
+  public guardDeleted = new Subject<number>();
+  
   public providerCreated = new Subject<number>();
   public providerEdited = new Subject<number>();
   public dbConnectionCreated = new Subject<number>(); // Used to alert components displaying db connections that a new connection has been created
