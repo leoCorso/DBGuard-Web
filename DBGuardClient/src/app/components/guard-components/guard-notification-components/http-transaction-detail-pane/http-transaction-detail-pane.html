@@ -8,7 +8,7 @@
     <span class="http-value"><p-tag [value]="getEnumLabel(httpMethods, httpTransactionInfo().httpMethod)" [severity]="getHttpSeverity(httpTransactionInfo().httpMethod)"></p-tag></span>
     <span class="http-key">Request headers:</span>
     <span class="http-value">
-        @if(httpTransactionInfo().requestHeaders){
+        @if(httpTransactionInfo().requestHeaders && recordHasItem(httpTransactionInfo().requestHeaders)){
             {{ mapToArray(httpTransactionInfo().requestHeaders).map(item => `${item.key}: ${item.value}`).join(', ') }}
         }
         @else {
@@ -17,8 +17,8 @@
     </span>
     <span class="http-key">Query parameters:</span>
     <span class="http-value">
-        @if (httpTransactionInfo().queryParameters) {
-            {{ mapToArray(httpTransactionInfo().queryParameters).map(item => `${item.key}: ${item.value}`).join(', ') }}
+        @if (httpTransactionInfo().queryParameters && recordHasItem(httpTransactionInfo().queryParameters)) {
+            {{ mapToArray(httpTransactionInfo().queryParameters).map(item => `${item.key}: ${item.value}`).join(', ')}}
         }
         @else {
             <em>None</em>
@@ -26,7 +26,7 @@
     </span>
     <span class="http-key">Body type:</span>
     <span class="http-value">
-        @if (httpTransactionInfo().bodyType !== undefined) {
+        @if (httpTransactionInfo().bodyType !== null) {
             {{ getEnumLabel(bodyTypes, httpTransactionInfo().bodyType!) }}
         }
         @else {

@@ -1,0 +1,68 @@
+@if(loadingUserInfo()){
+
+}
+@else {
+    @if (userInfo()) {
+        <div class="user-info">
+            <span class="user-key">Id:</span>
+            <span class="user-value">{{ userInfo()!.id }}</span>
+            <span class="user-key">Username:</span>
+            <div class="user-value">
+                <div class="username-input">
+                    @if (editingUsername()) {
+                        <input [formControl]="usernameControl" type="text" pInputText fluid>
+                    }
+                    @else {
+                        <span >{{ userInfo()!.username }}</span>
+                    }
+                    @if (editingUsername()) {
+                        <p-button (onClick)="saveUsernameEdit()" [text]="true" icon="pi pi-check" severity="secondary" [disabled]="usernameControl.pristine"></p-button>
+                        <p-button (onClick)="cancelUsernameEdit()" [text]="true" icon="pi pi-times" severity="secondary"></p-button>
+                    }
+                    @else {
+                        <p-button (onClick)="editingUsername.set(true)" [text]="true" icon="pi pi-pencil" severity="secondary"></p-button>
+                    }
+                </div>
+        
+            </div>
+            <span class="user-key">Roles:</span>
+            <span class="user-value">
+                <div class="role-info">
+                    @for (role of userInfo()!.roles; track $index) {
+                        <p-tag [value]="role" [rounded]="true"></p-tag>
+                    }
+                </div>
+            </span>
+        </div>
+        @if(editingPassword()){
+            <form [formGroup]="editPasswordForm" (ngSubmit)="updatePassword()">
+                <div>
+                    <p-floatlabel variant="on">
+                        <p-password id="current-password" formControlName="currentPassword" [feedback]="false"></p-password>
+                        <label for="current-password">Current password</label>
+                    </p-floatlabel>
+                    <p-message variant="simple" size="small" severity="info">Required</p-message>
+                </div>
+                <div>
+                    <p-floatlabel variant="on">
+                        <p-password id="new-password" formControlName="newPassword"></p-password>
+                        <label for="new-password">New password</label>
+                    </p-floatlabel>
+                    <p-message variant="simple" size="small" severity="info">Required</p-message>
+                </div>
+                <div>
+                    <p-floatlabel variant="on">
+                        <p-password id="confirm-password" formControlName="confirmPassword" [feedback]="false"></p-password>
+                        <label for="confirm-password">Confirm password</label>
+                    </p-floatlabel>
+                    <p-message variant="simple" size="small" severity="info">Required</p-message>
+                </div>
+                <p-button type="submit" label="Update" [disabled]="editPasswordForm.invalid"></p-button>
+                <p-button (onClick)="cancelPasswordEdit()" label="Cancel" severity="secondary"></p-button>
+            </form>
+        }
+        @else {
+            <p-button (onClick)="editingPassword.set(true)" label="Change password" [rounded]="true"></p-button>
+        }
+    }
+}

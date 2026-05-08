@@ -133,6 +133,28 @@ namespace DBGuardAPI.Controllers
                 IsActive = userToEdit.IsActive
             };
         }
+        [HttpGet(nameof(GetSelfInfo))]
+        public async Task<ActionResult<ViewUserSelfDTO>> GetSelfInfo()
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if(user is null)
+            {
+                _logger.LogError("A request for self user info was received for an invalid user");
+                return NotFound();
+            }
+            if (!user.IsActive)
+            {
+                _logger.LogError("A request for self user info was received for an inactive user {UserId}", user.Id);
+                return Conflict(new { Message = "User is inactive" });
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            return new ViewUserSelfDTO
+            {
+                Id = user.Id,
+                Username = user.UserName!,
+                Roles = roles.ToList()
+            };
+        }
         [HttpPost(nameof(Login))]
         [AllowAnonymous]
         public async Task<ActionResult<AuthResult>> Login(LoginRequest loginRequest)

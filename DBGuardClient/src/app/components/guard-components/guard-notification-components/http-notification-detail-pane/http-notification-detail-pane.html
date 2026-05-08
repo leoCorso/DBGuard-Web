@@ -14,7 +14,7 @@
     </span>
     <span class="http-key">Body type:</span>
     <span class="http-value">
-        @if(httpNotificationDetail().bodyType !== undefined){
+        @if(httpNotificationDetail().bodyType !== null){
             {{ getEnumLabel(httpBodyTypes, httpNotificationDetail().bodyType!) }}
         }
         @else {

@@ -77,6 +77,7 @@ builder.Services.AddDataProtection()
 
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddHostedService<MonitorService>();
+builder.Services.AddHostedService<RefreshTokenCleaner>();
 builder.Services.AddSingleton<CredentialProtector>();
 builder.Services.AddTransient<GuardProcessor>();
 builder.Services.AddTransient<NotificationService>();

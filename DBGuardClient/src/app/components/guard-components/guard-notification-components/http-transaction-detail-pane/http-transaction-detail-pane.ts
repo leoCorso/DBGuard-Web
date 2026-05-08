@@ -43,4 +43,7 @@ export class HttpTransactionDetailPane {
       .filter(line => line.length > 0)
       .join('\n');
   }
+  public recordHasItem(record: Record<string, string | null>): boolean {
+    return Object.keys(record).length > 0;
+  }
 }

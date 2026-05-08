@@ -19,7 +19,9 @@
             </div>
         }
         @else {
-            <app-notification-detail-pane [notificationDetail]="notificationDetail()!"></app-notification-detail-pane>
+            @if (notificationDetail()) {
+                <app-notification-detail-pane [notificationDetail]="notificationDetail()!"></app-notification-detail-pane>
+            }
         }
     </p-card>
     @if (notificationProvider()) {

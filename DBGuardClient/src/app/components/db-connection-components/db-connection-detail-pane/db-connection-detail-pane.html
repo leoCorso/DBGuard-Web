@@ -5,31 +5,33 @@
     </div>
 }
 @else {
-    <div class="database-info">
-        <span class="connection-key"><strong>Id:</strong></span>
-        <span class="connection-value">
-            <p-button [label]="databaseConnectionInfo()?.id?.toString()" [routerLink]="['/db-connections/detail', databaseConnectionInfo()?.id]" [outlined]="true" severity="contrast"></p-button>
-        </span>
-        <span class="connection-key"><strong>Create date:</strong></span>
-        <span class="connection-value">{{ databaseConnectionInfo()?.createDate | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
-        <span class="connection-key"><strong>Last edited</strong></span>
-        <span class="connection-value">{{ databaseConnectionInfo()?.lastEdited | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
-        <span class="connection-key"><strong>Endpoint:</strong></span>
-        <span class="connection-value">{{ databaseConnectionInfo()?.endpoint }}</span>
-        <span class="connection-key"><strong>Database engine:</strong></span>
-        <span class="connection-value">{{ getEnumLabel(databaseEngines, databaseConnectionInfo()!.databaseEngine) }}</span>
-        <span class="connection-key"><strong>Database name:</strong></span>
-        <span class="connection-value">{{ databaseConnectionInfo()?.databaseName }}</span>
-        <span class="connection-key"><strong>Username:</strong></span>
-        <span class="connection-value">{{ databaseConnectionInfo()?.username }}</span>
-        @if (authService.hasRoles(['Admin']) && databaseConnectionInfo()?.password) {
-            <span class="connection-key"><strong>Password: </strong></span>
-            <div class="connection-value">
-                <span>{{ viewPassword() ? databaseConnectionInfo()!.password : '********' }}</span>
-                <p-button (onClick)="viewPassword.set(!viewPassword())" [link]="true" [icon]="viewPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" pTooltip="View password"></p-button>
-            </div>
-        }
-        <span class="connection-key"><strong>Created by:</strong></span>
-        <span class="connection-value"><p-button [label]="databaseConnectionInfo()?.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
-    </div>
+    @if (databaseConnectionInfo()) {
+        <div class="database-info">
+            <span class="connection-key"><strong>Id:</strong></span>
+            <span class="connection-value">
+                <p-button [label]="databaseConnectionInfo()!.id?.toString()" [routerLink]="['/db-connections/detail', databaseConnectionInfo()?.id]" [outlined]="true" severity="contrast"></p-button>
+            </span>
+            <span class="connection-key"><strong>Create date:</strong></span>
+            <span class="connection-value">{{ databaseConnectionInfo()!.createDate | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
+            <span class="connection-key"><strong>Last edited</strong></span>
+            <span class="connection-value">{{ databaseConnectionInfo()!.lastEdited | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
+            <span class="connection-key"><strong>Endpoint:</strong></span>
+            <span class="connection-value">{{ databaseConnectionInfo()!.endpoint }}</span>
+            <span class="connection-key"><strong>Database engine:</strong></span>
+            <span class="connection-value">{{ getEnumLabel(databaseEngines, databaseConnectionInfo()!.databaseEngine) }}</span>
+            <span class="connection-key"><strong>Database name:</strong></span>
+            <span class="connection-value">{{ databaseConnectionInfo()!.databaseName }}</span>
+            <span class="connection-key"><strong>Username:</strong></span>
+            <span class="connection-value">{{ databaseConnectionInfo()!.username }}</span>
+            @if (authService.hasRoles(['Admin']) && databaseConnectionInfo()!.password) {
+                <span class="connection-key"><strong>Password: </strong></span>
+                <div class="connection-value">
+                    <span>{{ viewPassword() ? databaseConnectionInfo()!.password : '********' }}</span>
+                    <p-button (onClick)="viewPassword.set(!viewPassword())" [link]="true" [icon]="viewPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" pTooltip="View password"></p-button>
+                </div>
+            }
+            <span class="connection-key"><strong>Created by:</strong></span>
+            <span class="connection-value"><p-button [label]="databaseConnectionInfo()!.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
+        </div>
+    }
 }

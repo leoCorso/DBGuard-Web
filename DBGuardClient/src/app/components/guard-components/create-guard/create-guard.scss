@@ -4,14 +4,16 @@
     display: grid;
     grid-row-gap: 1rem;
 }
-.notify-options {
-    display: flex;
-    gap: 1rem;
-}
 .notify-option {
     display: flex;
     gap: 1rem;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.notify-options {
+    display: flex;
+    gap: 1rem;
     justify-content: center;
     align-items: center;
     padding: 1rem;
@@ -21,4 +23,14 @@
 }
 .bottom-btns {
     margin-top: 2rem;
+}
+@media(max-width: 768px){
+    .notify-options {
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+    }
 }

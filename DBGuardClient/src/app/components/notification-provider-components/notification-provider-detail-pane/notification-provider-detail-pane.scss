@@ -6,7 +6,16 @@
 .provider-key {
     justify-self: end;
     align-self: center;
+    text-wrap: nowrap;
+    font-weight: bold;
 }
 .provider-value {
     align-self: center;
+}
+@media(max-width: 992px){
+    .provider-info {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 1rem;;
+    }
 }

@@ -29,3 +29,18 @@ export interface CreateUserDTO {
 export interface CreateUserReferenceData {
     roles: string[]
 }
+export interface ViewUserSelfDTO {
+    id: string,
+    username: string,
+    roles: string[]
+}
+export interface EditSelfUsernameDTO {
+    id: string,
+    newUsername: string
+}
+export interface EditSelfPasswordDTO {
+    id: string,
+    currentPassword: string,
+    newPassword: string,
+    confirmNewPassword: string
+}

@@ -413,7 +413,6 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A guard deletion was attempted on a non-existing guard {GuardId}", guardId);
                 return NotFound();
             }
-
             List<int> notificationsRemoved = await context.GuardNotifications.AsNoTracking().Where(noti => noti.GuardId == guardToDelete.Id).Select(noti => noti.Id).ToListAsync();
             context.Guards.Remove(guardToDelete);
             await context.SaveChangesAsync();

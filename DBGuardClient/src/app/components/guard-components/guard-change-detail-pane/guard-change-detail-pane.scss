@@ -6,8 +6,16 @@
 .change-key {
     justify-self: end;
     align-self: center;
+    text-wrap: nowrap;
 }
 .change-value {
     justify-self: start;
     align-self: center;
+}
+@media(max-width: 992px){
+    .change-detail {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 1rem;
+    }   
 }

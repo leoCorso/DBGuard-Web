@@ -1,0 +1,9 @@
+<div class="cards">
+    <p-card header="User settings">
+        <app-edit-self></app-edit-self>
+    </p-card>
+    <p-card header="Other settings">
+        <p-button [rounded]="true" [outlined]="true" label="Toggle dark mode"
+            (onClick)="themeService.toggleDarkMode()"></p-button>
+    </p-card>
+</div>

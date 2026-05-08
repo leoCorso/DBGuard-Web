@@ -24,8 +24,8 @@
     </p-listbox>
     <!-- Edit and delete buttons -->
     <div>
-        <p-button (onClick)="editGuardNotification()" icon="pi pi-pencil" pTooltip="Edit select notification" [outlined]="true" [disabled]="selectedNotifications().length !== 1"></p-button>
-        <p-button (onClick)="removeGuardNotification()" icon="pi pi-trash" pTooltip="Remove notification" [outlined]="true" severity="danger" [disabled]="selectedNotifications().length === 0"></p-button>
+        <p-button [text]="true" (onClick)="editGuardNotification()" icon="pi pi-pencil" pTooltip="Edit select notification" [outlined]="true" [disabled]="selectedNotifications().length !== 1"></p-button>
+        <p-button [text]="true" (onClick)="removeGuardNotification()" icon="pi pi-trash" pTooltip="Remove notification" [outlined]="true" severity="danger" [disabled]="selectedNotifications().length === 0"></p-button>
     </div>
     <!-- Notification provider selection -->
     <p-inputgroup style="margin-bottom: 1rem;">

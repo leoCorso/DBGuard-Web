@@ -10,6 +10,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InactivityPrompt } from './components/inactivity-prompt/inactivity-prompt';
 import { Message } from 'primeng/message';
+import { ThemeService } from './services/theme-service';
 
 @Component({
   selector: 'app-root',
@@ -24,9 +25,11 @@ export class App implements OnInit {
   private dialogRef?: DynamicDialogRef<InactivityPrompt> | null;
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
   protected readonly title = signal('DBGuardClient');
 
   ngOnInit(): void {
+    this.themeService.initThemeMode();
     this.authService.initUser();
     this.setupInactivityListeners();
   }

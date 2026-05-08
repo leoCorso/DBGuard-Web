@@ -7,7 +7,15 @@
     justify-self: end;
     align-self: center;
     font-weight: bold;
+    text-wrap: nowrap;
 }
 .email-value {
     align-self: center;
+}
+@media(max-width: 992px){
+    .email-provider {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 1rem;
+    }
 }

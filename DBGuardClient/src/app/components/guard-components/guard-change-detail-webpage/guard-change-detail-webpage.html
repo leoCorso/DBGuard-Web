@@ -7,7 +7,9 @@
             </div>
         }
         @else {
-            <app-guard-change-detail-pane [changeHistoryDetail]="changeHistoryDetail()!"></app-guard-change-detail-pane>
+            @if (changeHistoryDetail()) {
+                <app-guard-change-detail-pane [changeHistoryDetail]="changeHistoryDetail()!"></app-guard-change-detail-pane>
+            }
         }
 
     </p-card>

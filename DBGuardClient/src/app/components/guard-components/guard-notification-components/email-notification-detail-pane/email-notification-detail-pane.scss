@@ -1,12 +1,13 @@
 .email-info {
     display: grid;
-    gap: .8rem;
+    gap: 1rem;
     grid-template-columns: auto auto;
 }
 .email-key {
     font-weight: bold;
     justify-self: end;
     align-self: center;
+    text-wrap: nowrap;
 }
 .email-value {
     align-self: center;

@@ -23,6 +23,7 @@ import { isAdminGuardGuard } from './guards/is-admin-guard-guard';
 import { UsersWebpage } from './components/user-components/users-webpage/users-webpage';
 import { UserDetailsWebpage } from './components/user-components/user-details-webpage/user-details-webpage';
 import { NotificationTransactionDetailWebpage } from './components/guard-components/guard-notification-components/notification-transaction-detail-webpage/notification-transaction-detail-webpage';
+import { SettingsWebpage } from './components/setting-components/settings-webpage/settings-webpage';
 
 export const routes: Routes = [
     {
@@ -118,5 +119,10 @@ export const routes: Routes = [
                 component: UserDetailsWebpage
             }
         ]
+    },
+    {
+        path: 'settings',
+        component: SettingsWebpage,
+        canActivate: [loggedInGuard]
     }
 ];

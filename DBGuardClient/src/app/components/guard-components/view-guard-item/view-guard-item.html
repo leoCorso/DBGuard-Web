@@ -6,45 +6,38 @@
                 <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getGuardStateSeverity(guardData().guardState)"></p-tag>
             </div>
             <div class="first-mid">
-                <div class="info">
-                    <label for="created"><strong>Created:</strong></label>
-                    <p id="created">{{ guardData().createDate | date: 'MM/dd/yyy hh:mm a' }}</p>
-                </div>
-                <div class="info">
-                    <label for="last-run"><strong>Last ran:</strong></label>
-                    @if(guardData().lastRun){
-                        <p id="last-ran">{{ guardData().lastRun | date: 'MM/dd/yyyy hh:mm a'}}</p>
-                    }
-                    @else {
+                <label class="info" for="created"><strong>Created:</strong></label>
+                <p class="info" id="created">{{ guardData().createDate | date: 'MM/dd/yyy hh:mm a' }}</p>
+                <label class="info" for="last-run"><strong>Last ran:</strong></label>
+                @if(guardData().lastRun){
+                    <p class="info" id="last-ran">{{ guardData().lastRun | date: 'MM/dd/yyyy hh:mm a'}}</p>
+                }
+                @else {
+                    <div class="info">
                         <p-tag value="Not ran" severity="info"></p-tag>
-                    }
-                </div>
+                    </div>
+                }
+                <label class="info" for="total-triggers"><strong>Total triggers:</strong></label>
                 <div class="info">
-                    <label for="total-triggers"><strong>Total triggers:</strong></label>
                     <p-badge [value]="guardData().totalTriggers" severity="warn"></p-badge>
                 </div>
+                <label class="info" for="total-errors"><strong>Total errors:</strong></label>
                 <div class="info">
-                    <label for="total-errors"><strong>Total errors:</strong></label>
                     <p-badge [value]="guardData().totalErrors" severity="danger"></p-badge>
                 </div>
+                <label class="info" for="created-by"><strong>Created by:</strong></label>
+                <p-button class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
+                <label class="info" for="expression"><strong>Trigger expression:</strong></label>
+                <p class="info" id="expression">{{ guardData().countColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</p>
             </div>
-            <div class="first-bottom">
-                <div class="info">
-                    <label for="created-by"><strong>Created by:</strong></label>
-                    <p-button [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
-                </div>
-            </div>
-        </div>
-        <div class="second-pane">
-            <label class="query-sample" for="query-sample">{{ guardData().countColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</label>
         </div>
         <div class="third-pane">
             <div class="third-top">
-                <div style="display: flex;justify-content: end;">
+                <div style="display: flex;justify-content: end;align-items: center;">
                     <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
                 </div>
-                <div style="justify-content: end;" class="info">
-                    <label for="run-period">Run period:</label>
+                <div>
+                    <label style="margin-right: .5rem;" for="run-period">Run period:</label>
                     <p-tag [value]="guardData().runPeriodInMinutes | formatRunPeriod" severity="contrast"></p-tag>
                 </div>
             </div>

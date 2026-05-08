@@ -82,7 +82,8 @@ export class Sidebar {
         },
         {
           label: 'Settings',
-          icon: 'pi pi-cog'
+          icon: 'pi pi-cog',
+          routerLink: 'settings'
         }
       ]
     },

@@ -17,7 +17,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     providePrimeNG({
       theme: {
-        preset: Material
+        preset: Material,
+        options: {
+            darkModeSelector: '.my-app-dark'
+        }
       }
     }),
     DialogService,
