@@ -10,6 +10,7 @@ import { Password } from 'primeng/password';
 import { AuthService } from '../../services/auth-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from 'primeng/message';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-login-webpage',
@@ -19,6 +20,7 @@ import { Message } from 'primeng/message';
 })
 export class LoginWebpage implements OnInit {
   public authService = inject(AuthService);
+  public themeService = inject(ThemeService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   public returnUrl?: string;

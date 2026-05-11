@@ -2,7 +2,7 @@
     <ng-template #start>
         <!-- Logo -->
         @if (!isMobile()) {
-            <p-button [text]="true" [rounded]="true "><p-image src="logo.png" width="40px"></p-image></p-button>
+            <p-button [text]="true" [rounded]="true "><p-image [src]="themeService.logoName" width="40px"></p-image></p-button>
         }
         <h1 style="margin: 0;">DBGuard</h1>
 

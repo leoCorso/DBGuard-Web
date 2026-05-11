@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth-service';
 import { Image } from 'primeng/image';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-top-navbar',
@@ -19,7 +20,8 @@ export class TopNavbar {
   private bpResult = toSignal(this.bpObserver.observe([Breakpoints.Handset]));
   public isMobile = computed(() => this.bpResult()?.matches ?? false);
   public toggleLogin = output<void>();
-
+  public themeService = inject(ThemeService);
+  
   public menuItems: MenuItem[] = [
     {
       label: 'Home',

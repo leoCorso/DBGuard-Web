@@ -1,6 +1,6 @@
 <p-card header="Login">
     <div class="header">
-        <p-image src="logo.png" width="60px"></p-image>
+        <p-image [src]="themeService.logoName" width="60px"></p-image>
         <h1>DBGuard</h1>
     </div>
     <form [formGroup]="loginForm" class="login-form" (ngSubmit)="loginClicked()">
