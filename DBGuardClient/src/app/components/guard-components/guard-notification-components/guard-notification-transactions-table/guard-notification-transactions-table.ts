@@ -5,7 +5,7 @@ import { Column } from '../../../../interfaces/table-items';
 import { SortValue } from '../../../../interfaces/sorting';
 import { environment } from '../../../../../environments/environment.development';
 import { FilterConfig, FilterValue } from '../../../../interfaces/filters';
-import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../../helper-functions/enum-helper';
+import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../../helpers/enum-helper';
 import { NotificationType } from '../../../../enums/notification-type';
 import { GuardDetailDTO, GuardView } from '../../../../interfaces/guard-dto';
 import { TableModule } from 'primeng/table';

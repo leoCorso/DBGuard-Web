@@ -1,0 +1,18 @@
+.totals-info {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 1rem;
+    padding: 1rem;
+}
+.total-key {
+    font-weight: bold;
+    justify-self: end;
+}
+@media(max-width: 768px){
+    .totals-info {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 1rem;
+        padding: 1rem;
+    }
+}

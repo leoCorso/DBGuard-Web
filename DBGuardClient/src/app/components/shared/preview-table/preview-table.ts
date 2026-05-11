@@ -23,7 +23,6 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
   @ViewChild('previewTable') viewItemsTable!: Table;
   public abstract fetchUrl: string;
   public abstract filtersConfig: FilterConfig[];
-  public initialLoaded = signal<boolean>(false);
   public filtersChanged(filter: FilterValue): void {
     const event = this.viewItemsTable.createLazyLoadMetadata();
     if(filter.value === '' || filter.value === null || filter.value.length === 0) {
@@ -71,7 +70,7 @@ export abstract class PreviewTable<ViewItem> extends PaginatedView<ViewItem> {
         params = this.paramsBuilder.addPagination(this.page(), pageSize, params);
       }
       // Call API
-      this.httpClient.get<PagedResponse<ViewItem>>(this.fetchUrl, { params: params }).pipe(withDelayedLoading((val) => this.showSpinner.set(val)), finalize(() => this.initialLoaded.set(true))).subscribe({
+      this.httpClient.get<PagedResponse<ViewItem>>(this.fetchUrl, { params: params }).pipe(withDelayedLoading((val) => this.showSpinner.set(val))).subscribe({
         next: (pagedResponse: PagedResponse<ViewItem>) => {
           this.page.set(pagedResponse.pageNumber);
           this.dataItems.set(pagedResponse.dataItems);

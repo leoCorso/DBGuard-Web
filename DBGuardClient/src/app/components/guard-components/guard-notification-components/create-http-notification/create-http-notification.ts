@@ -12,13 +12,13 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { InputText, InputTextModule } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
-import { enumToOptions } from '../../../../helper-functions/enum-helper';
+import { enumToOptions } from '../../../../helpers/enum-helper';
 import { TableModule } from 'primeng/table';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
 import { Card } from 'primeng/card';
 import { NotificationType } from '../../../../enums/notification-type';
-import { mapToArray, mapToRecords } from '../../../../helper-functions/http-notification-record-helper';
+import { mapToArray, mapToRecords } from '../../../../helpers/http-notification-record-helper';
 import { Popover } from 'primeng/popover'
 @Component({
   selector: 'app-create-http-notification',

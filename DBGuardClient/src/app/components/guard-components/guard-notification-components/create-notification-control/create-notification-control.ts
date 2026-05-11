@@ -14,9 +14,9 @@ import { Select } from 'primeng/select';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { CreateEmailNotification } from '../create-email-notification/create-email-notification';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { getEnumLabel } from '../../../../helper-functions/enum-helper';
+import { getEnumLabel } from '../../../../helpers/enum-helper';
 import { HTTPAction } from '../../../../enums/http-action';
-import { getHttpSeverity } from '../../../../helper-functions/http-severity-mapper';
+import { getHttpSeverity } from '../../../../helpers/http-severity-mapper';
 import { CreateHttpNotification } from '../create-http-notification/create-http-notification';
 
 @Component({

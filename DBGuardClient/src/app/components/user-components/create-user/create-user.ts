@@ -15,6 +15,7 @@ import { FormControlError } from '../../shared/form-control-error/form-control-e
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { finalize } from 'rxjs';
 import { Checkbox } from 'primeng/checkbox';
+import { passwordRequirementsRegex } from '../../../helpers/password-requirements';
 
 @Component({
   selector: 'app-create-user',
@@ -32,8 +33,8 @@ export class CreateUser implements OnInit {
   public savingUser = signal<boolean>(false);
   public userForm = new FormGroup({
     username: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(255)]),
-    password: new FormControl<string | null>(null, [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)]),
-    confirmPassword: new FormControl<string | null>(null, [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)]),
+    password: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)]),
+    confirmPassword: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)]),
     roles: new FormControl<string[]>([], [Validators.required]),
     isActive: new FormControl<boolean>(true, [Validators.required])
   }, [passwordMatchValidator()]);

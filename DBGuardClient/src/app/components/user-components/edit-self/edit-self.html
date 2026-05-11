@@ -34,35 +34,6 @@
                 </div>
             </span>
         </div>
-        @if(editingPassword()){
-            <form [formGroup]="editPasswordForm" (ngSubmit)="updatePassword()">
-                <div>
-                    <p-floatlabel variant="on">
-                        <p-password id="current-password" formControlName="currentPassword" [feedback]="false"></p-password>
-                        <label for="current-password">Current password</label>
-                    </p-floatlabel>
-                    <p-message variant="simple" size="small" severity="info">Required</p-message>
-                </div>
-                <div>
-                    <p-floatlabel variant="on">
-                        <p-password id="new-password" formControlName="newPassword"></p-password>
-                        <label for="new-password">New password</label>
-                    </p-floatlabel>
-                    <p-message variant="simple" size="small" severity="info">Required</p-message>
-                </div>
-                <div>
-                    <p-floatlabel variant="on">
-                        <p-password id="confirm-password" formControlName="confirmPassword" [feedback]="false"></p-password>
-                        <label for="confirm-password">Confirm password</label>
-                    </p-floatlabel>
-                    <p-message variant="simple" size="small" severity="info">Required</p-message>
-                </div>
-                <p-button type="submit" label="Update" [disabled]="editPasswordForm.invalid"></p-button>
-                <p-button (onClick)="cancelPasswordEdit()" label="Cancel" severity="secondary"></p-button>
-            </form>
-        }
-        @else {
-            <p-button (onClick)="editingPassword.set(true)" label="Change password" [rounded]="true"></p-button>
-        }
+        <p-button [link]="true" (onClick)="changePassword()" label="Change password" [rounded]="true"></p-button>
     }
 }

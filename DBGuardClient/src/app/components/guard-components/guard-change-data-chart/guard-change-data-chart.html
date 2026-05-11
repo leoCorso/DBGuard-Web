@@ -1,0 +1,8 @@
+<div>
+    <p-floatlabel variant="on">
+        <p-datepicker view="year" dateFormat="yy" id="year-picker" [formControl]="yearSelection" [showButtonBar]="true"
+            [showIcon]="true"></p-datepicker>
+        <label for="year-picker">Year</label>
+    </p-floatlabel>
+    <p-chart type="bar" [data]="data" [options]="options" class="h-[30rem]" />
+</div>

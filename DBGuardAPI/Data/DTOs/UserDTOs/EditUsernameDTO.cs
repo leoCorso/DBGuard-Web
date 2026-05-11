@@ -1,8 +1,7 @@
 ﻿namespace DBGuardAPI.Data.DTOs.UserDTOs
 {
-    public class EditSelfInfoDTO
+    public class EditUsernameDTO
     {
-        public required string Id { get; set; }
         public required string NewUsername { get; set; }
     }
 }

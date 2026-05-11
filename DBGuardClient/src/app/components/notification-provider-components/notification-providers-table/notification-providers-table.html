@@ -1,16 +1,13 @@
 <div class="data-table">
-    @if (dataItems().length === 0 && initialLoaded()) {
-        <em>No providers</em>
-    }
-    @else {
-        <p-table class="preview-table" #previewTable [lazy]="true" [lazyLoadOnInit]="true"
-            (onLazyLoad)="loadPreviewData($event)" [showCurrentPageReport]="true"
-            currentPageReportTemplate="{totalRecords} records across {totalPages} pages" [scrollable]="true"
-            scrollHeight="flex" [value]="dataItems()" [showGridlines]="true" [resizableColumns]="true" sortMode="multiple"
-            columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
-            [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
-            [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
-            <ng-template #header>
+    <p-table class="preview-table" #previewTable [lazy]="true" [lazyLoadOnInit]="true"
+        (onLazyLoad)="loadPreviewData($event)" [showCurrentPageReport]="true"
+        currentPageReportTemplate="{totalRecords} records across {totalPages} pages" [scrollable]="true"
+        scrollHeight="flex" [value]="dataItems()" [showGridlines]="true" [resizableColumns]="true" sortMode="multiple"
+        columnResizeMode="expand" [multiSortMeta]="defaultSort" [paginator]="true" [rows]="pageSize()"
+        [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
+        [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
+        <ng-template #header>
+            @if (dataItems().length > 0) {
                 <tr>
                     <th>#</th>
                     @for (column of columns; track $index) {
@@ -37,8 +34,13 @@
                     </th>
                     }
                 </tr>
-            </ng-template>
-            <ng-template #body let-provider let-rowIndex="rowIndex">
+            }
+            @else {
+                <em>No records</em>
+            }
+        </ng-template>
+        <ng-template #body let-provider let-rowIndex="rowIndex">
+            @if (dataItems().length > 0) {
                 <tr>
                     <td>{{ rowIndex + 1 }}</td>
                     <td><p-button [link]="true" [label]="provider.id"
@@ -56,7 +58,7 @@
                         }
                     </td>
                 </tr>
-            </ng-template>
-        </p-table>
-    }
+            }
+        </ng-template>
+    </p-table>
 </div>

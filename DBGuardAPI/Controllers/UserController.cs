@@ -4,6 +4,7 @@ using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.DTOs.UserDTOs;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.StaticData;
+using DBGuardAPI.Helpers;
 using DBGuardAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -298,18 +299,19 @@ namespace DBGuardAPI.Controllers
         public async Task<ActionResult<UserDTO>> PostUser(CreateUserDTO newUser)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            string newUsername = newUser.Username.Trim();
-            string normalizedNewUsername = newUser.Username.ToUpperInvariant().Trim();
+            string cleanUsername = newUser.Username.Trim();
+            string normalizedNewUsername = _userManager.NormalizeName(cleanUsername);
 
             if(normalizedNewUsername == "ADMIN")
             {
                 return Conflict(new { Message = "The username \"admin\" is reserved" });
             }
-            if (string.IsNullOrWhiteSpace(newUser.Username))
+            if (string.IsNullOrWhiteSpace(cleanUsername))
             {
                 return BadRequest();
             }
-            if(await context.Users.AnyAsync(user => user.NormalizedUserName == normalizedNewUsername))
+            bool usernameTaken = await context.Users.AnyAsync(user => user.NormalizedUserName == normalizedNewUsername);
+            if (usernameTaken)
             {
                 return Conflict(new { Message = "Another user already has this username" });
             }
@@ -317,11 +319,15 @@ namespace DBGuardAPI.Controllers
             {
                 return BadRequest(new { Message = "Passwords do not match" });
             }
+            if (!PasswordValidator.IsValidPassword(newUser.Password) || !PasswordValidator.IsValidPassword(newUser.ConfirmPassword))
+            {
+                return Conflict(new { Message = "The new password does not meet the requirements" });
+            }
             User currentUser = (await _userManager.GetUserAsync(User))!;
 
             User user = new()
             {
-                UserName = newUsername,
+                UserName = cleanUsername,
                 CreatedByUserId = currentUser.Id,
                 IsActive = newUser.IsActive
             };
@@ -331,7 +337,7 @@ namespace DBGuardAPI.Controllers
             return new UserDTO
             {
                 Id = user.Id,
-                Username = newUsername,
+                Username = cleanUsername,
                 CreateDate = user.CreateDate,
                 LastEdited = user.LastEdited,
                 CreatedByUserId = user.CreatedByUserId,
@@ -358,39 +364,128 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A user edit was requested with an invalid user id {UserId}", editedUser.Id);
                 return NotFound();
             }
-            string normalizedUsername = editedUser.Username.ToUpperInvariant().Trim();
+            string cleanUsername = editedUser.Username.Trim();
+            string normalizedUsername = _userManager.NormalizeName(cleanUsername);
 
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            if (await context.Users.AsNoTracking().AnyAsync(user => user.Id != userToEdit.Id && user.NormalizedUserName == normalizedUsername)){
-                return Conflict(new { Message = "This username is already in use" });
+            if(userToEdit.NormalizedUserName != normalizedUsername)
+            {
+                if (normalizedUsername == "ADMIN")
+                {
+                    return Conflict(new { Message = "The username \"admin\" is reserved" });
+                }
+                // Update username
+                bool usernameTaken = await context.Users.AsNoTracking().AnyAsync(user => user.Id != userToEdit.Id && user.NormalizedUserName == normalizedUsername);
+                if (usernameTaken){
+                    return Conflict(new { Message = "This username is already in use" });
+                }
+                await _userManager.SetUserNameAsync(userToEdit, cleanUsername);
+                _logger.LogInformation("A username was updated for user {UserId} {Username}", userToEdit.Id, cleanUsername);
             }
-            userToEdit.UserName = editedUser.Username.Trim();
-            userToEdit.IsActive = editedUser.IsActive;
-            await _userManager.UpdateAsync(userToEdit);
+            if(userToEdit.IsActive != editedUser.IsActive)
+            {
+                userToEdit.IsActive = editedUser.IsActive;
+                await _userManager.UpdateAsync(userToEdit);
+                _logger.LogInformation("A user active status was changed {UserId} {ActiveStatus}", userToEdit.Id, editedUser.IsActive);
+            }
+
+            // Sync roles
             // Remove user from roles not in new object
             var currentUserRoles = await _userManager.GetRolesAsync(userToEdit);
-            var rolesToRemove = currentUserRoles.Where(role => !editedUser.Roles.Contains(role)).ToList();
+            var rolesToRemove = currentUserRoles.Except(editedUser.Roles).ToList();
             await _userManager.RemoveFromRolesAsync(userToEdit, rolesToRemove);
+            foreach(string role in rolesToRemove)
+            {
+                _logger.LogInformation("Role {Role} was removed for user {UserId}", role, editedUser.Id);
+            }
             // Add user to roles in new object
-            var rolesToAdd = editedUser.Roles.Where(role => !currentUserRoles.Contains(role)).ToList();
+            var rolesToAdd = editedUser.Roles.Except(currentUserRoles).ToList();
             await _userManager.AddToRolesAsync(userToEdit, rolesToAdd);
+            foreach(string role in rolesToAdd)
+            {
+                _logger.LogInformation("Role {Role} was added for user {UserId}", role, editedUser.Id);
+            }
             // Update password if password is not the hash
-            if(editedUser.Password != userToEdit.PasswordHash)
+            if (editedUser.Password != userToEdit.PasswordHash)
             {
                 await _userManager.RemovePasswordAsync(userToEdit);
                 await _userManager.AddPasswordAsync(userToEdit, editedUser.Password);
+                _logger.LogInformation("A user password was updated {UserId}", userToEdit.Id);
             }
             User userDTO = await context.Users.Where(user => user.Id == userToEdit.Id).Include(user => user.CreatedByUser).AsNoTracking().FirstAsync();
 
-            return CreatedAtAction(nameof(GetUserDetails), new { UserId = userDTO.Id }, new UserDTO
+            return Ok(new UserDTO
             {
                 Id = userToEdit.Id,
-                Username = userToEdit.UserName.Trim(),
+                Username = userToEdit.UserName!.Trim(),
                 CreateDate = userToEdit.CreateDate,
                 LastEdited = userDTO.LastEdited,
                 CreatedByUserId = userDTO.CreatedByUserId,
                 CreatedByUsername = userDTO.CreatedByUser!.UserName
             });
+        }
+        [HttpPut(nameof(PutUsername))]
+        public async Task<ActionResult<EditUsernameDTO>> PutUsername(EditUsernameDTO usernameEdit)
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if(user is null)
+            {
+                _logger.LogError("A username edit was attempted on an unknown user");
+                return NotFound();
+            }
+            string cleanUsername = usernameEdit.NewUsername.Trim();
+            string normalizedUsername = _userManager.NormalizeName(cleanUsername);
+            if (normalizedUsername == "ADMIN")
+            {
+                return Conflict(new { Message = "The username \"admin\" is reserved" });
+            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            if (string.IsNullOrWhiteSpace(cleanUsername))
+            {
+                return Conflict(new { Message = "Username cannot be null or whitespace" });
+            }
+            if(normalizedUsername == user.NormalizedUserName)
+            {
+                return Conflict(new { Message = "Updated username is the same as current username" });
+            }
+            bool usernameTaken = await context.Users.AsNoTracking().AnyAsync(user => user.NormalizedUserName == normalizedUsername);
+            if (usernameTaken)
+            {
+                return Conflict(new { Message = "Username is already in use" });
+            }
+            await _userManager.SetUserNameAsync(user, cleanUsername);
+            _logger.LogInformation("A username was updated {UserId} {Username}", user.Id, cleanUsername);
+            return Ok(new EditUsernameDTO { NewUsername = cleanUsername });
+        }
+        [HttpPut(nameof(PutPassword))]
+        public async Task<ActionResult> PutPassword(EditPasswordDTO passwordEdit)
+        {
+            User? user = await _userManager.GetUserAsync(User);
+            if(user is null)
+            {
+                _logger.LogError("A password edit was attempted on an unknown user");
+                return NotFound();
+            }
+            if(passwordEdit.NewPassword != passwordEdit.ConfirmNewPassword)
+            {
+                return Conflict(new { Message = "The new passwords do not match" });
+            }
+            if(passwordEdit.NewPassword == passwordEdit.CurrentPassword)
+            {
+                return Conflict(new { Message = "The new password is the same as the old password" });
+            }
+            if (!PasswordValidator.IsValidPassword(passwordEdit.NewPassword) || !PasswordValidator.IsValidPassword(passwordEdit.ConfirmNewPassword))
+            {
+                return Conflict(new { Message = "The new password does not meet the requirements" });
+            }
+            var passwordChangeResult = await _userManager.ChangePasswordAsync(user, passwordEdit.CurrentPassword, passwordEdit.NewPassword);
+            if (!passwordChangeResult.Succeeded)
+            {
+                return Conflict(new { Message = passwordChangeResult.Errors.First().Description });
+            }
+            _logger.LogInformation("User {UserId} changed their password", user.Id);
+            await _signInManager.RefreshSignInAsync(user);
+            return Ok();
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpDelete(nameof(DeleteUser))]

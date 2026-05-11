@@ -12,17 +12,17 @@
             <ng-template #header>
                 <div class="card-header">
                     <h3>Notification provider</h3>
-                    @if (authService.hasRoles(['Admin'])) {
-                        <p-buttongroup>
-                            @if (notificationProvider()?.providerType !== notificationTypes.Http) {
-                                <p-button [loading]="testingProvider()" [text]="true" label="Test" icon="pi pi-play" severity="contrast" (onClick)="testProvider()" pTooltip="Test the notification provider to ensure it works"></p-button>
-                            }
-                            @if (notificationProvider()?.createdByUserId) {
+                    <p-buttongroup>
+                        @if (notificationProvider()?.providerType !== notificationTypes.Http) {
+                            <p-button [loading]="testingProvider()" [text]="true" label="Test" icon="pi pi-play" severity="contrast" (onClick)="testProvider()" pTooltip="Test the notification provider to ensure it works"></p-button>
+                        }
+                        @if (notificationProvider()?.createdByUserId) {
+                            @if (authService.hasRoles(['Admin'])) {
                                 <p-button [text]="true" label="Edit" icon="pi pi-pencil" (onClick)="editProvider()"></p-button>
                                 <p-button [loading]="deletingProvider()" [text]="true" label="Delete" icon="pi pi-trash" severity="danger" (onClick)="deleteProviderClicked($event)"></p-button>
                             }
+                        }
                         </p-buttongroup>
-                    }
                 </div>
             </ng-template>
             @if(notificationProvider()){

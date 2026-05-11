@@ -23,14 +23,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
 using Sieve.Services;
-using ZstdSharp.Unsafe;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Globalization;
+using DBGuardAPI.Data.DTOs.Shared;
 
 namespace DBGuardAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = RoleNames.User)]
+    [Authorize]
     public class GuardsController: ControllerBase
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
@@ -192,6 +193,7 @@ namespace DBGuardAPI.Controllers
             return (await _entityViewGetter.GetPagedResponseAsync<GuardChangeTransactionDTO>(sieveParams, query));
         }
         [HttpGet(nameof(GetGuardToEdit))]
+        [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult<CreateGuardDTO>> GetGuardToEdit([FromQuery] int guardId)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
@@ -230,6 +232,58 @@ namespace DBGuardAPI.Controllers
                 return NotFound();
             }
             return guardToEdit;
+        }
+        [HttpGet(nameof(GetMonthlyGuardChangeData))]
+        public async Task<ActionResult<List<GuardChangeItemDTO>>> GetMonthlyGuardChangeData([FromQuery] DateTime yearSelection)
+        {
+            // From reference data get year
+            int year = yearSelection.Year;
+
+            // Get data for year and group by state and month
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            var counts = await context.GuardChangeTransactions
+                .AsNoTracking()
+                .Where(change => change.Timestamp.Year == year)
+                .GroupBy(change => new { change.GuardState, change.Timestamp.Month })
+                .Select(changeGroup => new
+                {
+                    changeGroup.Key.GuardState,
+                    changeGroup.Key.Month,
+                    Count = changeGroup.Count()
+                })
+                .ToListAsync();
+            // Create result object by iterating months and setting 0 if it doesnt exist in group data
+            List<GuardChangeItemDTO> changeItems = [];
+
+            foreach(int month in Enumerable.Range(1, 12))
+            {
+                foreach(GuardState state in System.Enum.GetValues<GuardState>())
+                {
+                    GuardChangeItemDTO item = new()
+                    {
+                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month),
+                        GuardState = state,
+                        Count = counts.Where(count => count.GuardState == state && count.Month == month).FirstOrDefault()?.Count ?? 0
+                    };
+                    changeItems.Add(item);
+                }
+            }
+            return changeItems;
+        }
+        [HttpGet(nameof(GetTotalSummary))]
+        public async Task<ActionResult<TotalSummary>> GetTotalSummary()
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            TotalSummary summary = new()
+            {
+                TotalGuards = await context.Guards.CountAsync(),
+                TotalGuardChanges = await context.GuardChangeTransactions.CountAsync(),
+                TotalNotificationsSent = await context.NotificationTransactions.Where(notification => notification.Successful).CountAsync(),
+                TotalProviders = await context.NotificationProviders.CountAsync(),
+                TotalDatabaseConnections = await context.DatabaseConnections.CountAsync(),
+                TotalUsers = await context.Users.CountAsync()
+            };
+            return summary;
         }
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostGuard))]

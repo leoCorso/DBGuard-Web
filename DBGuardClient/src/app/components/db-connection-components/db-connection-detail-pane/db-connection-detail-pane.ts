@@ -4,7 +4,7 @@ import { BehaviorSubject, debounce, debounceTime, finalize, merge, single, Subje
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
-import { getEnumLabel } from '../../../helper-functions/enum-helper';
+import { getEnumLabel } from '../../../helpers/enum-helper';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { AuthService } from '../../../services/auth-service';
 import { Button } from 'primeng/button';

@@ -34,12 +34,10 @@ export interface ViewUserSelfDTO {
     username: string,
     roles: string[]
 }
-export interface EditSelfUsernameDTO {
-    id: string,
+export interface EditUsernameDTO {
     newUsername: string
 }
-export interface EditSelfPasswordDTO {
-    id: string,
+export interface EditPasswordDTO {
     currentPassword: string,
     newPassword: string,
     confirmNewPassword: string

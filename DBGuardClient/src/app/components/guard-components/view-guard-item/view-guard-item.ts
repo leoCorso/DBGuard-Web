@@ -10,8 +10,8 @@ import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';
-import { getEnumLabel, formatEnumKey } from '../../../helper-functions/enum-helper';
-import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
+import { getEnumLabel, formatEnumKey } from '../../../helpers/enum-helper';
+import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardView } from '../../../interfaces/guard-dto';
 import { Button } from 'primeng/button';
 

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, computed, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { EmailProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { environment } from '../../../../environments/environment.development';
-import { getEnumLabel } from '../../../helper-functions/enum-helper';
+import { getEnumLabel } from '../../../helpers/enum-helper';
 import { NotificationType } from '../../../enums/notification-type';
 import { DatePipe } from '@angular/common';
 import { Button } from 'primeng/button';

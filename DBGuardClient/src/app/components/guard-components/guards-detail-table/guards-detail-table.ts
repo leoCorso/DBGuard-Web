@@ -5,7 +5,7 @@ import { Column } from '../../../interfaces/table-items';
 import { SortValue } from '../../../interfaces/sorting';
 import { environment } from '../../../../environments/environment.development';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
-import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../helper-functions/enum-helper';
+import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';
 import { TableModule } from 'primeng/table';
@@ -14,7 +14,7 @@ import { FilterItem } from '../../shared/filter-item/filter-item';
 import { DatePipe } from '@angular/common';
 import { RouterLink, RouterModule } from "@angular/router";
 import { Tag } from 'primeng/tag';
-import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
+import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 
 @Component({
   selector: 'app-guards-detail-table',

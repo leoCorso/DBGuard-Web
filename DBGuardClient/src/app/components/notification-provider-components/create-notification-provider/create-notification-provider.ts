@@ -2,14 +2,14 @@ import { Component, computed, inject, input, OnInit, signal } from '@angular/cor
 import { CreateEmailNotificationProviderDTO, CreateNotificationProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NotificationType } from '../../../enums/notification-type';
-import { enumToOptions } from '../../../helper-functions/enum-helper';
+import { enumToOptions } from '../../../helpers/enum-helper';
 import { Select } from 'primeng/select';
 import { FloatLabel } from 'primeng/floatlabel';
 import { EmailProviderForm } from './email-provider-form/email-provider-form';
 import { environment } from '../../../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { isEmailProvider } from '../../../helper-functions/type-guards';
+import { isEmailProvider } from '../../../helpers/type-guards';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';

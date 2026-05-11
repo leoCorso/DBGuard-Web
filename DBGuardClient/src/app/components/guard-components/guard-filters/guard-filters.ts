@@ -1,7 +1,7 @@
 import { Component, output } from '@angular/core';
 import { FilterConfig, SelectOption } from '../../../interfaces/filters';
 import { FilterItem } from '../../shared/filter-item/filter-item';
-import { enumToOptions } from '../../../helper-functions/enum-helper';
+import { enumToOptions } from '../../../helpers/enum-helper';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardState } from '../../../enums/guard-state';

@@ -9,7 +9,7 @@ import { Textarea } from 'primeng/textarea';
 import { Select } from 'primeng/select';
 import { Message } from 'primeng/message';
 import {FloatLabel} from 'primeng/floatlabel';
-import { enumToOptions, getEnumLabel } from '../../../helper-functions/enum-helper';
+import { enumToOptions, getEnumLabel } from '../../../helpers/enum-helper';
 import { InputNumber } from 'primeng/inputnumber';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Button } from 'primeng/button';

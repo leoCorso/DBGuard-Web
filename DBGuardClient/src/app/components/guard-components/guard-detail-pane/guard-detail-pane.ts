@@ -1,8 +1,8 @@
 import { Component, input } from '@angular/core';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
 import { Tag } from 'primeng/tag';
-import { formatEnumKey, getEnumLabel } from '../../../helper-functions/enum-helper';
-import { getGuardStateSeverity } from '../../../helper-functions/guard-state-helper';
+import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
+import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardState } from '../../../enums/guard-state';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
 import { DatePipe } from '@angular/common';

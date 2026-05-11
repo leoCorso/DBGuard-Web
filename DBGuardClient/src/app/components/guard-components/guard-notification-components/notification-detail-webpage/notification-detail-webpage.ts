@@ -8,7 +8,7 @@ import { DatePipe } from '@angular/common';
 import { GuardNotificationTransactionsTable } from '../guard-notification-transactions-table/guard-notification-transactions-table';
 import { environment } from '../../../../../environments/environment.development';
 import { NotificationType } from '../../../../enums/notification-type';
-import { getEnumLabel } from '../../../../helper-functions/enum-helper';
+import { getEnumLabel } from '../../../../helpers/enum-helper';
 import { NotificationDetailDTO, EmailNotificationDetailDTO, GuardNotificationDTO } from '../../../../interfaces/notification-dto';
 import { DbConnectionDetailPane } from '../../../db-connection-components/db-connection-detail-pane/db-connection-detail-pane';
 import { NotificationDetailPane } from '../notification-detail-pane/notification-detail-pane';
@@ -27,6 +27,7 @@ import { GuardDetailDTO } from '../../../../interfaces/guard-dto';
 import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 import { withDelayedLoading } from '../../../../custom-operators/delayed-loading';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../../../services/auth-service';
 
 @Component({
   selector: 'app-notification-detail-webpage',
@@ -37,6 +38,7 @@ import { finalize } from 'rxjs';
 })
 export class NotificationDetailWebpage implements OnInit, OnDestroy {
   private httpClient = inject(HttpClient);
+  public authService = inject(AuthService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private messageService = inject(MessageService);

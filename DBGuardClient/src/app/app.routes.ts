@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeWebpage } from './components/home-webpage/home-webpage';
 import { loggedInGuard } from './guards/logged-in-guard';
 import { LoginWebpage } from './components/login-webpage/login-webpage';
 import { notLoggedInGuard } from './guards/not-logged-in-guard';
@@ -24,11 +23,12 @@ import { UsersWebpage } from './components/user-components/users-webpage/users-w
 import { UserDetailsWebpage } from './components/user-components/user-details-webpage/user-details-webpage';
 import { NotificationTransactionDetailWebpage } from './components/guard-components/guard-notification-components/notification-transaction-detail-webpage/notification-transaction-detail-webpage';
 import { SettingsWebpage } from './components/setting-components/settings-webpage/settings-webpage';
+import { DashboardWebpage } from './components/dashboard-components/dashboard-webpage/dashboard-webpage';
 
 export const routes: Routes = [
     {
         path: '',
-        component: HomeWebpage,
+        component: DashboardWebpage,
         canActivate: [loggedInGuard]
     },
     {

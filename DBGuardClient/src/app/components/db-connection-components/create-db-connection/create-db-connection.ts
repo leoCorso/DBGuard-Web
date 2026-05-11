@@ -5,7 +5,7 @@ import { CreateDatabaseConnectionDTO, DatabaseConnectionDTO } from '../../../int
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { enumToOptions } from '../../../helper-functions/enum-helper';
+import { enumToOptions } from '../../../helpers/enum-helper';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { Button } from 'primeng/button';

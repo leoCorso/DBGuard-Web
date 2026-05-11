@@ -19,3 +19,8 @@ export interface GuardChangeTransactionDTO {
     resultValue?: number,
     message?: string
 }
+export interface GuardChangeItemDTO {
+    month: string,
+    guardState: GuardState,
+    count: number
+}

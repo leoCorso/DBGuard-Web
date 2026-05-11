@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
-import { getEnumLabel } from '../../../../helper-functions/enum-helper';
+import { getEnumLabel } from '../../../../helpers/enum-helper';
 import { NotificationType } from '../../../../enums/notification-type';
 import { EmailNotificationDetailPane } from '../email-notification-detail-pane/email-notification-detail-pane';
 import { EmailTransactionDetailPane } from '../email-transaction-detail-pane/email-transaction-detail-pane';
