@@ -10,7 +10,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public string? GuardName { get; set; }
         public string? GuardDescription { get; set; }
         public required string TriggerQuery { get; set; }
-        public required string CountColumn { get; set; }
+        public required string TriggerColumn { get; set; }
         public GuardOperator TriggerOperator { get; set; }
         public int TriggerValue { get; set; }
         public required SimpleDatabaseConnectionDTO DatabaseConnection { get; set; }

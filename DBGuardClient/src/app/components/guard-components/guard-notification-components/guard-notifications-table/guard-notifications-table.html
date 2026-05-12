@@ -7,7 +7,6 @@
         [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
         [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()">
         <ng-template #header>
-            @if (dataItems().length > 0) {
             <tr>
                 <th>#</th>
                 @for (column of columns; track $index) {
@@ -34,14 +33,8 @@
                 </th>
                 }
             </tr>
-
-            }
-            @else {
-            <em>No records</em>
-            }
         </ng-template>
         <ng-template #body let-notification let-rowIndex="rowIndex">
-            @if (dataItems().length > 0) {
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
                 <td><p-button [label]="notification.id" [link]="true"
@@ -67,7 +60,6 @@
                         [routerLink]="['/users/detail', notification.createdByUserId]"></p-button>
                 </td>
             </tr>
-            }
         </ng-template>
     </p-table>
 </div>

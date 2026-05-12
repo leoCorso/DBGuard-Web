@@ -7,70 +7,70 @@
         [rowsPerPageOptions]="pageSizeOptions" [stripedRows]="true" paginatorDropdownAppendTo="body"
         [totalRecords]="totalItems()" dataKey="id" [loading]="showSpinner()" e>
         <ng-template #header>
-            @if (dataItems().length > 0) {
-                <tr>
-                    <th>#</th>
-                    @for (column of columns; track $index) {
-                    @if (column.sortable) {
-                    <th pResizableColumn [pSortableColumn]="column.field" class="custom-view-header">
-                        <div class="table-header-cell">
-                            {{ column.header }}<p-sortIcon [field]="column.field" />
-                        </div>
-                    </th>
-                    }
-                    @else {
-                    <th pResizableColumn class="custom-view-header">
-                        <div class="table-header-cell">{{ column.header }}</div>
-                    </th>
-                    }
-                    }
-                </tr>
-                <tr>
-                    <th></th>
-                    @for (filter of filtersConfig; track $index) {
-                    <th>
-                        <app-filter-item [filterConfig]="filter"
-                            (filterValueChanged)="filtersChanged($event)"></app-filter-item>
-                    </th>
-                    }
-                </tr>
-            }
-            @else {
-                <em>No records</em>
-            }
+            <tr>
+                <th>#</th>
+                @for (column of columns; track $index) {
+                @if (column.sortable) {
+                <th pResizableColumn [pSortableColumn]="column.field" class="custom-view-header">
+                    <div class="table-header-cell">
+                        {{ column.header }}<p-sortIcon [field]="column.field" />
+                    </div>
+                </th>
+                }
+                @else {
+                <th pResizableColumn class="custom-view-header">
+                    <div class="table-header-cell">{{ column.header }}</div>
+                </th>
+                }
+                }
+            </tr>
+            <tr>
+                <th></th>
+                @for (filter of filtersConfig; track $index) {
+                <th>
+                    <app-filter-item [filterConfig]="filter"
+                        (filterValueChanged)="filtersChanged($event)"></app-filter-item>
+                </th>
+                }
+            </tr>
         </ng-template>
         <ng-template #body let-notification let-rowIndex="rowIndex">
-            @if (dataItems().length > 0) {
-                <tr>
-                    <td>{{ rowIndex + 1 }}</td>
-                    <td>
-                        <p-button [label]="notification.id" [link]="true" [routerLink]="['/guards/notification-transaction-detail', notification.id]"></p-button>
-                    </td>
-                    <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
-                    <td>
-                        @if (notification.guardId) {
-                            <p-button [label]="notification.guardId" [link]="true" [routerLink]="['/guards/detail', notification.guardId]"></p-button>
-                        }
-                        @else {
-                            <p-tag value="Deleted" severity="danger"></p-tag>
-                        }
-                    </td>
-                    <td>
-                        @if (notification.guardNotificationId) {
-                            <p-button [label]="notification.guardNotificationId" [link]="true" [routerLink]="['/guards/notification-config-detail', notification.guardNotificationId]"></p-button>
-                        }
-                        @else {
-                            <p-tag value="Deleted" severity="danger"></p-tag>
-                        }
-                    </td>
-                    <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
-                    <td><p-button [link]="true" [label]="notification.guardChangeTransactionId" [routerLink]="['/guards/history-detail', notification.guardChangeTransactionId]"></p-button></td>
-                    <td>
-                        <p-tag [value]="notification.successful ? 'Sent' : 'Failed'" [severity]="notification.successful ? 'success' : 'danger'"></p-tag>
-                    </td>
-                    <td>{{ notification.errorMessage ?? 'None' }}</td>
-                </tr>
-            }
+            <tr>
+                <td>{{ rowIndex + 1 }}</td>
+                <td>
+                    <p-button [label]="notification.id" [link]="true"
+                        [routerLink]="['/guards/notification-transaction-detail', notification.id]"></p-button>
+                </td>
+                <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
+                <td>
+                    @if (notification.guardId) {
+                    <p-button [label]="notification.guardId" [link]="true"
+                        [routerLink]="['/guards/detail', notification.guardId]"></p-button>
+                    }
+                    @else {
+                    <p-tag value="Deleted" severity="danger"></p-tag>
+                    }
+                </td>
+                <td>
+                    @if (notification.guardNotificationId) {
+                    <p-button [label]="notification.guardNotificationId" [link]="true"
+                        [routerLink]="['/guards/notification-config-detail', notification.guardNotificationId]"></p-button>
+                    }
+                    @else {
+                    <p-tag value="Deleted" severity="danger"></p-tag>
+                    }
+                </td>
+                <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
+                <td><p-button [link]="true" [label]="notification.guardChangeTransactionId"
+                        [routerLink]="['/guards/history-detail', notification.guardChangeTransactionId]"></p-button>
+                </td>
+                <td>
+                    <p-tag [value]="notification.successful ? 'Sent' : 'Failed'"
+                        [severity]="notification.successful ? 'success' : 'danger'"></p-tag>
+                </td>
+                <td>{{ notification.errorMessage ?? 'None' }}</td>
+            </tr>
+
         </ng-template>
     </p-table>
 </div>

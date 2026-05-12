@@ -18,10 +18,10 @@
     </span>
     <span class="guard-key">Last edited:</span>
     <span class="guard-value">{{ guardDetail().lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
-    <span class="guard-key">Query:</span>
+    <span class="guard-key">Trigger query:</span>
     <span class="guard-value">{{ guardDetail().triggerQuery }}</span>
-    <span class="guard-key">Count column:</span>
-    <span class="guard-value">{{ guardDetail().countColumn }}</span>
+    <span class="guard-key">Trigger column:</span>
+    <span class="guard-value">{{ guardDetail().triggerColumn }}</span>
     <span class="guard-key">Trigger operator:</span>
     <span class="guard-value">{{ formatEnum(getEnumLabel(guardOperators, guardDetail().triggerOperator)) }}</span>
     <span class="guard-key">Trigger value:</span>

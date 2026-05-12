@@ -31,7 +31,7 @@ namespace DBGuardAPI.Services
             try
             {
                 string query = guard.TriggerQuery;
-                string countColumn = guard.CountColumn;
+                string countColumn = guard.TriggerColumn;
                 DatabaseEngine databaseEngine = guard.DatabaseConnection!.DatabaseEngine;
                 string endpoint = guard.DatabaseConnection.EndPoint;
                 string database = guard.DatabaseConnection.DatabaseName;
@@ -119,10 +119,10 @@ namespace DBGuardAPI.Services
                 GuardId = guard.Id,
                 GuardState = newState,
                 PreviousGuardState = previousState,
-                GuardQuery = guard.TriggerQuery,
-                GuardOperator = guard.TriggerOperator,
-                GuardValue = guard.TriggerValue,
-                ResultValue = actualCount,
+                TriggerQuery = guard.TriggerQuery,
+                TriggerOperator = guard.TriggerOperator,
+                TriggerValue = guard.TriggerValue,
+                TriggeredValue = actualCount,
                 Message = message,
                 DatabaseConnectionId = guard.DatabaseConnectionId,
                 DatabaseConnectionEndPoint = guard.DatabaseConnection!.EndPoint,

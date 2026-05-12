@@ -95,7 +95,7 @@ namespace DBGuardAPI.Controllers
                     CreatedByUserId = guard.CreatedByUserId,
                     UserName = guard.CreatedByUser!.UserName!,
                     TriggerQuery = guard.TriggerQuery,
-                    CountColumn = guard.CountColumn,
+                    TriggerColumn = guard.TriggerColumn,
                     TriggerOperator = guard.TriggerOperator,
                     TriggerValue = guard.TriggerValue,
                     GuardState = guard.GuardState,
@@ -146,7 +146,7 @@ namespace DBGuardAPI.Controllers
                 CreatedByUserId = guard.CreatedByUserId,
                 UserName = guard.CreatedByUser!.UserName!,
                 TriggerQuery = guard.TriggerQuery,
-                CountColumn = guard.CountColumn,
+                TriggerColumn = guard.TriggerColumn,
                 TriggerOperator = guard.TriggerOperator,
                 TriggerValue = guard.TriggerValue,
                 GuardState = guard.GuardState,
@@ -178,15 +178,15 @@ namespace DBGuardAPI.Controllers
                     GuardId = change.GuardId,
                     GuardState = change.GuardState,
                     PreviousGuardState = change.PreviousGuardState,
-                    GuardQuery = change.GuardQuery,
-                    GuardOperator = change.GuardOperator,
-                    GuardValue = change.GuardValue,
+                    TriggerQuery = change.TriggerQuery,
+                    TriggerOperator = change.TriggerOperator,
+                    TriggerValue = change.TriggerValue,
                     DatabaseConnectionId = change.DatabaseConnectionId,
                     DatabaseConnectionEndpoint = change.DatabaseConnectionEndPoint,
                     DatabaseName = change.DatabaseName,
                     DatabaseConnectionEngine = change.DatabaseConnectionEngine,
                     DatabaseConnectionUsername = change.DatabaseConnectionUsername,
-                    ResultValue = change.ResultValue,
+                    TriggeredValue = change.TriggeredValue,
                     Message = change.Message
                     })
                 .AsQueryable();
@@ -208,7 +208,7 @@ namespace DBGuardAPI.Controllers
                     GuardName = guard.GuardName,
                     GuardDescription = guard.GuardDescription,
                     TriggerQuery = guard.TriggerQuery,
-                    CountColumn = guard.CountColumn,
+                    TriggerColumn = guard.TriggerColumn,
                     TriggerOperator = guard.TriggerOperator,
                     TriggerValue = guard.TriggerValue,
                     NotifyOnClear = guard.NotifyOnClear,
@@ -298,7 +298,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A post guard request was received with a non-existing database connection {DBConnectionId}", newGuard.DatabaseConnection.Id);
                 return NotFound(new { Message = $"No database connection exists with the specified id (${newGuard.DatabaseConnection.Id})" });
             }
-            if(string.IsNullOrWhiteSpace(newGuard.TriggerQuery) || string.IsNullOrWhiteSpace(newGuard.CountColumn))
+            if(string.IsNullOrWhiteSpace(newGuard.TriggerQuery) || string.IsNullOrWhiteSpace(newGuard.TriggerColumn))
             {
                 return BadRequest();
             }
@@ -316,13 +316,13 @@ namespace DBGuardAPI.Controllers
                     // Test query and ensure it executes
                     IDictionary<string, object> resultSet = connection.QuerySingle(newGuard.TriggerQuery);
                     // Ensure query contains column specified
-                    if (!TriggerHelper.ColumnExistsInSet(newGuard.CountColumn, resultSet))
+                    if (!TriggerHelper.ColumnExistsInSet(newGuard.TriggerColumn, resultSet))
                     {
-                        throw new InvalidDataException($"The column {newGuard.CountColumn} is not present in the querys result set");
+                        throw new InvalidDataException($"The column {newGuard.TriggerColumn} is not present in the querys result set");
                     }
 
                     // Ensure row and column value is int
-                    if (!int.TryParse(resultSet[newGuard.CountColumn].ToString(), out int count))
+                    if (!int.TryParse(resultSet[newGuard.TriggerColumn].ToString(), out int count))
                     {
                         throw new InvalidDataException($"The count column in result set is not a int parseable value.");
                     }
@@ -334,7 +334,7 @@ namespace DBGuardAPI.Controllers
                     GuardDescription = newGuard.GuardDescription?.Trim(),
                     CreatedByUserId = user.Id,
                     TriggerQuery = newGuard.TriggerQuery.Trim(),
-                    CountColumn = newGuard.CountColumn,
+                    TriggerColumn = newGuard.TriggerColumn,
                     TriggerOperator = newGuard.TriggerOperator,
                     TriggerValue = newGuard.TriggerValue,
                     DatabaseConnectionId = dbConnection.Id,
@@ -397,7 +397,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A guard edit was attempted with non-existing guard id {GuardId}", guardEdits.Id);
                 return NotFound();
             }
-            if (string.IsNullOrWhiteSpace(guardEdits.TriggerQuery) || string.IsNullOrWhiteSpace(guardEdits.CountColumn))
+            if (string.IsNullOrWhiteSpace(guardEdits.TriggerQuery) || string.IsNullOrWhiteSpace(guardEdits.TriggerColumn))
             {
                 return BadRequest();
             }
@@ -405,7 +405,7 @@ namespace DBGuardAPI.Controllers
             guard.GuardDescription = guardEdits.GuardDescription?.Trim();
             guard.LastEditedDate = DateTimeOffset.UtcNow;
             guard.TriggerQuery = guardEdits.TriggerQuery.Trim();
-            guard.CountColumn = guardEdits.CountColumn;
+            guard.TriggerColumn = guardEdits.TriggerColumn;
             guard.TriggerOperator = guardEdits.TriggerOperator;
             guard.TriggerValue = guardEdits.TriggerValue;
             guard.DatabaseConnectionId = guardEdits.DatabaseConnection.Id;

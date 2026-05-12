@@ -8,15 +8,15 @@ export interface GuardChangeTransactionDTO {
     guardId?: number,
     guardState: GuardState,
     previousGuardState: GuardState,
-    guardQuery: string,
-    guardOperator: GuardOperator,
-    guardValue: number,
+    triggerQuery: string,
+    triggerOperator: GuardOperator,
+    triggerValue: number,
+    triggeredValue?: number,
     databaseConnectionId?: number,
     databaseConnectionEndpoint: string,
     databaseName: string,
     databaseConnectionEngine: DatabaseEngine,
-    databaseConnectionUsername: string,
-    resultValue?: number,
+    databaseConnectionUsername?: string,
     message?: string
 }
 export interface GuardChangeItemDTO {

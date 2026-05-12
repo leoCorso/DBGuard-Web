@@ -22,7 +22,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         [Sieve(CanSort = true, CanFilter = true)]
         public required string TriggerQuery { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CountColumn { get; set; }
+        public required string TriggerColumn { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public GuardOperator TriggerOperator { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]

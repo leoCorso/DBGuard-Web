@@ -140,7 +140,7 @@ $$"""
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Expression</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{guard.CountColumn}} {{guard.TriggerOperator}} {{guard.TriggerValue}}</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{guard.TriggerColumn}} {{guard.TriggerOperator}} {{guard.TriggerValue}}</td>
                 </tr>
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
@@ -336,7 +336,7 @@ $$"""
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Expression</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{emailNotification.Guard!.CountColumn}} {{emailNotification.Guard!.TriggerOperator}} {{emailNotification.Guard!.TriggerValue}}</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{emailNotification.Guard!.TriggerColumn}} {{emailNotification.Guard!.TriggerOperator}} {{emailNotification.Guard!.TriggerValue}}</td>
                 </tr>
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
@@ -530,10 +530,10 @@ $$"""
                 .Replace("{{_timestamp}}", guardChange.Timestamp.ToString())
                 .Replace("{{_currentGuardState}}", guardChange.GuardState.ToString())
                 .Replace("{{_previousGuardState}}", guardChange.PreviousGuardState.ToString())
-                .Replace("{{_guardQuery}}", guardChange.GuardQuery)
-                .Replace("{{_guardOperator}}", guardChange.GuardOperator.ToString())
-                .Replace("{{_guardValue}}", guardChange.GuardValue.ToString())
-                .Replace("{{_resultValue}}", guardChange.ResultValue.ToString())
+                .Replace("{{_guardQuery}}", guardChange.TriggerQuery)
+                .Replace("{{_guardOperator}}", guardChange.TriggerOperator.ToString())
+                .Replace("{{_guardValue}}", guardChange.TriggerValue.ToString())
+                .Replace("{{_resultValue}}", guardChange.TriggeredValue.ToString())
                 .Replace("{{_changeMessage}}", guardChange.Message ?? string.Empty)
                 .Replace("{{_databaseEndpoint}}", guardChange.DatabaseConnectionEndPoint)
                 .Replace("{{_databaseEngine}}", guardChange.DatabaseConnectionEngine.ToString())

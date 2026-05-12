@@ -14,7 +14,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public required string CreatedByUserId { get; set; }
         public required string UserName { get; set; }
         public required string TriggerQuery { get; set; }
-        public required string CountColumn { get; set; }
+        public required string TriggerColumn { get; set; }
         public GuardOperator TriggerOperator { get; set; }
         public int TriggerValue { get; set; }
         public GuardState GuardState { get; set; }

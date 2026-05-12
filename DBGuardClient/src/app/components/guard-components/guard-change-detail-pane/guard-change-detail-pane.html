@@ -22,17 +22,17 @@
     <span class="change-key"><strong>Previous guard state:</strong></span>
     <span class="change-value"><p-tag [value]="getEnumLabel(guardStates, changeHistoryDetail().previousGuardState)"
             [severity]="getGuardStateSeverity(changeHistoryDetail().previousGuardState)"></p-tag></span>
-    <span class="change-key"><strong>Guard query:</strong></span>
-    <span class="change-value">{{ changeHistoryDetail().guardQuery }}</span>
-    <span class="change-key"><strong>Guard operator:</strong></span>
-    <span class="change-value">{{ formatEnumKey(getEnumLabel(guardOperators, changeHistoryDetail().guardOperator))
+    <span class="change-key"><strong>Trigger query:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().triggerQuery }}</span>
+    <span class="change-key"><strong>Trigger operator:</strong></span>
+    <span class="change-value">{{ formatEnumKey(getEnumLabel(guardOperators, changeHistoryDetail().triggerOperator))
         }}</span>
     <span class="change-key"><strong>Trigger value:</strong></span>
-    <span class="change-value">{{ changeHistoryDetail().guardValue }}</span>
-    <span class="change-key"><strong>Result value:</strong></span>
+    <span class="change-value">{{ changeHistoryDetail().triggerValue }}</span>
+    <span class="change-key"><strong>Triggered value:</strong></span>
     <span class="change-value">
-        @if (changeHistoryDetail().resultValue) {
-            {{ changeHistoryDetail().resultValue }}
+        @if (changeHistoryDetail().triggeredValue) {
+            {{ changeHistoryDetail().triggeredValue }}
         }
         @else {
             <em>None</em>

@@ -10,10 +10,10 @@ namespace DBGuardAPI.Data.Models
         public int? GuardId { get; set; }
         public GuardState GuardState { get; set; }
         public GuardState PreviousGuardState { get; set; }
-        public required string GuardQuery { get; set; }
-        public GuardOperator GuardOperator { get; set; }
-        public int GuardValue { get; set; }
-        public int? ResultValue { get; set; } // The value of result set which triggered or untriggered query
+        public required string TriggerQuery { get; set; }
+        public GuardOperator TriggerOperator { get; set; }
+        public int TriggerValue { get; set; }
+        public int? TriggeredValue { get; set; } // The value of result set which triggered or untriggered query
         public string? Message { get; set; } //  Message log
         public int? DatabaseConnectionId { get; set; }
         public required string DatabaseConnectionEndPoint { get; set; }
