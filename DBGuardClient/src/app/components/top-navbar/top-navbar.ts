@@ -7,10 +7,11 @@ import { Image } from 'primeng/image';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ThemeService } from '../../services/theme-service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-top-navbar',
-  imports: [Menubar, Button, Image],
+  imports: [Menubar, Button, Image, RouterLink],
   templateUrl: './top-navbar.html',
   styleUrl: './top-navbar.scss',
 })
