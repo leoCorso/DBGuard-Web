@@ -28,7 +28,7 @@ export class GuardFilters extends FilterPane {
     { field: 'createDate', label: 'Create date', type: 'datetime', isTableFilter: false, placeholder: 'Filter by creation' },
     { field: 'lastRun', label: 'Last run', type: 'datetime', isTableFilter: false, placeholder: 'Filter by last run' },
     { field: 'userName', label: 'User', type: 'text', isTableFilter: false, placeholder: 'Filter by user' },
-    { field: 'countColumn', label: 'Count column', type: 'text', isTableFilter: false, placeholder: 'Filter by count column' },
+    { field: 'triggerColumn', label: 'Trigger column', type: 'text', isTableFilter: false, placeholder: 'Filter by count column' },
     { field: 'triggerOperator', label: 'Trigger operator', type: 'multi-select', isTableFilter: false, placeholder: 'Filter by operator', options:  this.guardOperators},
     { field: 'triggerValue', label: 'Trigger value', type: 'text', isTableFilter: false, placeholder: 'Filter by trigger value' },
     { field: 'endPoint', label: 'Endpoint', type: 'text', isTableFilter: false, placeholder: 'Filter by database endpoint' },

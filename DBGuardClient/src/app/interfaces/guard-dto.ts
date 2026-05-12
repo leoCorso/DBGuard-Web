@@ -63,7 +63,7 @@ export interface GuardView {
     lastRun: Date,
     createdByUserId: string,
     userName: string,
-    countColumn: string,
+    triggerColumn: string,
     triggerOperator: GuardOperator,
     triggerValue: number,
     databaseConnectionId: number,

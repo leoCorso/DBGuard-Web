@@ -65,19 +65,24 @@ export class GuardChangeDataChart implements OnInit {
       datasets: [
         {
           label: 'Unknown guard states',
-          data: this.changeData().filter(item => item.guardState == GuardState.Unknown).map(item => item.count)
+          data: this.changeData().filter(item => item.guardState == GuardState.Unknown).map(item => item.count),
+          backgroundColor: '#5e7cff'
         },
         {
           label: 'Triggered guards',
-          data: this.changeData().filter(item => item.guardState == GuardState.Triggered).map(item => item.count)
+          data: this.changeData().filter(item => item.guardState == GuardState.Triggered).map(item => item.count),
+          backgroundColor: '#fff75e'
         },
         {
           label: 'Error guard states',
-          data: this.changeData().filter(item => item.guardState == GuardState.Error).map(item => item.count)
+          data: this.changeData().filter(item => item.guardState == GuardState.Error).map(item => item.count),
+          backgroundColor: '#ff5e5e'
+
         },
         {
           label: 'Clear guards',
-          data: this.changeData().filter(item => item.guardState == GuardState.Clear).map(item => item.count)
+          data: this.changeData().filter(item => item.guardState == GuardState.Clear).map(item => item.count),
+          backgroundColor: '#5eff74'
         }
       ]
     }
