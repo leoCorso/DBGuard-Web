@@ -4,7 +4,6 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>941a1a5a-5781-4cb6-b1f9-a7297836e62c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +40,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\apps\client\" />
   </ItemGroup>
 
 </Project>

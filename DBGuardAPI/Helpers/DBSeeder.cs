@@ -1,16 +1,34 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models;
-using DBGuardAPI.Data.Enums;
-using DBGuardAPI.Data.StaticData;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using DBGuardAPI.Data.Models.NotificationProviders;
+using DBGuardAPI.Data.StaticData;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace DBGuardAPI.Helpers
 {
     public static class DBSeeder
     {
-        public static async Task SeedAsync(IServiceProvider serviceProvider, ILogger logger)
+        public static async Task ApplyMigrationsAsync(WebApplication app)
+        {
+            try
+            {
+                using var scope = app.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(); // your DbContext
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+                Log.Information("Applying database migrations...");
+                await db.Database.MigrateAsync();
+                Log.Information("Migrations applied successfully.");
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Failed to apply migrations.");
+                throw;
+            }
+        }
+        public static async Task SeedAsync(IServiceProvider serviceProvider, Microsoft.Extensions.Logging.ILogger logger)
         {
             using var scope = serviceProvider.CreateScope();
             var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
@@ -21,9 +39,8 @@ namespace DBGuardAPI.Helpers
             {
 
                 await SeedRolesAsync(roleManager, configuration, logger);
-                logger.LogInformation("Default roles initialized");
+                logger.LogInformation("Roles initialized");
                 await SeedAdminUserAsync(userManager, configuration, logger);
-                logger.LogInformation("Default admin initialized");
                 await DBSeeder.SeedViewsAsync(dbContextFactory, logger);
                 logger.LogInformation("Initialized views");
                 await DBSeeder.SeedDefaultNotificationProviders(dbContextFactory, logger);
@@ -34,7 +51,7 @@ namespace DBGuardAPI.Helpers
                 logger.LogError(ex, "Error while seeding roles or admin {Message}", ex.Message);
             }
         }
-        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager, IConfiguration configuration, ILogger logger)
+        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager, IConfiguration configuration, Microsoft.Extensions.Logging.ILogger logger)
         {
             string[] roles = [RoleNames.Admin, RoleNames.User];
             foreach (string role in roles)
@@ -49,8 +66,17 @@ namespace DBGuardAPI.Helpers
                 }
             }
         }
-        private static async Task SeedAdminUserAsync(UserManager<User> userManager, IConfiguration configuration, ILogger logger)
+        private static async Task SeedAdminUserAsync(UserManager<User> userManager, IConfiguration configuration, Microsoft.Extensions.Logging.ILogger logger)
         {
+            string seedFlagFile = "/app/data/.admin-seeded"; // Use in prod
+            //string seedFlagFile = "./.admin-seeded"; // Use in dev
+
+            if (File.Exists(seedFlagFile)) // If file exists we already created admin once
+            {
+                logger.LogInformation("Admin already seeded");
+                return;
+            }
+
             string? username = configuration["DefaultAdmin:Username"];
             if(userManager is null)
             {
@@ -73,10 +99,11 @@ namespace DBGuardAPI.Helpers
                     throw new Exception($"Failed to seed admin user: {username}");
                 }
                 await userManager.AddToRolesAsync(admin, [RoleNames.Admin, RoleNames.User]);
+                File.WriteAllText(seedFlagFile, DateTimeOffset.UtcNow.ToString("O"));
                 logger.LogInformation("Created default admin user");
             }
         }
-        private static async Task SeedViewsAsync(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger logger)
+        private static async Task SeedViewsAsync(IDbContextFactory<ApplicationDbContext> dbContextFactory, Microsoft.Extensions.Logging.ILogger logger)
         {
             using var context = await dbContextFactory.CreateDbContextAsync();
             await context.Database.ExecuteSqlRawAsync(@"
@@ -89,7 +116,7 @@ namespace DBGuardAPI.Helpers
                 JOIN database_connections d ON g.database_connection_id = d.id
             ");
         }
-        private static async Task SeedDefaultNotificationProviders(IDbContextFactory<ApplicationDbContext> dbContextFactory, ILogger logger)
+        private static async Task SeedDefaultNotificationProviders(IDbContextFactory<ApplicationDbContext> dbContextFactory, Microsoft.Extensions.Logging.ILogger logger)
         {
             using var context = await dbContextFactory.CreateDbContextAsync();
             if(await context.NotificationProviders.AnyAsync(provider => provider.ProviderType == NotificationType.HTTP))

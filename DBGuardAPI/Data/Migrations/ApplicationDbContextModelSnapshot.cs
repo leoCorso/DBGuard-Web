@@ -85,11 +85,6 @@ namespace DBGuardAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CountColumn")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("count_column");
-
                     b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("create_date");
@@ -151,6 +146,11 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("total_triggers");
 
+                    b.Property<string>("TriggerColumn")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_column");
+
                     b.Property<int>("TriggerOperator")
                         .HasColumnType("integer")
                         .HasColumnName("trigger_operator");
@@ -199,7 +199,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnName("database_connection_id");
 
                     b.Property<string>("DatabaseConnectionUsername")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("database_connection_username");
 
@@ -212,22 +211,9 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("guard_id");
 
-                    b.Property<int>("GuardOperator")
-                        .HasColumnType("integer")
-                        .HasColumnName("guard_operator");
-
-                    b.Property<string>("GuardQuery")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("guard_query");
-
                     b.Property<int>("GuardState")
                         .HasColumnType("integer")
                         .HasColumnName("guard_state");
-
-                    b.Property<int>("GuardValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("guard_value");
 
                     b.Property<string>("Message")
                         .HasColumnType("text")
@@ -237,13 +223,26 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("previous_guard_state");
 
-                    b.Property<int?>("ResultValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("result_value");
-
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
+
+                    b.Property<int>("TriggerOperator")
+                        .HasColumnType("integer")
+                        .HasColumnName("trigger_operator");
+
+                    b.Property<string>("TriggerQuery")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_query");
+
+                    b.Property<int>("TriggerValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("trigger_value");
+
+                    b.Property<int?>("TriggeredValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("triggered_value");
 
                     b.HasKey("Id")
                         .HasName("pk_guard_change_transactions");
@@ -541,11 +540,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    b.Property<string>("CountColumn")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("count_column");
-
                     b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("create_date");
@@ -600,6 +594,11 @@ namespace DBGuardAPI.Migrations
                     b.Property<int>("TotalTriggers")
                         .HasColumnType("integer")
                         .HasColumnName("total_triggers");
+
+                    b.Property<string>("TriggerColumn")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_column");
 
                     b.Property<int>("TriggerOperator")
                         .HasColumnType("integer")

@@ -32,11 +32,11 @@ namespace DBGuardAPI.Data.Models
                 user.HasMany(u => u.DatabaseConnections)
                     .WithOne(dc => dc.CreatedByUser)
                     .HasForeignKey(dc => dc.CreatedByUserId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.SetNull);
                 user.HasMany(u => u.NotificationProviders)
                     .WithOne(sp => sp.CreatedByUser)
                     .HasForeignKey(sp => sp.CreatedByUserId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.SetNull);
                 user.HasOne(u => u.CreatedByUser)
                     .WithMany(u => u.CreatedUsers)
                     .HasForeignKey(u => u.CreatedByUserId)

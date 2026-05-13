@@ -254,7 +254,7 @@ namespace DBGuardAPI.Migrations
                     created_by_user_id = table.Column<string>(type: "text", nullable: false),
                     last_edited_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     trigger_query = table.Column<string>(type: "text", nullable: false),
-                    count_column = table.Column<string>(type: "text", nullable: false),
+                    trigger_column = table.Column<string>(type: "text", nullable: false),
                     trigger_operator = table.Column<int>(type: "integer", nullable: false),
                     trigger_value = table.Column<int>(type: "integer", nullable: false),
                     database_connection_id = table.Column<int>(type: "integer", nullable: false),
@@ -294,16 +294,16 @@ namespace DBGuardAPI.Migrations
                     guard_id = table.Column<int>(type: "integer", nullable: true),
                     guard_state = table.Column<int>(type: "integer", nullable: false),
                     previous_guard_state = table.Column<int>(type: "integer", nullable: false),
-                    guard_query = table.Column<string>(type: "text", nullable: false),
-                    guard_operator = table.Column<int>(type: "integer", nullable: false),
-                    guard_value = table.Column<int>(type: "integer", nullable: false),
-                    result_value = table.Column<int>(type: "integer", nullable: true),
+                    trigger_query = table.Column<string>(type: "text", nullable: false),
+                    trigger_operator = table.Column<int>(type: "integer", nullable: false),
+                    trigger_value = table.Column<int>(type: "integer", nullable: false),
+                    triggered_value = table.Column<int>(type: "integer", nullable: true),
                     message = table.Column<string>(type: "text", nullable: true),
                     database_connection_id = table.Column<int>(type: "integer", nullable: true),
                     database_connection_end_point = table.Column<string>(type: "text", nullable: false),
                     database_connection_engine = table.Column<int>(type: "integer", nullable: false),
                     database_name = table.Column<string>(type: "text", nullable: false),
-                    database_connection_username = table.Column<string>(type: "text", nullable: false)
+                    database_connection_username = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

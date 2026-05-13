@@ -6,6 +6,13 @@
 # dotenv files
 .env
 
+# app files
+jwt_secret.key
+.admin-seeded
+
+# Frontend files
+wwwroot/apps/client/*
+
 # User-specific files
 *.rsuser
 *.suo

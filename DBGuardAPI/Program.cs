@@ -8,12 +8,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Serilog;
 using Serilog.Events;
 using Sieve.Services;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure configurator from environment variables
+ConfigurationSeeder.SeedDefaultConfiguration(builder, Log.Logger);
+
+// Prevents including the Kesterl server type
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.AddServerHeader = false;
+});
 
 // Add services to the container.
 builder.Host.UseSerilog((ctx, lc) =>
@@ -86,6 +100,8 @@ builder.Services.AddScoped<ISieveCustomFilterMethods, GuardFilters>();
 builder.Services.AddScoped<EntityViewGetter>();
 builder.Services.AddScoped<RefreshTokenService>();
 
+string[] origins = builder.Configuration["Cors:Allowed-Origins"]!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)!;
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Dev", builder =>
@@ -94,6 +110,13 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
+    });
+    options.AddPolicy("Prod", builder =>
+    {
+        builder.WithOrigins(origins)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -105,6 +128,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
 var app = builder.Build();
+await DBSeeder.ApplyMigrationsAsync(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -112,8 +136,27 @@ if (app.Environment.IsDevelopment())
     app.UseCors(policyName: "Dev");
     app.MapOpenApi();
 }
+else
+{
+    app.UseCors("Prod");
+}
 
 app.UseHttpsRedirection();
+
+// Configure kestrel to serve index.html for public front end from wwwroot/apps/public for requests to /
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "apps", "client")),
+    RequestPath = ""
+});
+// Configure kestrel to serve html, css, javascript files for public frontend and add content security policy
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "apps", "client")),
+    RequestPath = ""
+});
+app.MapFallbackToFile(Path.Combine("apps", "client", "index.html"));
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
