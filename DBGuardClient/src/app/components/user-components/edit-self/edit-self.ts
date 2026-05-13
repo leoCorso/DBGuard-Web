@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { EditUsernameDTO, ViewUserSelfDTO } from '../../../interfaces/user.dto';
 import { HttpClient } from '@angular/common/http';
 import { finalize, Observable, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 import { ProgressSpinner } from 'primeng/progressspinner';

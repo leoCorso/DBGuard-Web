@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs';
 import { RouterModule } from "@angular/router";
 import { Button } from 'primeng/button';
 import { FilterItem } from '../../shared/filter-item/filter-item';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';

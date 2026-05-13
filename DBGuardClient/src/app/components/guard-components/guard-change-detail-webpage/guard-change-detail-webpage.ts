@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { MessageService } from 'primeng/api';
 import { Card } from 'primeng/card';

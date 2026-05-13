@@ -6,7 +6,7 @@ import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { DatePipe } from '@angular/common';
 import { GuardNotificationTransactionsTable } from '../guard-notification-transactions-table/guard-notification-transactions-table';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { NotificationType } from '../../../../enums/notification-type';
 import { getEnumLabel } from '../../../../helpers/enum-helper';
 import { NotificationDetailDTO, EmailNotificationDetailDTO, GuardNotificationDTO } from '../../../../interfaces/notification-dto';

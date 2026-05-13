@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { UserDetailDTO } from '../../../interfaces/user.dto';
 import { DatePipe } from '@angular/common';
 import { Button } from 'primeng/button';

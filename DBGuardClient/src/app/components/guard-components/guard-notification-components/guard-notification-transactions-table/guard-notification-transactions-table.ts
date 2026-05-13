@@ -3,7 +3,7 @@ import { PreviewTable } from '../../../shared/preview-table/preview-table';
 import { NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
 import { Column } from '../../../../interfaces/table-items';
 import { SortValue } from '../../../../interfaces/sorting';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { FilterConfig, FilterValue } from '../../../../interfaces/filters';
 import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../../helpers/enum-helper';
 import { NotificationType } from '../../../../enums/notification-type';

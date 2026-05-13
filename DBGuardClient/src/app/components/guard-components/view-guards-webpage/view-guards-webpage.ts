@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, effect, ElementRef, inject, input, model, OnInit, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { FilterValue } from '../../../interfaces/filters';
 import { Drawer } from 'primeng/drawer';
 import { GuardFilters } from '../guard-filters/guard-filters';

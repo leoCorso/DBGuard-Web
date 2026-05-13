@@ -3,7 +3,7 @@ import { NotificationTransactionDetailPane } from '../notification-transaction-d
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { Card } from 'primeng/card';
 import { GuardChangeTransactionDTO } from '../../../../interfaces/guard-change-transaction-dto';
 import { PagedResponse } from '../../../../interfaces/request-response-dto';

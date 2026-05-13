@@ -9,7 +9,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from '../../../services/auth-service';
 import { TooltipModule } from 'primeng/tooltip';

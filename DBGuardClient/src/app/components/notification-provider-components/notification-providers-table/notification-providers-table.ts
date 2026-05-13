@@ -2,7 +2,7 @@ import { Component, inject, input, OnInit, signal, WritableSignal } from '@angul
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { Column } from '../../../interfaces/table-items';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { SortValue } from '../../../interfaces/sorting';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { enumToOptions, getEnumLabel } from '../../../helpers/enum-helper';

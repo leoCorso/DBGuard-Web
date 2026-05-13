@@ -10,7 +10,7 @@ import { Button } from 'primeng/button';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmPopup } from 'primeng/confirmpopup';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateUser } from '../create-user/create-user';
 import { EntityChangeService } from '../../../services/entity-change-service';

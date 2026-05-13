@@ -7,7 +7,7 @@ import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { passwordRequirementsRegex } from '../../../helpers/password-requirements';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { EditPasswordDTO } from '../../../interfaces/user.dto';
 import { passwordMatchValidator } from '../../../form-validators/matching-validator';
 import { FormControlError } from '../../shared/form-control-error/form-control-error';

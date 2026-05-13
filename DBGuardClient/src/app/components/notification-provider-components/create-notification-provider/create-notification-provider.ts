@@ -6,7 +6,7 @@ import { enumToOptions } from '../../../helpers/enum-helper';
 import { Select } from 'primeng/select';
 import { FloatLabel } from 'primeng/floatlabel';
 import { EmailProviderForm } from './email-provider-form/email-provider-form';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { isEmailProvider } from '../../../helpers/type-guards';

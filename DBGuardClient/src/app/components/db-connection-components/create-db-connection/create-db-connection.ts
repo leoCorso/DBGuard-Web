@@ -9,7 +9,7 @@ import { enumToOptions } from '../../../helpers/enum-helper';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { Button } from 'primeng/button';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';

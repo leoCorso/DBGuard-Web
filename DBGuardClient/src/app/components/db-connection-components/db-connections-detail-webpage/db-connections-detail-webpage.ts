@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { DbConnectionDetailPane } from '../db-connection-detail-pane/db-connection-detail-pane';
 import { DbConnectionsTable } from '../db-connections-table/db-connections-table';
 import { Card } from 'primeng/card';

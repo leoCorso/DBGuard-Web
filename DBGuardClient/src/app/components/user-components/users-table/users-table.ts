@@ -3,7 +3,7 @@ import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { UserDTO } from '../../../interfaces/user.dto';
 import { Column } from '../../../interfaces/table-items';
 import { SortValue } from '../../../interfaces/sorting';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { TableModule } from 'primeng/table';
 import { DatePipe } from '@angular/common';

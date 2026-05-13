@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GuardChangeItemDTO } from '../../../interfaces/guard-change-transaction-dto';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePicker } from 'primeng/datepicker';

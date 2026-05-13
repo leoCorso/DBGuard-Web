@@ -3,7 +3,7 @@ import { GuardDetailDTO } from '../../../interfaces/guard-dto';
 import { BehaviorSubject, debounce, debounceTime, finalize, merge, single, Subject, takeUntil } from 'rxjs';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { getEnumLabel } from '../../../helpers/enum-helper';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { AuthService } from '../../../services/auth-service';

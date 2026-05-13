@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } 
 import { GuardOperator } from '../../../enums/guard-operator';
 import { DatabaseConnectionDTO, SimpleDatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { InputText } from 'primeng/inputtext';
 import { Textarea } from 'primeng/textarea';
 import { Select } from 'primeng/select';
