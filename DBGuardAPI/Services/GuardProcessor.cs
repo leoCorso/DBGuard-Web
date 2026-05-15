@@ -48,7 +48,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Error)
                     {
                         // Update guard state to error
-                        ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' not found in query result");
+                        await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' not found in query result");
                     }
                 }
                 if (!int.TryParse(resultSet[countColumn].ToString(), out int count))
@@ -57,7 +57,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Error)
                     {
                         // Update guard state to error
-                        ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' value is not an integer");
+                        await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' value is not an integer");
                     }
                 }
                 if (TriggerHelper.EvaluateTriggerCondition(count, guard.TriggerValue, guard.TriggerOperator))
@@ -65,7 +65,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Triggered)
                     {
                         // Update guard state to triggered
-                        ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Triggered, null, count);
+                        await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Triggered, null, count);
                     }
                 }
                 else
@@ -74,7 +74,7 @@ namespace DBGuardAPI.Services
                     if (guard.GuardState != GuardState.Clear)
                     {
                         // Update guard state to error
-                        ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Clear, null, count);
+                        await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Clear, null, count);
                     }
                 }
             }
@@ -85,7 +85,7 @@ namespace DBGuardAPI.Services
                 if (guard.GuardState != GuardState.Error)
                 {
                     // Update guard state to error
-                    ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Failed to connect endpoint {guard.DatabaseConnection.EndPoint}");
+                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Failed to connect endpoint {guard.DatabaseConnection.EndPoint}");
                 }
             }
             catch (OperationCanceledException)
@@ -95,7 +95,7 @@ namespace DBGuardAPI.Services
                 if (guard.GuardState != GuardState.Error)
                 {
                     // Update guard state to error
-                    ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Connection to {guard.DatabaseConnection.EndPoint} timed out");
+                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Connection to {guard.DatabaseConnection.EndPoint} timed out");
                 }
             }
             finally

@@ -85,9 +85,18 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Option for windows
+//builder.Services.AddDataProtection()
+//    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
+//    .SetApplicationName(nameof(builder.Environment.ApplicationName));
+
+// Option when deploying to docker
+Directory.CreateDirectory("/app/data/dataprotection");
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
-    .SetApplicationName(nameof(builder.Environment.ApplicationName));
+    .PersistKeysToFileSystem(new DirectoryInfo("/app/data/dataprotection"))
+    .SetApplicationName(nameof(builder.Environment.ApplicationName))
+    .SetDefaultKeyLifetime(TimeSpan.FromDays(90)); // Rotate keys every 90 days
+
 
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddHostedService<MonitorService>();
