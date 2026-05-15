@@ -68,7 +68,12 @@ namespace DBGuardAPI.Helpers
         }
         private static async Task SeedAdminUserAsync(UserManager<User> userManager, IConfiguration configuration, Microsoft.Extensions.Logging.ILogger logger)
         {
-            string seedFlagFile = "/app/data/.admin-seeded"; // Use in prod
+            string? appDataPath = configuration["AppDataPath"];
+            if (appDataPath is null)
+            {
+                throw new KeyNotFoundException("The app data path is missing from config");
+            }
+            string seedFlagFile = Path.Combine(appDataPath, ".admin-seeded");
             //string seedFlagFile = "./.admin-seeded"; // Use in dev
 
             if (File.Exists(seedFlagFile)) // If file exists we already created admin once
@@ -78,12 +83,12 @@ namespace DBGuardAPI.Helpers
             }
 
             string? username = configuration["DefaultAdmin:Username"];
-            if(userManager is null)
+            if(string.IsNullOrWhiteSpace(username))
             {
                 throw new KeyNotFoundException("The default admin username is missing from the config");
             }
             string? password = configuration["DefaultAdmin:Password"];
-            if(password is null)
+            if(string.IsNullOrWhiteSpace(password))
             {
                 throw new KeyNotFoundException("The default admin password is missing from the config");
             }

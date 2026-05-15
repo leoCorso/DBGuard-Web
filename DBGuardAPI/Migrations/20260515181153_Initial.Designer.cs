@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DBGuardAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260513173013_Initial")]
+    [Migration("20260515181153_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -40,7 +40,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -983,8 +982,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
                         .WithMany("DatabaseConnections")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_database_connections_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");
@@ -1095,7 +1093,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
                         .WithMany("NotificationProviders")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_notification_providers_asp_net_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");

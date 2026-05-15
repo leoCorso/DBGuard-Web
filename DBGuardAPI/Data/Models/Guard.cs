@@ -10,7 +10,7 @@ namespace DBGuardAPI.Data.Models
         public string? GuardName { get; set; }
         public string? GuardDescription { get; set; }
         public DateTimeOffset CreateDate { get; set; } = DateTimeOffset.UtcNow;
-        public required string CreatedByUserId { get; set; }
+        public string? CreatedByUserId { get; set; }
         public DateTimeOffset LastEditedDate { get; set; } = DateTimeOffset.UtcNow;
         public required string TriggerQuery { get; set; }
         public required string TriggerColumn { get; set; }

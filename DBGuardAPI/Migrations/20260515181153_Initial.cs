@@ -181,7 +181,7 @@ namespace DBGuardAPI.Migrations
                     password = table.Column<string>(type: "text", nullable: true),
                     create_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_edited_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    created_by_user_id = table.Column<string>(type: "text", nullable: false)
+                    created_by_user_id = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -190,7 +190,8 @@ namespace DBGuardAPI.Migrations
                         name: "fk_database_connections_users_created_by_user_id",
                         column: x => x.created_by_user_id,
                         principalTable: "AspNetUsers",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,7 +217,8 @@ namespace DBGuardAPI.Migrations
                         name: "fk_notification_providers_asp_net_users_created_by_user_id",
                         column: x => x.created_by_user_id,
                         principalTable: "AspNetUsers",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(

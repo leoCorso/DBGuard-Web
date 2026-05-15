@@ -85,17 +85,25 @@ namespace DBGuardAPI.Services
                 if (guard.GuardState != GuardState.Error)
                 {
                     // Update guard state to error
-                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Failed to connect endpoint {guard.DatabaseConnection.EndPoint}");
+                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, ex.Message);
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException ex)
             {
-                _logger.LogWarning("Connection to {Endpoint} timed out", guard.DatabaseConnection!.EndPoint);
+                _logger.LogError(ex, "Connection to {Endpoint} timed out", guard.DatabaseConnection!.EndPoint);
                 // Update guard state to error
                 if (guard.GuardState != GuardState.Error)
                 {
                     // Update guard state to error
-                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Connection to {guard.DatabaseConnection.EndPoint} timed out");
+                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, ex.Message);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Unknown error");
+                if(guard.GuardState != GuardState.Error)
+                {
+                    await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, ex.Message);
                 }
             }
             finally

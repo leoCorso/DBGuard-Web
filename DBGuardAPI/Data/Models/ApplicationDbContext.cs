@@ -28,7 +28,7 @@ namespace DBGuardAPI.Data.Models
                 user.HasMany(u => u.Guards)
                     .WithOne(g => g.CreatedByUser)
                     .HasForeignKey(g => g.CreatedByUserId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.SetNull);
                 user.HasMany(u => u.DatabaseConnections)
                     .WithOne(dc => dc.CreatedByUser)
                     .HasForeignKey(dc => dc.CreatedByUserId)

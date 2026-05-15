@@ -9,6 +9,7 @@
 # app files
 jwt_secret.key
 .admin-seeded
+dataprotection/*
 
 # Frontend files
 wwwroot/apps/client/*

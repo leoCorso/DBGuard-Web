@@ -105,6 +105,9 @@ export class CreateGuard implements OnInit, OnDestroy {
       next: (newConnection: DatabaseConnectionDTO | undefined) => {
         if(newConnection){
           this.databaseConnections.update(conns => [...conns, newConnection]);
+          this.guardFormGroup.patchValue({
+            databaseConnection: newConnection
+          })
         }
       }
     });

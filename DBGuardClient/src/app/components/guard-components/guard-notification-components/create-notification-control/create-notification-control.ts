@@ -123,6 +123,7 @@ export class CreateNotificationControl implements OnDestroy {
       next: (newProvider: NotificationProviderDTO | undefined) => {
         if(newProvider){
           this.extraProviders.update(values => [...values, newProvider]);
+          this.notificationProviderSelection.patchValue(newProvider);
         }
       }
     });

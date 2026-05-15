@@ -85,16 +85,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Option for windows
-//builder.Services.AddDataProtection()
-//    .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
-//    .SetApplicationName(nameof(builder.Environment.ApplicationName));
-
-// Option when deploying to docker
-Directory.CreateDirectory("/app/data/dataprotection");
+string? dataPath = builder.Configuration["AppDataPath"];
+if (dataPath is null){
+    throw new KeyNotFoundException("The app data path is missing when setting up data protection key");
+}
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/app/data/dataprotection"))
-    .SetApplicationName(nameof(builder.Environment.ApplicationName))
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(dataPath, "dataprotection")))
+    .SetApplicationName(builder.Environment.ApplicationName)
     .SetDefaultKeyLifetime(TimeSpan.FromDays(90)); // Rotate keys every 90 days
 
 
@@ -109,7 +106,11 @@ builder.Services.AddScoped<ISieveCustomFilterMethods, GuardFilters>();
 builder.Services.AddScoped<EntityViewGetter>();
 builder.Services.AddScoped<RefreshTokenService>();
 
-string[] origins = builder.Configuration["Cors:Allowed-Origins"]!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)!;
+string[] origins = [];
+if (builder.Environment.IsProduction())
+{
+    origins = builder.Configuration["Cors:Allowed-Origins"]!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)!;
+}
 
 builder.Services.AddCors(options =>
 {
