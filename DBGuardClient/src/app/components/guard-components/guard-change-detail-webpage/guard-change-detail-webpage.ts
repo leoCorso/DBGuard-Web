@@ -1,25 +1,17 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
-import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
-import { environment } from '../../../../environments/environment';
-import { PagedResponse } from '../../../interfaces/request-response-dto';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Card } from 'primeng/card';
-import { Button } from 'primeng/button';
-import { DatePipe } from '@angular/common';
-import { Tag } from 'primeng/tag';
-import { GuardState } from '../../../enums/guard-state';
-import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
-import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
-import { GuardOperator } from '../../../enums/guard-operator';
-import { DatabaseEngine } from '../../../enums/database-engines';
-import { GuardNotificationTransactionsTable } from '../guard-notification-components/guard-notification-transactions-table/guard-notification-transactions-table';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { environment } from '../../../../environments/environment';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
+import { GuardDetailDTO } from '../../../interfaces/guard-dto';
+import { PagedResponse } from '../../../interfaces/request-response-dto';
 import { GuardChangeDetailPane } from '../guard-change-detail-pane/guard-change-detail-pane';
 import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
-import { GuardDetailDTO } from '../../../interfaces/guard-dto';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { GuardNotificationTransactionsTable } from '../guard-notification-components/guard-notification-transactions-table/guard-notification-transactions-table';
 
 @Component({
   selector: 'app-guard-change-detail-webpage',

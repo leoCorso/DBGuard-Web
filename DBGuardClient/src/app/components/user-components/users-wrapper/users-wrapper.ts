@@ -1,9 +1,8 @@
 import { Component, inject, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Toolbar } from 'primeng/toolbar';
-import { UsersToolbar } from '../users-toolbar/users-toolbar';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateUser } from '../create-user/create-user';
+import { UsersToolbar } from '../users-toolbar/users-toolbar';
 
 @Component({
   selector: 'app-users-wrapper',

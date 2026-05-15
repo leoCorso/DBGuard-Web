@@ -1,22 +1,22 @@
 import { Component, computed, DestroyRef, forwardRef, inject, input, model, OnDestroy, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
-import { CreateEmailGuardNotificationDTOWIndex, CreateGuardNotificationDTO, CreateGuardNotificationDTOWIndex, CreateHTTPGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { NotificationType } from '../../../../enums/notification-type';
-import { CreateNotificationProvider } from '../../../notification-provider-components/create-notification-provider/create-notification-provider';
-import { Listbox } from 'primeng/listbox';
-import { Tag } from 'primeng/tag';
 import { Button } from 'primeng/button';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputGroup } from 'primeng/inputgroup';
-import { Select } from 'primeng/select';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
-import { CreateEmailNotification } from '../create-email-notification/create-email-notification';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { getEnumLabel } from '../../../../helpers/enum-helper';
+import { Listbox } from 'primeng/listbox';
+import { Select } from 'primeng/select';
+import { Tag } from 'primeng/tag';
 import { HTTPAction } from '../../../../enums/http-action';
+import { NotificationType } from '../../../../enums/notification-type';
+import { getEnumLabel } from '../../../../helpers/enum-helper';
 import { getHttpSeverity } from '../../../../helpers/http-severity-mapper';
+import { CreateEmailGuardNotificationDTOWIndex, CreateGuardNotificationDTO, CreateGuardNotificationDTOWIndex, CreateHTTPGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
+import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
+import { CreateNotificationProvider } from '../../../notification-provider-components/create-notification-provider/create-notification-provider';
+import { CreateEmailNotification } from '../create-email-notification/create-email-notification';
 import { CreateHttpNotification } from '../create-http-notification/create-http-notification';
 
 @Component({

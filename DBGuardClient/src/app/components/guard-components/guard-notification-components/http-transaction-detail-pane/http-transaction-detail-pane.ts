@@ -1,14 +1,14 @@
 import { Component, input } from '@angular/core';
-import { HttpNotificationTransactionDTO } from '../../../../interfaces/notification-dto';
-import { getEnumLabel } from '../../../../helpers/enum-helper';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { Tag } from 'primeng/tag';
 import { HTTPAction } from '../../../../enums/http-action';
-import { mapToArray } from '../../../../helpers/http-notification-record-helper';
 import { HttpBodyType } from '../../../../enums/http-body-type';
 import { HttpResponseCodes } from '../../../../enums/http-response-codes';
-import { Tag } from 'primeng/tag';
-import { Dialog } from 'primeng/dialog';
-import { Button } from 'primeng/button';
+import { getEnumLabel } from '../../../../helpers/enum-helper';
+import { mapToArray } from '../../../../helpers/http-notification-record-helper';
 import { getHttpSeverity } from '../../../../helpers/http-severity-mapper';
+import { HttpNotificationTransactionDTO } from '../../../../interfaces/notification-dto';
 
 @Component({
   selector: 'app-http-transaction-detail-pane',

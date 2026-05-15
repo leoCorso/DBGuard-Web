@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
-import { Button } from 'primeng/button';
 import { RouterLink, RouterModule } from '@angular/router';
+import { Button } from 'primeng/button';
+import { Tag } from 'primeng/tag';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';
-import { getEnumLabel, formatEnumKey } from '../../../helpers/enum-helper';
+import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
-import { Tag } from 'primeng/tag';
-import { DatePipe } from '@angular/common';
+import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
 
 @Component({
   selector: 'app-guard-change-detail-pane',

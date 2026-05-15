@@ -1,9 +1,9 @@
-import { Component, computed, inject, ViewChild } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { Menu } from 'primeng/menu';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Component, computed, inject, ViewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { Menu } from 'primeng/menu';
 import { AuthService } from '../../services/auth-service';
 
 @Component({

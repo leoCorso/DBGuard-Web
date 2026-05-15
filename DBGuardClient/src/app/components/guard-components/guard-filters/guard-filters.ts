@@ -1,13 +1,13 @@
-import { Component, output } from '@angular/core';
-import { FilterConfig, SelectOption } from '../../../interfaces/filters';
-import { FilterItem } from '../../shared/filter-item/filter-item';
-import { enumToOptions } from '../../../helpers/enum-helper';
-import { GuardOperator } from '../../../enums/guard-operator';
-import { DatabaseEngine } from '../../../enums/database-engines';
-import { GuardState } from '../../../enums/guard-state';
-import { FilterPane } from '../../shared/filter-pane/filter-pane';
+import { Component } from '@angular/core';
 import { Button } from 'primeng/button';
-import { Tooltip, TooltipModule } from "primeng/tooltip";
+import { TooltipModule } from "primeng/tooltip";
+import { DatabaseEngine } from '../../../enums/database-engines';
+import { GuardOperator } from '../../../enums/guard-operator';
+import { GuardState } from '../../../enums/guard-state';
+import { enumToOptions } from '../../../helpers/enum-helper';
+import { FilterConfig } from '../../../interfaces/filters';
+import { FilterItem } from '../../shared/filter-item/filter-item';
+import { FilterPane } from '../../shared/filter-pane/filter-pane';
 
 @Component({
   selector: 'app-guard-filters',

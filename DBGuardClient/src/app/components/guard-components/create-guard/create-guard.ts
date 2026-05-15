@@ -1,42 +1,37 @@
-import { Component, effect, inject, input, model, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
-import { GuardOperator } from '../../../enums/guard-operator';
-import { DatabaseConnectionDTO, SimpleDatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
-import { InputText } from 'primeng/inputtext';
-import { Textarea } from 'primeng/textarea';
-import { Select } from 'primeng/select';
-import { Message } from 'primeng/message';
-import {FloatLabel} from 'primeng/floatlabel';
-import { enumToOptions, getEnumLabel } from '../../../helpers/enum-helper';
-import { InputNumber } from 'primeng/inputnumber';
-import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
+import { Card } from 'primeng/card';
+import { Checkbox } from 'primeng/checkbox';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FloatLabel } from 'primeng/floatlabel';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
-import { CreateGuardNotificationDTO } from '../../../interfaces/notification-dto';
-import { CreateGuardDTO, CreateGuardReferenceData, SimpleGuardDTO } from '../../../interfaces/guard-dto';
-import { Listbox } from 'primeng/listbox';
-import { Tag } from 'primeng/tag';
-import { Card } from 'primeng/card';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CreateDbConnection } from '../../db-connection-components/create-db-connection/create-db-connection';
-import { finalize, Subject, takeUntil, tap, timer } from 'rxjs';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
+import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
+import { ToggleSwitch } from 'primeng/toggleswitch';
+import { TooltipModule } from 'primeng/tooltip';
+import { finalize, Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { DatabaseEngine } from '../../../enums/database-engines';
+import { GuardOperator } from '../../../enums/guard-operator';
+import { enumToOptions, getEnumLabel } from '../../../helpers/enum-helper';
+import { DatabaseConnectionDTO, SimpleDatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
+import { CreateGuardDTO, CreateGuardReferenceData, SimpleGuardDTO } from '../../../interfaces/guard-dto';
+import { CreateGuardNotificationDTO } from '../../../interfaces/notification-dto';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { RadioButton } from 'primeng/radiobutton';
-import { Checkbox } from 'primeng/checkbox';
+import { CreateDbConnection } from '../../db-connection-components/create-db-connection/create-db-connection';
 import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-create-guard',
-  imports: [Card, Tag, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
-    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, Listbox, FormsModule, Checkbox, ProgressSpinner],
+  imports: [Card, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
+    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, FormsModule, Checkbox],
   templateUrl: './create-guard.html',
   styleUrl: './create-guard.scss',
 })

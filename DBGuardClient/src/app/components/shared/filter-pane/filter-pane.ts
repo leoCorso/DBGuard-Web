@@ -1,4 +1,4 @@
-import { Component, inject, model, output, QueryList, signal, ViewChildren } from '@angular/core';
+import { Component, model, output, QueryList, ViewChildren } from '@angular/core';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { FilterItem } from '../filter-item/filter-item';
 

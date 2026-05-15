@@ -1,23 +1,19 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { EditUsernameDTO, ViewUserSelfDTO } from '../../../interfaces/user.dto';
 import { HttpClient } from '@angular/common/http';
-import { finalize, Observable, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { InputText } from 'primeng/inputtext';
-import { Password } from 'primeng/password';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { FloatLabel } from 'primeng/floatlabel';
-import { Message } from 'primeng/message';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { InputText } from 'primeng/inputtext';
+import { Tag } from 'primeng/tag';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { EditUsernameDTO, ViewUserSelfDTO } from '../../../interfaces/user.dto';
 import { ChangePassword } from '../change-password/change-password';
 
 @Component({
   selector: 'app-edit-self',
-  imports: [ProgressSpinner, InputText, Password, Button, Tag, ReactiveFormsModule, FloatLabel, Message],
+  imports: [InputText, Button, Tag, ReactiveFormsModule],
   templateUrl: './edit-self.html',
   styleUrl: './edit-self.scss',
 })

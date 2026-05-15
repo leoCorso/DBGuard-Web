@@ -1,23 +1,20 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
-import { environment } from '../../../../environments/environment';
-import { DbConnectionDetailPane } from '../db-connection-detail-pane/db-connection-detail-pane';
-import { DbConnectionsTable } from '../db-connections-table/db-connections-table';
-import { Card } from 'primeng/card';
-import { GuardsDetailTable } from '../../guard-components/guards-detail-table/guards-detail-table';
-import { ButtonGroup } from 'primeng/buttongroup';
-import { Button } from 'primeng/button';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CreateDbConnection } from '../create-db-connection/create-db-connection';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Button } from 'primeng/button';
+import { ButtonGroup } from 'primeng/buttongroup';
+import { Card } from 'primeng/card';
 import { ConfirmPopup } from 'primeng/confirmpopup';
-import { AuthService } from '../../../services/auth-service';
-import { TooltipModule } from 'primeng/tooltip';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Toast } from 'primeng/toast';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { TooltipModule } from 'primeng/tooltip';
 import { finalize } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../services/auth-service';
+import { GuardsDetailTable } from '../../guard-components/guards-detail-table/guards-detail-table';
+import { CreateDbConnection } from '../create-db-connection/create-db-connection';
+import { DbConnectionDetailPane } from '../db-connection-detail-pane/db-connection-detail-pane';
 
 @Component({
   selector: 'app-db-connections-detail-webpage',

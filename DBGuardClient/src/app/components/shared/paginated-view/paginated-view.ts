@@ -1,7 +1,6 @@
-import { Component, inject, OnDestroy, OnInit, Signal, signal, WritableSignal } from '@angular/core';
-import { BehaviorSubject, debounceTime, Subject, take, takeUntil } from 'rxjs';
-import { SortOption } from '../../../interfaces/sorting';
 import { HttpClient } from '@angular/common/http';
+import { Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
+import { Subject } from 'rxjs';
 import { FilterValue } from '../../../interfaces/filters';
 import { ViewParamsBuilder } from '../../../services/view-params-builder';
 

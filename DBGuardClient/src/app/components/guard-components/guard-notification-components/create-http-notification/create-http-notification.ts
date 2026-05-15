@@ -1,25 +1,24 @@
-import { Component, Input, input, model, OnInit, output } from '@angular/core';
-import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
-import { CreateHTTPGuardNotificationDTO, CreateHTTPGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
-import { CreateNotification } from '../create-notification/create-notification';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpBodyType } from '../../../../enums/http-body-type';
-import { HTTPAction } from '../../../../enums/http-action';
-import { TextareaModule  } from 'primeng/textarea';
-import { InputGroup } from 'primeng/inputgroup';
-import { InputGroupAddon } from 'primeng/inputgroupaddon';
-import { FloatLabel } from 'primeng/floatlabel';
-import { InputText, InputTextModule } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Select } from 'primeng/select';
-import { enumToOptions } from '../../../../helpers/enum-helper';
-import { TableModule } from 'primeng/table';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
 import { Card } from 'primeng/card';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputGroup } from 'primeng/inputgroup';
+import { InputGroupAddon } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
+import { Popover } from 'primeng/popover';
+import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { TextareaModule } from 'primeng/textarea';
+import { HTTPAction } from '../../../../enums/http-action';
+import { HttpBodyType } from '../../../../enums/http-body-type';
 import { NotificationType } from '../../../../enums/notification-type';
+import { enumToOptions } from '../../../../helpers/enum-helper';
 import { mapToArray, mapToRecords } from '../../../../helpers/http-notification-record-helper';
-import { Popover } from 'primeng/popover'
+import { CreateHTTPGuardNotificationDTO, CreateHTTPGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
+import { CreateNotification } from '../create-notification/create-notification';
 @Component({
   selector: 'app-create-http-notification',
   imports: [InputTextModule, TextareaModule , InputGroup, InputGroupAddon, FloatLabel, Message, ReactiveFormsModule, Select, 

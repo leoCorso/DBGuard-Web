@@ -1,28 +1,25 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DatabaseEngine } from '../../../enums/database-engines';
-import { CreateDatabaseConnectionDTO, DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
+import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { enumToOptions } from '../../../helpers/enum-helper';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
-import { Button } from 'primeng/button';
-import { environment } from '../../../../environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Data } from '@angular/router';
-import { EntityChangeService } from '../../../services/entity-change-service';
-import { Tooltip, TooltipModule } from "primeng/tooltip";
-import { Checkbox } from 'primeng/checkbox';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { Select } from 'primeng/select';
+import { TooltipModule } from "primeng/tooltip";
 import { finalize } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { DatabaseEngine } from '../../../enums/database-engines';
+import { enumToOptions } from '../../../helpers/enum-helper';
+import { CreateDatabaseConnectionDTO, DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
+import { EntityChangeService } from '../../../services/entity-change-service';
 
 @Component({
   selector: 'app-create-db-connection',
-  imports: [ReactiveFormsModule, FloatLabel, InputText, Select, Message, Password, Button, ProgressSpinner, TooltipModule, Checkbox],
+  imports: [ReactiveFormsModule, FloatLabel, InputText, Select, Message, Password, Button, TooltipModule, Checkbox],
   templateUrl: './create-db-connection.html',
   styleUrl: './create-db-connection.scss',
 })

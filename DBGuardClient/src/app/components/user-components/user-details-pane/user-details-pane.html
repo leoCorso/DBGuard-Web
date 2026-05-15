@@ -22,11 +22,18 @@
         <span class="user-value">{{ userDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
         <span class="user-key">Created by:</span>
         <span class="user-value">
-        @if (userDetails()?.createdByUserId) {
-            <p-button [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
-        }
-        @else {
+        
+        <!-- If is default admin -->
+        @if(userDetails()?.username === 'admin'){
             <p-tag value="System" severity="info"></p-tag>
+        }
+        <!-- If created by id is null show removed -->
+        @else if (!userDetails()?.createdByUserId) {
+            <p-tag value="Deleted" severity="danger"></p-tag>
+        }
+        <!-- Else show created by user info -->
+        @else {
+            <p-button [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
         }
         </span>
         <span class="user-key">Roles:</span>

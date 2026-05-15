@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { EmailNotificationDetailDTO, NotificationDetailDTO } from '../../../../interfaces/notification-dto';
+import { EmailNotificationDetailDTO } from '../../../../interfaces/notification-dto';
 
 @Component({
   selector: 'app-email-notification-detail-pane',

@@ -1,14 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, input, output } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Select } from 'primeng/select';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
-import { MultiSelect } from 'primeng/multiselect';
 import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
+import { MultiSelect } from 'primeng/multiselect';
+import { Select } from 'primeng/select';
 import { SelectButton } from 'primeng/selectbutton';
-import { FilterConfig, FilterOperator, FilterValue, NumberFilterOperators, TextFilterOperators } from '../../../interfaces/filters';
-import { CommonModule } from '@angular/common';
 import { Slider } from 'primeng/slider';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { FilterConfig, FilterOperator, FilterValue, NumberFilterOperators, TextFilterOperators } from '../../../interfaces/filters';
 
 @Component({
   selector: 'app-filter-item',

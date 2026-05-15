@@ -1,15 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { GuardChangeItemDTO } from '../../../interfaces/guard-change-transaction-dto';
-import { environment } from '../../../../environments/environment';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePicker } from 'primeng/datepicker';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
+import { DatePicker } from 'primeng/datepicker';
 import { FloatLabel } from 'primeng/floatlabel';
+import { environment } from '../../../../environments/environment';
 import { GuardState } from '../../../enums/guard-state';
-import { Card } from 'primeng/card';
+import { GuardChangeItemDTO } from '../../../interfaces/guard-change-transaction-dto';
 
 @Component({
   selector: 'app-guard-change-data-chart',

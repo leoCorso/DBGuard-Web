@@ -1,14 +1,12 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
-import { PaginatedView } from '../paginated-view/paginated-view';
-import { Column } from '../../../interfaces/table-items';
+import { Component, inject, ViewChild } from '@angular/core';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
-import { SortValue } from '../../../interfaces/sorting';
-import { LazyLoadEvent } from 'primeng/api';
-import { PagedResponse } from '../../../interfaces/request-response-dto';
-import { FilterConfig, FilterValue } from '../../../interfaces/filters';
-import { EntityChangeService } from '../../../services/entity-change-service';
 import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
-import { finalize } from 'rxjs';
+import { FilterConfig, FilterValue } from '../../../interfaces/filters';
+import { PagedResponse } from '../../../interfaces/request-response-dto';
+import { SortValue } from '../../../interfaces/sorting';
+import { Column } from '../../../interfaces/table-items';
+import { EntityChangeService } from '../../../services/entity-change-service';
+import { PaginatedView } from '../paginated-view/paginated-view';
 
 @Component({
   selector: 'app-preview-table',

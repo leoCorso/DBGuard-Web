@@ -210,13 +210,13 @@ namespace DBGuardAPI.Controllers
             };
 
         }
-        [HttpPost(nameof(LogOut))] 
+        [HttpPost(nameof(LogOut))]
+        [AllowAnonymous]
         public async Task<ActionResult> LogOut()
         {
             User? user = await _userManager.GetUserAsync(User);
             if(user is null)
             {
-                _logger.LogError("A user logout was attempted for an invalid user");
                 return NotFound();
             }
             string? token = Request.Cookies["refreshToken"]; // Get refresh token in cookie

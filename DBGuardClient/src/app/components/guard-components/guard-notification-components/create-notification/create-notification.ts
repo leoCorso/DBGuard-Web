@@ -1,5 +1,5 @@
-import { OutputEmitterRef, InputSignal, output, Component, input } from "@angular/core"
-import { NotificationProviderDTO } from "../../../../interfaces/notification-provider-dto"
+import { Component, input, output } from "@angular/core";
+import { NotificationProviderDTO } from "../../../../interfaces/notification-provider-dto";
 
 @Component({
   selector: 'app-create-notification',

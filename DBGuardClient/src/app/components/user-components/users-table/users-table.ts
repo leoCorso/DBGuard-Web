@@ -1,18 +1,18 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { PreviewTable } from '../../shared/preview-table/preview-table';
-import { UserDTO } from '../../../interfaces/user.dto';
-import { Column } from '../../../interfaces/table-items';
-import { SortValue } from '../../../interfaces/sorting';
+import { DatePipe } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Button } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { Tag } from 'primeng/tag';
+import { merge, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
-import { TableModule } from 'primeng/table';
-import { DatePipe } from '@angular/common';
-import { Button } from 'primeng/button';
-import { RouterModule } from '@angular/router';
-import { FilterItem } from '../../shared/filter-item/filter-item';
-import { Tag } from 'primeng/tag';
+import { SortValue } from '../../../interfaces/sorting';
+import { Column } from '../../../interfaces/table-items';
+import { UserDTO } from '../../../interfaces/user.dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { merge, takeUntil } from 'rxjs';
+import { FilterItem } from '../../shared/filter-item/filter-item';
+import { PreviewTable } from '../../shared/preview-table/preview-table';
 
 @Component({
   selector: 'app-users-table',

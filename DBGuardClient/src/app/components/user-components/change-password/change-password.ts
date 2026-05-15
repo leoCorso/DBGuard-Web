@@ -1,15 +1,15 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
-import { passwordRequirementsRegex } from '../../../helpers/password-requirements';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { EditPasswordDTO } from '../../../interfaces/user.dto';
 import { passwordMatchValidator } from '../../../form-validators/matching-validator';
+import { passwordRequirementsRegex } from '../../../helpers/password-requirements';
+import { EditPasswordDTO } from '../../../interfaces/user.dto';
 import { FormControlError } from '../../shared/form-control-error/form-control-error';
 
 @Component({

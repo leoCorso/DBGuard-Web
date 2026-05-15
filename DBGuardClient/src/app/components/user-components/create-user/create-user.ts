@@ -1,21 +1,21 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
-import { CreateUserDTO, CreateUserReferenceData, UserDTO } from '../../../interfaces/user.dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
-import { Password } from 'primeng/password';
-import { MultiSelect } from 'primeng/multiselect';
-import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
-import { passwordMatchValidator } from '../../../form-validators/matching-validator';
-import { FormControlError } from '../../shared/form-control-error/form-control-error';
-import { EntityChangeService } from '../../../services/entity-change-service';
+import { MultiSelect } from 'primeng/multiselect';
+import { Password } from 'primeng/password';
 import { finalize } from 'rxjs';
-import { Checkbox } from 'primeng/checkbox';
+import { environment } from '../../../../environments/environment';
+import { passwordMatchValidator } from '../../../form-validators/matching-validator';
 import { passwordRequirementsRegex } from '../../../helpers/password-requirements';
+import { CreateUserDTO, CreateUserReferenceData, UserDTO } from '../../../interfaces/user.dto';
+import { EntityChangeService } from '../../../services/entity-change-service';
+import { FormControlError } from '../../shared/form-control-error/form-control-error';
 
 @Component({
   selector: 'app-create-user',

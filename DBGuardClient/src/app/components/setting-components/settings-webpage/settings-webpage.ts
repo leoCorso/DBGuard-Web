@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ThemeService } from '../../../services/theme-service';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
+import { ThemeService } from '../../../services/theme-service';
 import { EditSelf } from '../../user-components/edit-self/edit-self';
 
 @Component({

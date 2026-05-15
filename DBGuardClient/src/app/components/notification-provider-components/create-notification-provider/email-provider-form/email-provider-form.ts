@@ -1,16 +1,15 @@
-import { Component, input, OnInit, output, signal } from '@angular/core';
+import { Component, input, OnInit, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CreateEmailNotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
-import { InputText } from 'primeng/inputtext';
-import { InputNumber } from 'primeng/inputnumber';
-import { FloatLabel } from 'primeng/floatlabel';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
-import { NotificationType } from '../../../../enums/notification-type';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
+import { FloatLabel } from 'primeng/floatlabel';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
+import { Password } from 'primeng/password';
 import { TooltipModule } from 'primeng/tooltip';
-import { ProgressSpinner } from 'primeng/progressspinner';
+import { NotificationType } from '../../../../enums/notification-type';
+import { CreateEmailNotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 
 @Component({
   selector: 'app-email-provider-form',

@@ -1,15 +1,15 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { NotificationTransactionDetailPane } from '../notification-transaction-detail-pane/notification-transaction-detail-pane';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
-import { environment } from '../../../../../environments/environment';
-import { Card } from 'primeng/card';
-import { GuardChangeTransactionDTO } from '../../../../interfaces/guard-change-transaction-dto';
-import { PagedResponse } from '../../../../interfaces/request-response-dto';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { GuardChangeDetailPane } from '../../guard-change-detail-pane/guard-change-detail-pane';
+import { Card } from 'primeng/card';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { environment } from '../../../../../environments/environment';
+import { GuardChangeTransactionDTO } from '../../../../interfaces/guard-change-transaction-dto';
+import { NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
+import { PagedResponse } from '../../../../interfaces/request-response-dto';
+import { GuardChangeDetailPane } from '../../guard-change-detail-pane/guard-change-detail-pane';
+import { NotificationTransactionDetailPane } from '../notification-transaction-detail-pane/notification-transaction-detail-pane';
 
 @Component({
   selector: 'app-notification-transaction-detail-webpage',

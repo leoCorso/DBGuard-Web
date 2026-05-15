@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { RouterLink, RouterModule } from "@angular/router";
+import { Button } from 'primeng/button';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Tag } from 'primeng/tag';
+import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { UserDetailDTO } from '../../../interfaces/user.dto';
-import { DatePipe } from '@angular/common';
-import { Button } from 'primeng/button';
-import { RouterLink, RouterModule } from "@angular/router";
-import { Tag } from 'primeng/tag';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { Subject, takeUntil } from 'rxjs';
-import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-user-details-pane',

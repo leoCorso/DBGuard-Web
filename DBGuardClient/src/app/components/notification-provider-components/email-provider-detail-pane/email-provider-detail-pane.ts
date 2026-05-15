@@ -1,7 +1,7 @@
 import { Component, inject, input, signal } from '@angular/core';
+import { Button } from 'primeng/button';
 import { EmailProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { AuthService } from '../../../services/auth-service';
-import { Button } from 'primeng/button';
 
 @Component({
   selector: 'app-email-provider-detail-pane',

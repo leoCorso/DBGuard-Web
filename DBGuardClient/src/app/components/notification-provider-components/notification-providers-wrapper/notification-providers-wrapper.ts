@@ -1,9 +1,9 @@
 import { Component, inject, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NotificationProviderToolbar } from '../notification-provider-toolbar/notification-provider-toolbar';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
 import { AuthService } from '../../../services/auth-service';
+import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
+import { NotificationProviderToolbar } from '../notification-provider-toolbar/notification-provider-toolbar';
 
 @Component({
   selector: 'app-notification-providers-wrapper',

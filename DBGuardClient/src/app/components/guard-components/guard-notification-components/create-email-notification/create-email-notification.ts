@@ -1,16 +1,15 @@
-import { Component, input, OnInit, output, signal } from '@angular/core';
-import { CreateEmailGuardNotificationDTO, CreateEmailGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
-import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Listbox } from 'primeng/listbox';
+import { Component, OnInit, signal } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { InputText } from 'primeng/inputtext';
-import { Textarea } from 'primeng/textarea';
-import { Button } from 'primeng/button';
+import { Listbox } from 'primeng/listbox';
 import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
 import { NotificationType } from '../../../../enums/notification-type';
-import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
+import { CreateEmailGuardNotificationDTO, CreateEmailGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
 import { CreateNotification } from '../create-notification/create-notification';
 
 @Component({

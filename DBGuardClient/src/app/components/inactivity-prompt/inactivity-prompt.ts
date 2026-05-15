@@ -1,8 +1,6 @@
-import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
-import { InactivityService } from '../../services/inactivity-service';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { InactivityService } from '../../services/inactivity-service';
 
 @Component({
   selector: 'app-inactivity-prompt',

@@ -1,15 +1,15 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { Image } from 'primeng/image';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../services/auth-service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Message } from 'primeng/message';
 import { ThemeService } from '../../services/theme-service';
 
 @Component({

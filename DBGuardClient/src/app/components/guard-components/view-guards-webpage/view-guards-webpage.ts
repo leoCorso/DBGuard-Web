@@ -1,24 +1,22 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, effect, ElementRef, inject, input, model, OnInit, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { FilterValue } from '../../../interfaces/filters';
-import { Drawer } from 'primeng/drawer';
-import { GuardFilters } from '../guard-filters/guard-filters';
-import { Button } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
-import { PaginatedDataView } from '../../shared/paginated-data-view/paginated-data-view';
-import { GuardView } from '../../../interfaces/guard-dto';
-import { SortOption, SortValue } from '../../../interfaces/sorting';
-import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
-import { SortSelectControl } from '../../shared/sort-select-control/sort-select-control';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { merge, take, takeUntil } from 'rxjs';
-import { ViewParamsBuilder } from '../../../services/view-params-builder';
-import { PagedResponse } from '../../../interfaces/request-response-dto';
+import { Button } from 'primeng/button';
+import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
+import { Drawer } from 'primeng/drawer';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { ViewGuardItem } from '../view-guard-item/view-guard-item';
-import { EntityChangeService } from '../../../services/entity-change-service';
+import { TooltipModule } from 'primeng/tooltip';
+import { merge, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { FilterValue } from '../../../interfaces/filters';
+import { GuardView } from '../../../interfaces/guard-dto';
+import { PagedResponse } from '../../../interfaces/request-response-dto';
+import { SortOption, SortValue } from '../../../interfaces/sorting';
+import { EntityChangeService } from '../../../services/entity-change-service';
+import { PaginatedDataView } from '../../shared/paginated-data-view/paginated-data-view';
+import { SortSelectControl } from '../../shared/sort-select-control/sort-select-control';
+import { GuardFilters } from '../guard-filters/guard-filters';
+import { ViewGuardItem } from '../view-guard-item/view-guard-item';
 
 @Component({
   selector: 'app-view-guards-webpage',

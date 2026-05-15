@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { GuardDetailDTO } from '../../../interfaces/guard-dto';
+import { RouterLink, RouterModule } from "@angular/router";
+import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
+import { GuardOperator } from '../../../enums/guard-operator';
+import { GuardState } from '../../../enums/guard-state';
 import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
-import { GuardState } from '../../../enums/guard-state';
+import { GuardDetailDTO } from '../../../interfaces/guard-dto';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
-import { DatePipe } from '@angular/common';
-import { GuardOperator } from '../../../enums/guard-operator';
-import { Button } from 'primeng/button';
-import { RouterLink, RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-guard-detail-pane',

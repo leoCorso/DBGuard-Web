@@ -1,4 +1,4 @@
-import { forkJoin, Observable, Subject, timer } from 'rxjs';
+import { Observable, Subject, timer } from 'rxjs';
 import { finalize, takeUntil, tap } from 'rxjs/operators';
 
 export function withDelayedLoading<T>(

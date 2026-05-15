@@ -1,13 +1,13 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, computed, inject, output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { Image } from 'primeng/image';
 import { Menubar } from 'primeng/menubar';
 import { AuthService } from '../../services/auth-service';
-import { Image } from 'primeng/image';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ThemeService } from '../../services/theme-service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-top-navbar',

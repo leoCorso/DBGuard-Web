@@ -1,9 +1,7 @@
-import { Component, OnDestroy, OnInit, Signal, signal, ViewChild } from '@angular/core';
-import { SortOption, SortValue } from '../../../interfaces/sorting';
-import { FilterValue } from '../../../interfaces/filters';
+import { Component, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
-import { BehaviorSubject, debounceTime, Subject, takeUntil } from 'rxjs';
+import { SortOption, SortValue } from '../../../interfaces/sorting';
 import { PaginatedView } from '../paginated-view/paginated-view';
 
 @Component({

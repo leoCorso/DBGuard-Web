@@ -1,13 +1,12 @@
-import { Component, forwardRef, input, model, OnDestroy, OnInit, signal } from '@angular/core';
-import { SortOption, SortValue } from '../../../interfaces/sorting';
-import { ControlValueAccessor, FormControl, FormGroup, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
-import { Select } from 'primeng/select';
+import { Component, forwardRef, input, signal } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
+import { Select } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
+import { SortOption, SortValue } from '../../../interfaces/sorting';
 @Component({
   selector: 'app-sort-select-control',
   imports: [Select, Button, FormsModule, FloatLabel, InputGroup, InputGroupAddon, TooltipModule],

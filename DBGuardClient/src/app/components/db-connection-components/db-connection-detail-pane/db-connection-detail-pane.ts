@@ -1,20 +1,18 @@
-import { Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { GuardDetailDTO } from '../../../interfaces/guard-dto';
-import { BehaviorSubject, debounce, debounceTime, finalize, merge, single, Subject, takeUntil } from 'rxjs';
-import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
-import { getEnumLabel } from '../../../helpers/enum-helper';
-import { DatabaseEngine } from '../../../enums/database-engines';
-import { AuthService } from '../../../services/auth-service';
-import { Button } from 'primeng/button';
-import { EntityChangeService } from '../../../services/entity-change-service';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Password } from 'primeng/password';
-import { Tooltip } from "primeng/tooltip";
 import { DatePipe } from '@angular/common';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterModule } from "@angular/router";
+import { Button } from 'primeng/button';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Tooltip } from "primeng/tooltip";
+import { Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { DatabaseEngine } from '../../../enums/database-engines';
+import { getEnumLabel } from '../../../helpers/enum-helper';
+import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
+import { AuthService } from '../../../services/auth-service';
+import { EntityChangeService } from '../../../services/entity-change-service';
 
 @Component({
   selector: 'app-db-connection-detail-pane',

@@ -1,20 +1,20 @@
-import { Component, input, OnInit, signal, WritableSignal } from '@angular/core';
-import { PreviewTable } from '../../shared/preview-table/preview-table';
-import { GuardDTO, GuardView } from '../../../interfaces/guard-dto';
-import { Column } from '../../../interfaces/table-items';
-import { SortValue } from '../../../interfaces/sorting';
+import { DatePipe } from '@angular/common';
+import { Component, input, OnInit, signal } from '@angular/core';
+import { RouterLink, RouterModule } from "@angular/router";
+import { Button } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { Tag } from 'primeng/tag';
 import { environment } from '../../../../environments/environment';
-import { FilterConfig, FilterValue } from '../../../interfaces/filters';
-import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';
-import { TableModule } from 'primeng/table';
-import { Button } from 'primeng/button';
-import { FilterItem } from '../../shared/filter-item/filter-item';
-import { DatePipe } from '@angular/common';
-import { RouterLink, RouterModule } from "@angular/router";
-import { Tag } from 'primeng/tag';
+import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
+import { FilterConfig, FilterValue } from '../../../interfaces/filters';
+import { GuardDTO } from '../../../interfaces/guard-dto';
+import { SortValue } from '../../../interfaces/sorting';
+import { Column } from '../../../interfaces/table-items';
+import { FilterItem } from '../../shared/filter-item/filter-item';
+import { PreviewTable } from '../../shared/preview-table/preview-table';
 
 @Component({
   selector: 'app-guards-detail-table',

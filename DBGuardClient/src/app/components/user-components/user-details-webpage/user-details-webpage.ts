@@ -1,20 +1,19 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserDetailsPane } from '../user-details-pane/user-details-pane';
-import { Card } from 'primeng/card';
-import { GuardsDetailTable } from '../../guard-components/guards-detail-table/guards-detail-table';
-import { DbConnectionsTable } from '../../db-connection-components/db-connections-table/db-connections-table';
-import { NotificationProvidersTable } from '../../notification-provider-components/notification-providers-table/notification-providers-table';
-import { ButtonGroup } from 'primeng/buttongroup';
-import { Button } from 'primeng/button';
 import { ConfirmationService } from 'primeng/api';
+import { Button } from 'primeng/button';
+import { ButtonGroup } from 'primeng/buttongroup';
+import { Card } from 'primeng/card';
 import { ConfirmPopup } from 'primeng/confirmpopup';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { finalize } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { DbConnectionsTable } from '../../db-connection-components/db-connections-table/db-connections-table';
+import { GuardsDetailTable } from '../../guard-components/guards-detail-table/guards-detail-table';
+import { NotificationProvidersTable } from '../../notification-provider-components/notification-providers-table/notification-providers-table';
 import { CreateUser } from '../create-user/create-user';
-import { EntityChangeService } from '../../../services/entity-change-service';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { UserDetailsPane } from '../user-details-pane/user-details-pane';
 
 @Component({
   selector: 'app-user-details-webpage',

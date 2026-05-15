@@ -1,14 +1,13 @@
-import { Component, computed, input } from '@angular/core';
-import { EmailNotificationDetailDTO, EmailNotificationTransactionDTO, HttpNotificationTransactionDTO, NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
 import { DatePipe } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { getEnumLabel } from '../../../../helpers/enum-helper';
-import { NotificationType } from '../../../../enums/notification-type';
-import { EmailNotificationDetailPane } from '../email-notification-detail-pane/email-notification-detail-pane';
-import { EmailTransactionDetailPane } from '../email-transaction-detail-pane/email-transaction-detail-pane';
 import { Divider } from 'primeng/divider';
+import { Tag } from 'primeng/tag';
+import { NotificationType } from '../../../../enums/notification-type';
+import { getEnumLabel } from '../../../../helpers/enum-helper';
+import { EmailNotificationTransactionDTO, HttpNotificationTransactionDTO, NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
+import { EmailTransactionDetailPane } from '../email-transaction-detail-pane/email-transaction-detail-pane';
 import { HttpTransactionDetailPane } from '../http-transaction-detail-pane/http-transaction-detail-pane';
 
 @Component({

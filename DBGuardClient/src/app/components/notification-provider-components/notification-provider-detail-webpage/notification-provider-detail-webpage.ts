@@ -1,24 +1,24 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { NotificationProviderDetailPane } from '../notification-provider-detail-pane/notification-provider-detail-pane';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Card } from 'primeng/card';
-import { GuardNotificationsTable } from '../../guard-components/guard-notification-components/guard-notifications-table/guard-notifications-table';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Card } from 'primeng/card';
 import { ConfirmPopup } from 'primeng/confirmpopup';
-import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
-import { environment } from '../../../../environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { AuthService } from '../../../services/auth-service';
-import { TooltipModule } from 'primeng/tooltip';
-import { Toast } from 'primeng/toast';
-import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
-import { NotificationType } from '../../../enums/notification-type';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Toast } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { finalize } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { NotificationType } from '../../../enums/notification-type';
+import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
+import { AuthService } from '../../../services/auth-service';
+import { GuardNotificationsTable } from '../../guard-components/guard-notification-components/guard-notifications-table/guard-notifications-table';
+import { CreateNotificationProvider } from '../create-notification-provider/create-notification-provider';
+import { NotificationProviderDetailPane } from '../notification-provider-detail-pane/notification-provider-detail-pane';
 
 @Component({
   selector: 'app-notification-provider-detail-webpage',

@@ -1,15 +1,14 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Message } from 'primeng/message';
+import { Toast } from 'primeng/toast';
+import { InactivityPrompt } from './components/inactivity-prompt/inactivity-prompt';
 import { Sidebar } from './components/sidebar/sidebar';
 import { TopNavbar } from './components/top-navbar/top-navbar';
 import { AuthService } from './services/auth-service';
-import { Toast } from 'primeng/toast';
-import { first, Subject, takeUntil } from 'rxjs';
 import { InactivityService } from './services/inactivity-service';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { InactivityPrompt } from './components/inactivity-prompt/inactivity-prompt';
-import { Message } from 'primeng/message';
 import { ThemeService } from './services/theme-service';
 
 @Component({

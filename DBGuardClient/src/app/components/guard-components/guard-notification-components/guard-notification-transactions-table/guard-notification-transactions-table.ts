@@ -1,21 +1,20 @@
-import { Component, inject, input, OnInit, signal, WritableSignal } from '@angular/core';
-import { PreviewTable } from '../../../shared/preview-table/preview-table';
-import { NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
-import { Column } from '../../../../interfaces/table-items';
-import { SortValue } from '../../../../interfaces/sorting';
-import { environment } from '../../../../../environments/environment';
-import { FilterConfig, FilterValue } from '../../../../interfaces/filters';
-import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../../helpers/enum-helper';
-import { NotificationType } from '../../../../enums/notification-type';
-import { GuardDetailDTO, GuardView } from '../../../../interfaces/guard-dto';
-import { TableModule } from 'primeng/table';
-import { FilterItem } from '../../../shared/filter-item/filter-item';
 import { DatePipe } from '@angular/common';
-import { EntityChangeService } from '../../../../services/entity-change-service';
-import { takeUntil } from 'rxjs';
-import { Tag } from 'primeng/tag';
-import { Button } from 'primeng/button';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Button } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { Tag } from 'primeng/tag';
+import { takeUntil } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { NotificationType } from '../../../../enums/notification-type';
+import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../../helpers/enum-helper';
+import { FilterConfig, FilterValue } from '../../../../interfaces/filters';
+import { NotificationTransactionDTO } from '../../../../interfaces/notification-dto';
+import { SortValue } from '../../../../interfaces/sorting';
+import { Column } from '../../../../interfaces/table-items';
+import { EntityChangeService } from '../../../../services/entity-change-service';
+import { FilterItem } from '../../../shared/filter-item/filter-item';
+import { PreviewTable } from '../../../shared/preview-table/preview-table';
 
 @Component({
   selector: 'app-guard-notification-transactions-table',

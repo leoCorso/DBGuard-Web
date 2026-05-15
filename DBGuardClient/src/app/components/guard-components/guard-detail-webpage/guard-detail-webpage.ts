@@ -1,38 +1,34 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { environment } from '../../../../environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreateGuardDTO, GuardDetailDTO } from '../../../interfaces/guard-dto';
-import { Card } from 'primeng/card';
-import { DatePipe } from '@angular/common';
-import { GuardOperator } from '../../../enums/guard-operator';
-import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
-import { GuardState } from '../../../enums/guard-state';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
-import { BehaviorSubject, debounceTime, finalize, Subject, takeUntil } from 'rxjs';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Tag } from 'primeng/tag';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { EntityChangeService } from '../../../services/entity-change-service';
+import { Card } from 'primeng/card';
 import { ConfirmPopup } from 'primeng/confirmpopup';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { getGuardStateSeverity, getGuardStateSeverityTwo } from '../../../helpers/guard-state-helper';
-import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Toast } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
+import { finalize, Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
+import { GuardState } from '../../../enums/guard-state';
+import { getEnumLabel } from '../../../helpers/enum-helper';
+import { getGuardStateSeverityTwo } from '../../../helpers/guard-state-helper';
+import { GuardDetailDTO } from '../../../interfaces/guard-dto';
+import { AuthService } from '../../../services/auth-service';
+import { EntityChangeService } from '../../../services/entity-change-service';
 import { DbConnectionDetailPane } from '../../db-connection-components/db-connection-detail-pane/db-connection-detail-pane';
 import { CreateGuard } from '../create-guard/create-guard';
 import { GuardChangeHistoryTable } from '../guard-change-history-table/guard-change-history-table';
+import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
 import { GuardNotificationTransactionsTable } from '../guard-notification-components/guard-notification-transactions-table/guard-notification-transactions-table';
 import { GuardNotificationsTable } from '../guard-notification-components/guard-notifications-table/guard-notifications-table';
-import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
-import { AuthService } from '../../../services/auth-service';
-import { TooltipModule } from 'primeng/tooltip';
-import { Toast } from 'primeng/toast';
-import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
 
 @Component({
   selector: 'app-guard-detail-webpage',
-  imports: [Card, GuardDetailPane, Button, Tag, ButtonGroup, GuardChangeHistoryTable, GuardNotificationTransactionsTable, 
+  imports: [Card, GuardDetailPane, Button, ButtonGroup, GuardChangeHistoryTable, GuardNotificationTransactionsTable, 
     DbConnectionDetailPane, GuardNotificationsTable, ProgressSpinner, ConfirmPopup, TooltipModule, Toast],
   templateUrl: './guard-detail-webpage.html',
   styleUrl: './guard-detail-webpage.scss',

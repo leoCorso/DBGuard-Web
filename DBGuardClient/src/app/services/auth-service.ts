@@ -1,12 +1,12 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { computed, inject, Injectable, OnDestroy, OnInit, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { EMPTY, finalize, Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { LoginRequest } from '../interfaces/login-request';
 import { AuthResult } from '../interfaces/login-result';
-import { environment } from '../../environments/environment';
-import { Router } from '@angular/router';
-import { EMPTY, finalize, Observable, tap } from 'rxjs';
 import { InactivityService } from './inactivity-service';
-import { MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',

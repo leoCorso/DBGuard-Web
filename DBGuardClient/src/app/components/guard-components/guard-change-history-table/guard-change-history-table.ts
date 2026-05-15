@@ -1,24 +1,22 @@
-import { Component, inject, input, OnInit, signal, Signal } from '@angular/core';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { LazyLoadEvent } from 'primeng/api';
 import { DatePipe } from '@angular/common';
-import { Card } from 'primeng/card';
-import { Tag } from 'primeng/tag';
-import { takeUntil } from 'rxjs';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { RouterModule } from "@angular/router";
 import { Button } from 'primeng/button';
-import { FilterItem } from '../../shared/filter-item/filter-item';
+import { TableModule } from 'primeng/table';
+import { Tag } from 'primeng/tag';
+import { takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';
-import { getEnumLabel, formatEnumKey, enumToOptions } from '../../../helpers/enum-helper';
+import { enumToOptions, formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
 import { SortValue } from '../../../interfaces/sorting';
 import { Column } from '../../../interfaces/table-items';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 
 @Component({

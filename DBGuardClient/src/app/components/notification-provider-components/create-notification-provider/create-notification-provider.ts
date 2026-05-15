@@ -1,23 +1,21 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
-import { CreateEmailNotificationProviderDTO, CreateNotificationProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FloatLabel } from 'primeng/floatlabel';
+import { Message } from 'primeng/message';
+import { Select } from 'primeng/select';
+import { finalize } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { NotificationType } from '../../../enums/notification-type';
 import { enumToOptions } from '../../../helpers/enum-helper';
-import { Select } from 'primeng/select';
-import { FloatLabel } from 'primeng/floatlabel';
-import { EmailProviderForm } from './email-provider-form/email-provider-form';
-import { environment } from '../../../../environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { isEmailProvider } from '../../../helpers/type-guards';
+import { CreateEmailNotificationProviderDTO, CreateNotificationProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { Message } from 'primeng/message';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { finalize } from 'rxjs';
+import { EmailProviderForm } from './email-provider-form/email-provider-form';
 
 @Component({
   selector: 'app-create-notification-provider',
-  imports: [Select, FloatLabel, ReactiveFormsModule, EmailProviderForm, Message, ProgressSpinner],
+  imports: [Select, FloatLabel, ReactiveFormsModule, EmailProviderForm, Message],
   templateUrl: './create-notification-provider.html',
   styleUrl: './create-notification-provider.scss',
 })

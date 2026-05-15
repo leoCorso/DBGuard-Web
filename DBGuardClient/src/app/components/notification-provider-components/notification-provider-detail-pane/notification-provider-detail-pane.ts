@@ -1,22 +1,18 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, computed, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { EmailProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
-import { environment } from '../../../../environments/environment';
-import { getEnumLabel } from '../../../helpers/enum-helper';
-import { NotificationType } from '../../../enums/notification-type';
 import { DatePipe } from '@angular/common';
-import { Button } from 'primeng/button';
+import { Component, computed, input, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink, RouterModule } from "@angular/router";
-import { EmailProviderDetailPane } from '../email-provider-detail-pane/email-provider-detail-pane';
+import { Button } from 'primeng/button';
 import { Divider } from 'primeng/divider';
-import { EntityChangeService } from '../../../services/entity-change-service';
-import { merge, Subject, takeUntil } from 'rxjs';
-import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
+import { Subject } from 'rxjs';
+import { NotificationType } from '../../../enums/notification-type';
+import { getEnumLabel } from '../../../helpers/enum-helper';
+import { EmailProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
+import { EmailProviderDetailPane } from '../email-provider-detail-pane/email-provider-detail-pane';
 
 @Component({
   selector: 'app-notification-provider-detail-pane',
-  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, ProgressSpinner, Tag],
+  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, Tag],
   templateUrl: './notification-provider-detail-pane.html',
   styleUrl: './notification-provider-detail-pane.scss',
 })
