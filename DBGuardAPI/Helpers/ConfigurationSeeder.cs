@@ -18,7 +18,6 @@ namespace DBGuardAPI.Helpers
 
         // Default db values
         private static readonly string DefaultDBHost = "postgres"; // Use for docker prod
-
         private static readonly string DefaultDBPort = "5432";
         private static readonly string DefaultDBName = "dbguard-web";
         private static readonly string DefaultDBUserId = "dbguard-web";
