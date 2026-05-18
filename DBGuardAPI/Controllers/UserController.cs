@@ -195,8 +195,8 @@ namespace DBGuardAPI.Controllers
             Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                //Secure = true,
+                //SameSite = SameSiteMode.None,
                 Expires = refreshToken.Expires
             });
 
@@ -229,8 +229,8 @@ namespace DBGuardAPI.Controllers
             Response.Cookies.Delete("refreshToken", new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                //Secure = true,
+                //SameSite = SameSiteMode.None,
             }); 
 
             return Ok();
@@ -279,8 +279,8 @@ namespace DBGuardAPI.Controllers
             Response.Cookies.Append("refreshToken", newToken.Token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                //Secure = true,
+                //SameSite = SameSiteMode.None,
                 Expires = newToken.Expires
             });
             JwtSecurityToken accessToken = await _jwtService.GetTokenAsync(user);
