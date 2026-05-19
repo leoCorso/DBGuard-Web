@@ -31,7 +31,7 @@
     <span class="change-value">{{ changeHistoryDetail().triggerValue }}</span>
     <span class="change-key"><strong>Triggered value:</strong></span>
     <span class="change-value">
-        @if (changeHistoryDetail().triggeredValue) {
+        @if (changeHistoryDetail().triggeredValue !== undefined) {
             {{ changeHistoryDetail().triggeredValue }}
         }
         @else {
