@@ -2,11 +2,8 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
 
-// const IDLE_SECONDS = 840;
-// const WARNING_SECONDS = 60;
-
-const IDLE_SECONDS = 5;
-const WARNING_SECONDS = 3;
+const IDLE_SECONDS = 840;
+const WARNING_SECONDS = 60;
 
 @Injectable({
   providedIn: 'root',
