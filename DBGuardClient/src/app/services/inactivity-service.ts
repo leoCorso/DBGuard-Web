@@ -2,9 +2,11 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
 
-const IDLE_SECONDS = 840;
-const WARNING_SECONDS = 60;
+// const IDLE_SECONDS = 840;
+// const WARNING_SECONDS = 60;
 
+const IDLE_SECONDS = 5;
+const WARNING_SECONDS = 3;
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +23,11 @@ export class InactivityService {
   private countDownSubscription: Subscription | null = null;
 
   private readonly activityEvents$ = merge(
-    fromEvent(window, 'mousemove'),
-    fromEvent(window, 'keydown'),
-    fromEvent(window, 'mousedown'),
-    fromEvent(window, 'touchstart'),
-    fromEvent(window, 'scroll'),
+    fromEvent(window.document.body, 'mousemove'),
+    fromEvent(window.document.body, 'keydown'),
+    fromEvent(window.document.body, 'mousedown'),
+    fromEvent(window.document.body, 'touchstart'),
+    fromEvent(window.document.body, 'scroll'),
   );
 
   public start(): void {
@@ -60,4 +62,3 @@ export class InactivityService {
     });
   }
 }
-

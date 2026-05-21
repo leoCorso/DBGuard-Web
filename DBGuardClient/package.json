@@ -19,6 +19,8 @@
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@primeuix/themes": "^2.0.3",
+    "chart.js": "^4.5.1",
+    "idle-timeout": "^2.3.7",
     "primeicons": "^7.0.0",
     "primeng": "^21.0.0",
     "rxjs": "~7.8.0",

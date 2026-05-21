@@ -15,7 +15,7 @@ export class AuthService {
   private httpClient = inject(HttpClient);
   private router = inject(Router);
   private inactivityService = inject(InactivityService);
-
+  
   public loggedIn = signal<boolean>(false);
   public loginError = signal<string | undefined>(undefined);
   public defaultAdminError = signal<string | null>(null);
@@ -30,6 +30,7 @@ export class AuthService {
   private userRoles: string[] = [];
   private userName?: string;
   private messageService = inject(MessageService);
+  public IdleTimeout?: any;
 
   public getAccessToken = () => localStorage.getItem(this.accessTokenKey);
   public getUsername = () => localStorage.getItem(this.userNameKey);
