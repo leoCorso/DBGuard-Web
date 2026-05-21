@@ -1,4 +1,11 @@
 @if (isMobile()) {
     <p-button size="large" [text]="true" icon="pi pi-bars" (onClick)="menu.toggle($event)"/>
 }
-<p-menu #menu [model]="menuItems" [popup]="isMobile()"></p-menu>
+<p-menu #menu [model]="menuItems" [popup]="isMobile()">
+    <ng-template #end>
+        <div style="display: flex; justify-content: center;padding: 1rem;align-items: center;gap: .2rem;">
+            <strong>Version:</strong>
+            <span>{{ appVersion }}</span>
+        </div>
+    </ng-template>
+</p-menu>

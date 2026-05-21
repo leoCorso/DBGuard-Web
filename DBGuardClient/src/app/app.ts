@@ -26,7 +26,7 @@ export class App implements OnInit {
   private router = inject(Router);
   private themeService = inject(ThemeService);
   protected readonly title = signal('DBGuardClient');
-
+  
   ngOnInit(): void {
     this.themeService.initThemeMode();
     this.authService.initUser();

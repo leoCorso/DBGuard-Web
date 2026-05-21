@@ -2,7 +2,7 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
 
-const IDLE_SECONDS = 240;
+const IDLE_SECONDS = 840;
 const WARNING_SECONDS = 60;
 
 

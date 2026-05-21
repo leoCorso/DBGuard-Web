@@ -5,6 +5,7 @@ import { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Menu } from 'primeng/menu';
 import { AuthService } from '../../services/auth-service';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,6 +15,7 @@ import { AuthService } from '../../services/auth-service';
 })
 export class Sidebar {
   private authService = inject(AuthService);
+  public readonly appVersion = environment.version;
 
   public menuItems: MenuItem[] = [
     {
@@ -87,7 +89,9 @@ export class Sidebar {
         }
       ]
     },
-
+    {
+      separator: true
+    }
   ];
   private bpObserver = inject(BreakpointObserver);
   private bpResult = toSignal(this.bpObserver.observe([Breakpoints.Handset, Breakpoints.Small]));
