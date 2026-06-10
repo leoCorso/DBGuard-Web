@@ -11,7 +11,7 @@ namespace DBGuardAPI.Helpers
                 case GuardState.Clear:
                     return "green";
                 case GuardState.Triggered:
-                    return "yellow";
+                    return "#c4ba4b";  // Darker yellow
                 case GuardState.Error:
                     return "red";
                 default:
