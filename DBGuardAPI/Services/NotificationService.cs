@@ -141,6 +141,11 @@ $$"""
                 </tr>
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
+                  <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Triggered value</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;"> {{guardChange.TriggeredValue?.ToString() ?? "NA"}}</td>
+                </tr>
+
+                <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Expression</td>
                   <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{guard.TriggerColumn}} {{guard.TriggerOperator}} {{guard.TriggerValue}}</td>
                 </tr>
@@ -331,29 +336,29 @@ $$"""
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Guard State</td>
                   <td style="padding: 10px 0; vertical-align:top;">
                     <span style="display:inline-block; background-color:{{guardStateColor}}; color:white; font-size:12px; font-weight:bold; padding: 3px 10px; border-radius:12px;">
-                      {{emailNotification.Guard!.GuardState}}
+                      {{emailNotification.Guard.GuardState}}
                     </span>
                   </td>
                 </tr>
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Expression</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{emailNotification.Guard!.TriggerColumn}} {{emailNotification.Guard!.TriggerOperator}} {{emailNotification.Guard!.TriggerValue}}</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top; font-family: monospace;">{{emailNotification.Guard.TriggerColumn}} {{emailNotification.Guard!.TriggerOperator}} {{emailNotification.Guard!.TriggerValue}}</td>
                 </tr>
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Database Endpoint</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;">{{emailNotification.Guard!.DatabaseConnection!.EndPoint}}</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;">{{emailNotification.Guard.DatabaseConnection!.EndPoint}}</td>
                 </tr>
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Database</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;">{{emailNotification.Guard!.DatabaseConnection.DatabaseName}}</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;">{{emailNotification.Guard.DatabaseConnection.DatabaseName}}</td>
                 </tr>
 
                 <tr>
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Database Engine</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;">{{emailNotification.Guard!.DatabaseConnection.DatabaseEngine}}</td>
+                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;">{{emailNotification.Guard.DatabaseConnection.DatabaseEngine}}</td>
                 </tr>
 
               </table>
@@ -361,7 +366,7 @@ $$"""
               <!-- Query Block -->
               <h2 style="margin: 24px 0 10px; color:#1a1a2e; font-size:16px; text-transform:uppercase; letter-spacing:0.5px; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px;">Trigger Query</h2>
               <div style="background-color:#f8f8f8; border: 1px solid #e0e0e0; border-radius:4px; padding: 12px 16px; font-family: monospace; font-size:13px; color:#333333; word-break:break-all;">
-                {{emailNotification.Guard!.TriggerQuery}}
+                {{emailNotification.Guard.TriggerQuery}}
               </div>
 
               <!-- Message Block -->

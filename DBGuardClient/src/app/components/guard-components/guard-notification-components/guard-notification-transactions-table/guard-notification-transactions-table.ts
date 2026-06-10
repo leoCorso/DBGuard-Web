@@ -90,6 +90,19 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
         return newFilters;
       });
     }
+    else if(this.guardNotificationId()){
+      filter = {
+        field: 'guardNotificationId',
+        value: this.guardNotificationId(),
+        operator: '==',
+        type: 'numeric'
+      };
+      this.filters.update(filters => {
+        const newFilters = new Map(filters);
+        newFilters.set('guardNotificationId', filter);
+        return newFilters;
+      });
+    }
   }
   protected override configureFilters(): void {
     this.filtersConfig = [

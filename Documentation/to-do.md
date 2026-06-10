@@ -1,5 +1,20 @@
-1. Test that it works with MySQL
-2. Investigate error that occurs when logging in first time after refresh token expires and it continuously sends logout and refresh request
-3. Add docker deployment to getting started
-4. Add and push docker 1.0 tag to hub once 401 infinite loop no longer occurs
+
+
+# To do
+
+
+
+### 1.0.4
+
+* Add a black border to trigger text since the white on yellow is faint.
+* Add the result value to the dbguard email message
+* Add a footer to checkout my other work
+
+
+
+### 1.1.4
+
+* Add closed hours that can be specified for each day
+
+
 

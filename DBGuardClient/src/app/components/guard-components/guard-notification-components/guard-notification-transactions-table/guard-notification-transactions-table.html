@@ -43,7 +43,7 @@
                 </td>
                 <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
-                    @if (notification.guardId) {
+                    @if (notification.guardId !== undefined) {
                     <p-button [label]="notification.guardId" [link]="true"
                         [routerLink]="['/guards/detail', notification.guardId]"></p-button>
                     }
@@ -52,7 +52,7 @@
                     }
                 </td>
                 <td>
-                    @if (notification.guardNotificationId) {
+                    @if (notification.guardNotificationId !== undefined) {
                     <p-button [label]="notification.guardNotificationId" [link]="true"
                         [routerLink]="['/guards/notification-config-detail', notification.guardNotificationId]"></p-button>
                     }
@@ -68,7 +68,14 @@
                     <p-tag [value]="notification.successful ? 'Sent' : 'Failed'"
                         [severity]="notification.successful ? 'success' : 'danger'"></p-tag>
                 </td>
-                <td>{{ notification.errorMessage ?? 'None' }}</td>
+                <td>
+                    @if (notification.errorMessage) {
+                        {{  notification.errorMessage }}
+                    }
+                    @else {
+                        <p-tag value="None" severity="info"></p-tag>
+                    }
+                </td>
             </tr>
 
         </ng-template>

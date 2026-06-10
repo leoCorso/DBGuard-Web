@@ -43,7 +43,7 @@
                         [routerLink]="['/guards/history-detail', change.id]"></p-button></td>
                 <td>{{ change.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
-                    @if (change.guardId) {
+                    @if (change.guardId !== undefined) {
                     <p-button [link]="true" [label]="change.guardId"
                         [routerLink]="['/guards/detail', change.guardId]"></p-button>
                     }
@@ -59,8 +59,8 @@
                 <td>{{ formatEnumKey(getEnumLabel(guardOperator, change.triggerOperator)) }}</td>
                 <td>{{ change.triggerValue }}</td>
                 <td>
-                    @if (change.triggeredValue) {
-                    {{ change.triggeredValue }}
+                    @if (change.triggeredValue !== undefined) {
+                        {{ change.triggeredValue }}
                     }
                     @else {
                     <p-tag value="None" severity="info"></p-tag>
