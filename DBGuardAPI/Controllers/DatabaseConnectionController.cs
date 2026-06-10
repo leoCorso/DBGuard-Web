@@ -16,9 +16,12 @@ namespace DBGuardAPI.Controllers
     /// <summary>
     /// Provides api endpoints for the database connection used by guards
     /// </summary>
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ApiController]
     [Route("api/[controller]")]
-
+    [Authorize]
     public class DatabaseConnectionController: ControllerBase
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
@@ -36,11 +39,15 @@ namespace DBGuardAPI.Controllers
         }
 
         /// <summary>
-        /// Gets the details of the database connection including the user who created it if the user is not deleted
+        /// Gets the details of the database connection.
         /// </summary>
-        /// <param name="databaseConnectionId">The id of the database connection to fetch</param>
-        /// <returns>An http action result with the database connection details</returns>
-        [Authorize]
+        /// <remarks>Joins the user who created the database connection to include their id, username and password.
+        /// Only returns the database password if the user has the role <see cref="RoleNames.Admin"/>.
+        /// </remarks>
+        /// <param name="databaseConnectionId">The id of the database connection to get.</param>
+        /// <returns>An http action result with the database connection details.</returns>
+        [ProducesResponseType<DatabaseConnectionDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet(nameof(GetDatabaseConnectionDetail))]
         public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnectionDetail([FromQuery] int databaseConnectionId)
         {
@@ -69,6 +76,14 @@ namespace DBGuardAPI.Controllers
             }
             return databaseConnection;
         }
+        /// <summary>
+        /// Retrieves paginated, sorted, and filtered database connections.
+        /// </summary>
+        /// <remarks>Returns a bad request if the <see cref="SieveModel"/> object in query parameters is missing the <see cref="SieveModel.PageSize"/> or <see cref="SieveModel.Page"/> as its needed for retrieving a page.</remarks>
+        /// <param name="sieveParams">Pagination, sorting, and filtering options for the query.</param>
+        /// <returns>A paged response containing the matched database connections and pagination metadata</returns>
+        [ProducesResponseType<PagedResponseDTO<DatabaseConnectionDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet(nameof(GetPagedDatabaseConnections))]
         public async Task<ActionResult<PagedResponseDTO<DatabaseConnectionDTO>>> GetPagedDatabaseConnections([FromQuery] SieveModel sieveParams)
         {
@@ -93,6 +108,13 @@ namespace DBGuardAPI.Controllers
                 }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync(sieveParams, query);
         }
+        /// <summary>
+        /// Gets a database connection to edit.
+        /// </summary>
+        /// <param name="connectionId">The database connection id to edit.</param>
+        /// <returns>The database connection to edit</returns>
+        [ProducesResponseType<CreateDatabaseConnectionDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet(nameof(GetDatabaseConnectionToEdit))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult<CreateDatabaseConnectionDTO>> GetDatabaseConnectionToEdit([FromQuery] int connectionId)
@@ -117,19 +139,49 @@ namespace DBGuardAPI.Controllers
             }
             return dbToEdit;
         }
+        /// <summary>
+        /// Creates a new database connection.
+        /// </summary>
+        /// <remarks>
+        /// Endpoint and database name are required and cannot be empty.
+        /// Database username and password are optional, but if provided cannot be empty.
+        /// Returns a conflict if a database connection with a duplicate database engine, name, and username exist.
+        /// Uses <see cref="CredentialProtector"/> service to encrypt the password if provided.
+        /// If <see cref="CreateDatabaseConnectionDTO.ValidateConnection"/> is true, attempts a live connection before saving.
+        /// </remarks>
+        /// <param name="newConnection">The database connection to create</param>
+        /// <returns>The created database connection.</returns>
         [HttpPost(nameof(PostDatabaseConnection))]
         [Authorize(Roles = RoleNames.Admin)]
+        [ProducesResponseType<SimpleDatabaseConnectionDTO>(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
+
         public async Task<ActionResult> PostDatabaseConnection(CreateDatabaseConnectionDTO newConnection)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            User? user = await _userManager.GetUserAsync(User);
-            if (user is null)
-            {
-                return NotFound();
-            }
+            User user = (await _userManager.GetUserAsync(User))!;
+
             if ((await context.DatabaseConnections.AsNoTracking().AnyAsync(conn => conn.DatabaseEngine == newConnection.DatabaseEngine && conn.DatabaseName == newConnection.DatabaseName && newConnection.Username == conn.Username)))
             {
                 return Conflict(new { Message = "This database connection already exists" });
+            }
+            if (string.IsNullOrWhiteSpace(newConnection.Endpoint))
+            {
+                return BadRequest(new { Message = "The database endpoint cannot be null or empty" });
+            }
+            if (string.IsNullOrWhiteSpace(newConnection.DatabaseName))
+            {
+                return BadRequest(new { Message = "The database name cannot be null or empty" });
+            }
+            if (newConnection.Username is not null && string.IsNullOrWhiteSpace(newConnection.Username))
+            {
+                return BadRequest(new { Message = "The database username must be null or contain a non-empty value" });
+            }
+            if (newConnection.Password is not null && string.IsNullOrWhiteSpace(newConnection.Password))
+            {
+                return BadRequest(new { Message = "The database password must be null or contain a non-empty value" });
             }
             if (newConnection.ValidateConnection)
             {
@@ -142,22 +194,6 @@ namespace DBGuardAPI.Controllers
                 {
                     return StatusCode(StatusCodes.Status502BadGateway, new { Message = $"Could not create connection to the database. ({ex.Message})" });
                 }
-            }
-            if (string.IsNullOrWhiteSpace(newConnection.Endpoint))
-            {
-                return BadRequest(new { Message = "The database endpoint cannot be null or empty" });
-            }
-            if (string.IsNullOrWhiteSpace(newConnection.DatabaseName))
-            {
-                return BadRequest(new { Message = "The database name cannot be null or empty" });
-            }
-            if (newConnection.Username is not null && newConnection.Username == string.Empty)
-            {
-                return BadRequest(new { Message = "The database username must be null or contain a non-empty value" });
-            }
-            if (newConnection.Password is not null && newConnection.Password == string.Empty)
-            {
-                return BadRequest(new { Message = "The database password must be null or contain a non-empty value" });
             }
             DatabaseConnection newConnObject = new()
             {
@@ -180,6 +216,19 @@ namespace DBGuardAPI.Controllers
                 DatabaseEngine = newConnObject.DatabaseEngine
             });
         }
+
+        /// <summary>
+        /// Tests the database connection.
+        /// </summary>
+        /// <remarks>
+        /// Creates the connection string, connects to the database and opens a connection.
+        /// Uses the <see cref="CredentialProtector"/> service to decrypt the database password if required.
+        /// </remarks>
+        /// <param name="connectionId">The connection id of the database connection to test</param>
+        /// <returns>OK result if connectionn was successful or a exception status otherwise.</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
         [HttpPost(nameof(TestDatabaseConnection))]
         public async Task<ActionResult> TestDatabaseConnection([FromQuery] int connectionId)
         {
@@ -203,6 +252,21 @@ namespace DBGuardAPI.Controllers
             }
             return Ok(new { Message = "Database connection is healthy" });
         }
+        /// <summary>
+        /// Updates a database connection.
+        /// </summary>
+        /// <remarks>
+        /// Endpoint and DatabaseName are required.
+        /// The username and password is optional if not required by the database engine.
+        /// If <see cref="CreateDatabaseConnectionDTO.ValidateConnection"/> is true it will test the database connection before updating.
+        /// </remarks>
+        /// <param name="updatedConnection">The database connection with updated properties.</param>
+        /// <returns>The id of the database connection that was updated.</returns>
+        [ProducesResponseType<CreateDatabaseConnectionDTO>(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
         [HttpPut(nameof(PutDatabaseConnection))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult<CreateDatabaseConnectionDTO>> PutDatabaseConnection(CreateDatabaseConnectionDTO updatedConnection)
@@ -232,11 +296,11 @@ namespace DBGuardAPI.Controllers
             {
                 return BadRequest(new { Message = "The database name cannot be empty or null" });
             }
-            if (connection.Username is not null && connection.Username == string.Empty)
+            if (connection.Username is not null && string.IsNullOrWhiteSpace(connection.Username))
             {
                 return BadRequest(new { Message = "The database username must be null or contain a non-empty value" });
             }
-            if (connection.Password is not null && connection.Password == string.Empty)
+            if (connection.Password is not null && string.IsNullOrWhiteSpace(connection.Password))
             {
                 return BadRequest(new { Message = "The database password must be null or contain a non-empty value" });
             }
@@ -258,20 +322,24 @@ namespace DBGuardAPI.Controllers
             connection.Username = updatedConnection.Username?.Trim();
             if(string.IsNullOrWhiteSpace(connection.Password) || _credentialProtector.Decrypt(connection.Password) != updatedConnection.Password)
             {
-                connection.Password = string.IsNullOrWhiteSpace(updatedConnection.Password) ? null : _credentialProtector.Decrypt(updatedConnection.Password);
+                connection.Password = string.IsNullOrWhiteSpace(updatedConnection.Password) ? null : _credentialProtector.Encrypt(updatedConnection.Password);
 
             }
-            if (connection.Password is not null)
-            {
-                string currentPassword = _credentialProtector.Decrypt(connection.Password);
-                if (updatedConnection.Password != currentPassword)
-                {
-                }
-            }
+
             await context.SaveChangesAsync();
             _logger.LogInformation("A database connection was edited {ConnectionId}", updatedConnection.Id);
-            return CreatedAtAction(nameof(GetDatabaseConnectionDetail), new { Id = updatedConnection.Id});
+            return CreatedAtAction(nameof(GetDatabaseConnectionDetail), new { updatedConnection.Id});
         }
+
+        /// <summary>
+        /// Deletes a specified database connection.
+        /// </summary>
+        /// <remarks>Returns a conflict if there exists guards using the specified connection id.</remarks>
+        /// <param name="connectionId">The database id to delete.</param>
+        /// <returns>Result of operation.</returns>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpDelete(nameof(DeleteDatabaseConnection))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult> DeleteDatabaseConnection([FromQuery] int connectionId)
