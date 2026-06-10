@@ -9,8 +9,8 @@ export interface DatabaseConnectionDTO {
     password?: string,
     createDate: Date,
     lastEdited: Date,
-    createdByUserId: string,
-    createdByUsername: string
+    createdByUserId?: string,
+    createdByUsername?: string
 }
 export interface SimpleDatabaseConnectionDTO {
     id?: number,

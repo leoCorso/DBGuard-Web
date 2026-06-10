@@ -13,8 +13,12 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DBGuardAPI.Controllers
 {
+    /// <summary>
+    /// Provides api endpoints for the database connection used by guards
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+
     public class DatabaseConnectionController: ControllerBase
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
@@ -31,6 +35,11 @@ namespace DBGuardAPI.Controllers
             _entityViewGetter = entityViewGetter;
         }
 
+        /// <summary>
+        /// Gets the details of the database connection including the user who created it if the user is not deleted
+        /// </summary>
+        /// <param name="databaseConnectionId">The id of the database connection to fetch</param>
+        /// <returns>An http action result with the database connection details</returns>
         [Authorize]
         [HttpGet(nameof(GetDatabaseConnectionDetail))]
         public async Task<ActionResult<DatabaseConnectionDTO>> GetDatabaseConnectionDetail([FromQuery] int databaseConnectionId)
@@ -49,7 +58,7 @@ namespace DBGuardAPI.Controllers
                     Username = dc.Username,
                     Password = User.IsInRole(RoleNames.Admin) && dc.Password != null ? _credentialProtector.Decrypt(dc.Password) : null,
                     CreatedByUserId = dc.CreatedByUserId,
-                    CreatedByUsername = dc.CreatedByUser!.UserName!,
+                    CreatedByUsername = dc.CreatedByUser != null ? dc.CreatedByUser.UserName : null,
                     CreateDate = dc.CreateDate,
                     LastEdited = dc.LastEditedDate
                 })

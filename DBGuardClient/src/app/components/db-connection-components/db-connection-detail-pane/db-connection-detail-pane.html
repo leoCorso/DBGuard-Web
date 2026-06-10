@@ -31,7 +31,14 @@
                 </div>
             }
             <span class="connection-key"><strong>Created by:</strong></span>
-            <span class="connection-value"><p-button [label]="databaseConnectionInfo()!.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
+            @if (databaseConnectionInfo()!.createdByUserId !== null) {
+                <span class="connection-value"><p-button [label]="databaseConnectionInfo()!.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
+            }
+            @else {
+                <div>
+                    <p-tag value="Deleted" severity="danger"></p-tag>
+                </div>
+            }
         </div>
     }
 }

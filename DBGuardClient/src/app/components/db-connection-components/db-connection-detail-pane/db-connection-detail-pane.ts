@@ -13,10 +13,11 @@ import { getEnumLabel } from '../../../helpers/enum-helper';
 import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { AuthService } from '../../../services/auth-service';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { Tag } from 'primeng/tag';
 
 @Component({
   selector: 'app-db-connection-detail-pane',
-  imports: [Button, ProgressSpinner, Tooltip, DatePipe, RouterLink, RouterModule],
+  imports: [Button, ProgressSpinner, Tooltip, DatePipe, RouterLink, RouterModule, Tag],
   templateUrl: './db-connection-detail-pane.html',
   styleUrl: './db-connection-detail-pane.scss',
 })
