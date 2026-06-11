@@ -5,6 +5,7 @@ using DBGuardAPI.Data.DTOs;
 using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
 using DBGuardAPI.Data.DTOs.GuardDTOs;
 using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
+using DBGuardAPI.Data.Models.NotificationTransactions;
 using DBGuardAPI.Data.DTOs.NotificationsDTOs;
 using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.Enums;
@@ -29,6 +30,12 @@ using DBGuardAPI.Data.DTOs.Shared;
 
 namespace DBGuardAPI.Controllers
 {
+    /// <summary>
+    /// Controller with API endpoints to Get, Post, Put, and Delete guard related data.
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -51,6 +58,11 @@ namespace DBGuardAPI.Controllers
             _guardProcessor = guardProcessor;
         }
 
+        /// <summary>
+        /// Gets reference data used when creating a new guard.
+        /// </summary>
+        /// <returns>The guard reference data.</returns>
+        [ProducesResponseType<CreateGuardsReferenceData>(StatusCodes.Status200OK)]
         [HttpGet(nameof(GetCreateGuardsReferenceData))]
         public async Task<ActionResult<CreateGuardsReferenceData>> GetCreateGuardsReferenceData()
         {
@@ -77,6 +89,15 @@ namespace DBGuardAPI.Controllers
                 NotificationProviders = notificationProviders.Select(NotificationProviderHelper.MapToDTO).ToList()
             };
         }
+
+        /// <summary>
+        /// Gets the details of a guard.
+        /// </summary>
+        /// <remarks>Joins the user who created the guard if they exist to provide their id and name.</remarks>
+        /// <param name="id">The id of the guard to get details.</param>
+        /// <returns>The guard details</returns>
+        [ProducesResponseType<GuardDetailDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet(nameof(GetGuardDetail) + "/{id}")]
         public async Task<ActionResult<GuardDetailDTO>> GetGuardDetail(int id)
         {
@@ -92,8 +113,8 @@ namespace DBGuardAPI.Controllers
                     CreateDate = guard.CreateDate,
                     LastRun = guard.LastRun,
                     LastEditedDate = guard.LastEditedDate,
-                    CreatedByUserId = guard.CreatedByUserId,
-                    UserName = guard.CreatedByUser!.UserName!,
+                    CreatedByUserId = guard.CreatedByUserId != null ? guard.CreatedByUserId : null,
+                    UserName = guard.CreatedByUser != null ? guard.CreatedByUser.UserName : null,
                     TriggerQuery = guard.TriggerQuery,
                     TriggerColumn = guard.TriggerColumn,
                     TriggerOperator = guard.TriggerOperator,
@@ -117,6 +138,15 @@ namespace DBGuardAPI.Controllers
             }
             return guardDetail;
         }
+
+        /// <summary>
+        /// Filters, paginates and sorts guards.
+        /// </summary>
+        /// <remarks>Returns a conflict if the <see cref="SieveModel.PageSize"/> or <see cref="SieveModel.Page"/> are missing as it is required to limit return items.</remarks>
+        /// <param name="sieveParams">The query parameters used to sort, paginate and filter the records.</param>
+        /// <returns>A list of guards to view that are sorted, paginated and the current page, page size total items and total pages.</returns>
+        [ProducesResponseType<PagedResponseDTO<GuardView>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet(nameof(GetGuardsView))]
         public async Task<ActionResult<PagedResponseDTO<GuardView>>> GetGuardsView([FromQuery] SieveModel sieveParams)
         {
@@ -128,6 +158,14 @@ namespace DBGuardAPI.Controllers
             IQueryable<GuardView> query = context.GuardView.AsNoTracking().AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardView>(sieveParams, query);
         }
+        /// <summary>
+        /// Filters, paginates and sorts <see cref="GuardDTO"/> records.
+        /// </summary>
+        /// <remarks>Returns a bad request if the <see cref="SieveModel.Page"/> or <see cref="SieveModel.PageSize"/> are missing since it is used for pagination.</remarks>
+        /// <param name="sieveParams">The query parameters used for filtering, sorting and paginating.</param>
+        /// <returns>The records filtered, sorted and paginated and metadata of total items, total pages, current page, and page size.</returns>
+        [ProducesResponseType<PagedResponseDTO<GuardDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet(nameof(GetGuardsDTO))]
         public async Task<ActionResult<PagedResponseDTO<GuardDTO>>> GetGuardsDTO([FromQuery] SieveModel sieveParams)
         {
@@ -161,6 +199,15 @@ namespace DBGuardAPI.Controllers
             }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardDTO>(sieveParams, query);
         }
+        /// <summary>
+        /// Filters, paginates and sorts <see cref="GuardChangeTransactionDTO"/> records.
+        /// </summary>
+        /// <remarks>Returns a bad request if the <see cref="SieveModel.PageSize"/> or <see cref="SieveModel.Page"/> are missing since it is used for pagination.</remarks>
+        /// <param name="sieveParams">The query parameters used to filter, paginate and sort.</param>
+        /// <returns>The records filtered, paginated and sorted and metadata of total items, total pages, current page, page and page size.</returns>
+        [ProducesResponseType<PagedResponseDTO<GuardChangeTransactionDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         [HttpGet(nameof(GetGuardChangeTransactions))]
         public async Task<ActionResult<PagedResponseDTO<GuardChangeTransactionDTO>>> GetGuardChangeTransactions([FromQuery] SieveModel sieveParams)
         {
@@ -192,6 +239,14 @@ namespace DBGuardAPI.Controllers
                 .AsQueryable();
             return (await _entityViewGetter.GetPagedResponseAsync<GuardChangeTransactionDTO>(sieveParams, query));
         }
+        /// <summary>
+        /// Gets a guard to edit.
+        /// </summary>
+        /// <remarks>Joins the guards <see cref="DatabaseConnection"/> since it can be edited from guard.</remarks>
+        /// <param name="guardId">The id of the guard to edit.</param>
+        /// <returns>The guard to edit.</returns>
+        [ProducesResponseType<CreateGuardDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet(nameof(GetGuardToEdit))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult<CreateGuardDTO>> GetGuardToEdit([FromQuery] int guardId)
@@ -233,6 +288,13 @@ namespace DBGuardAPI.Controllers
             }
             return guardToEdit;
         }
+        /// <summary>
+        /// Groups guard changes by month and state.
+        /// </summary>
+        /// <remarks>Assumes twelve months.</remarks>
+        /// <param name="yearSelection">The year of guard changes to get.</param>
+        /// <returns>A list of twelve * count of <see cref="GuardState"/> records with the month, guard state, and number of guard states for that month.</returns>
+        [ProducesResponseType<List<GuardChangeItemDTO>>(StatusCodes.Status200OK)]
         [HttpGet(nameof(GetMonthlyGuardChangeData))]
         public async Task<ActionResult<List<GuardChangeItemDTO>>> GetMonthlyGuardChangeData([FromQuery] DateTime yearSelection)
         {
@@ -270,6 +332,11 @@ namespace DBGuardAPI.Controllers
             }
             return changeItems;
         }
+        /// <summary>
+        /// Gets total counts of created <see cref="Guard"/>, <see cref="GuardChangeTransaction"/>, successful <see cref="NotificationTransaction"/>, <see cref="NotificationProvider"/>, <see cref="DatabaseConnection"/> and <see cref="User"/>
+        /// </summary>
+        /// <returns>The total counts in a summary object.</returns>
+        [ProducesResponseType<TotalSummary>(StatusCodes.Status200OK)]
         [HttpGet(nameof(GetTotalSummary))]
         public async Task<ActionResult<TotalSummary>> GetTotalSummary()
         {
@@ -285,6 +352,16 @@ namespace DBGuardAPI.Controllers
             };
             return summary;
         }
+        /// <summary>
+        /// Creates a new guard.
+        /// </summary>
+        /// <remarks>If <see cref="CreateGuardDTO.ValidateGuard"/> is true it will test the guard before creation.</remarks>
+        /// <param name="newGuard">The new guard information to create.</param>
+        /// <returns>A simplified version of the created guard.</returns>
+        /// <exception cref="InvalidDataException">Thrown when trigger column is missing from query.</exception>
+        [ProducesResponseType<SimpleGuardDTO>(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostGuard))]
         public async Task<ActionResult> PostGuard(CreateGuardDTO newGuard)
@@ -305,7 +382,7 @@ namespace DBGuardAPI.Controllers
             try
             {
                 string? password = null;
-                if (dbConnection.Password is not null)
+                if (!string.IsNullOrWhiteSpace(dbConnection.Password))
                 {
                     password = _credentialProtector.Decrypt(dbConnection.Password);
                 }
@@ -364,6 +441,14 @@ namespace DBGuardAPI.Controllers
                 return BadRequest(new { ex.Message });
             }
         }
+
+        /// <summary>
+        /// Runs a guard manually.
+        /// </summary>
+        /// <param name="guardId">The id of the guard to run.</param>
+        /// <returns>The guard state of the guard.</returns>
+        [ProducesResponseType<GuardState>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost(nameof(RunGuardManually))]
         public async Task<ActionResult<GuardState>> RunGuardManually([FromQuery] int guardId)
         {
@@ -377,6 +462,15 @@ namespace DBGuardAPI.Controllers
             Guard guardAfterProcessing = (await context.Guards.FindAsync(guardId))!;
             return guardAfterProcessing.GuardState;
         }
+        /// <summary>
+        /// Edits a guard.
+        /// </summary>
+        /// <remarks>Also edits guard notifications.</remarks>
+        /// <param name="guardEdits">The guard to edit with updated information.</param>
+        /// <returns>Guard with simplified information.</returns>
+        [ProducesResponseType<SimpleGuardDTO>(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPut(nameof(PutGuard))]
         public async Task<ActionResult> PutGuard(CreateGuardDTO guardEdits)
@@ -420,6 +514,7 @@ namespace DBGuardAPI.Controllers
                 .Where(notification =>  !guardEdits.Notifications.Where(editedNotification => editedNotification.Id is not null).Select(editedNotification => editedNotification.Id).Contains(notification.Id))
                 .ToList();
             context.GuardNotifications.RemoveRange(notificationToRemove);
+
             // Add new notifications
             List<GuardNotification> newNotifications = guardEdits.Notifications.Where(notification => notification.Id is null).Select(GuardNotificationHelper.MapToEntity).ToList();
             foreach(GuardNotification notification in newNotifications)
@@ -456,6 +551,14 @@ namespace DBGuardAPI.Controllers
                 GuardDescription = guard.GuardDescription
             });
         }
+        /// <summary>
+        /// Deletes a guard.
+        /// </summary>
+        /// <remarks>Also deletes the guard notifications.</remarks>
+        /// <param name="guardId">The id of the guard to delete.</param>
+        /// <returns>Result of operation.</returns>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = RoleNames.Admin)]
         [HttpDelete(nameof(DeleteGuard))]
         public async Task<ActionResult> DeleteGuard([FromQuery] int guardId)

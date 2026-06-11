@@ -47,5 +47,12 @@
     <span class="guard-key">Total triggers:</span>
     <span class="guard-value">{{ guardDetail().totalTriggers }}</span>
     <span class="guard-key">Created by:</span>
-    <p-button [label]="guardDetail().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardDetail().createdByUserId]"></p-button>
+    @if (guardDetail().createdByUserId !== null) {
+        <p-button [label]="guardDetail().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardDetail().createdByUserId]"></p-button>
+    }
+    @else {
+        <div>
+            <p-tag value="Deleted" severity="danger"></p-tag>
+        </div>
+    }
 </div>

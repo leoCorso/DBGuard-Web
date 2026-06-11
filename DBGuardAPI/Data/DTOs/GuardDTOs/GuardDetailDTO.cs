@@ -11,8 +11,8 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public DateTimeOffset CreateDate { get; set; }
         public DateTimeOffset? LastRun { get; set; }
         public DateTimeOffset LastEditedDate { get; set; }
-        public required string CreatedByUserId { get; set; }
-        public required string UserName { get; set; }
+        public string? CreatedByUserId { get; set; }
+        public string? UserName { get; set; }
         public required string TriggerQuery { get; set; }
         public required string TriggerColumn { get; set; }
         public GuardOperator TriggerOperator { get; set; }

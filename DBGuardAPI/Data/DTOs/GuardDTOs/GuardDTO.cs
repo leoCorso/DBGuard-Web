@@ -16,9 +16,9 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         [Sieve(CanSort = true, CanFilter = true)]
         public DateTimeOffset LastEditedDate { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CreatedByUserId { get; set; }
+        public string? CreatedByUserId { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string UserName { get; set; }
+        public string? UserName { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public required string TriggerQuery { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
