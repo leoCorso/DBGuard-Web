@@ -1,6 +1,7 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
 using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
+using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models;
 using DBGuardAPI.Data.Models.NotificationProviders;
 using DBGuardAPI.Data.Models.ServiceProviders;
@@ -15,6 +16,12 @@ using Sieve.Models;
 
 namespace DBGuardAPI.Controllers
 {
+    /// <summary>
+    /// Api controller for notification providers
+    /// </summary>
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -35,6 +42,14 @@ namespace DBGuardAPI.Controllers
             _entityViewGetter = entityViewGetter;
             _notificationService = notificationService;
         }
+        /// <summary>
+        /// Gets a notification providers details.
+        /// </summary>
+        /// <param name="id">The id of the notification provider to get.</param>
+        /// <returns>The notification provider.</returns>
+        /// <exception cref="NotSupportedException">Thrown when the notification provider cannot be pattern matched with a supported NotificationProvider.</exception>
+        [ProducesResponseType<NotificationProviderDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet(nameof(GetNotificationProviderDetail))]
         public async Task<ActionResult<NotificationProviderDTO>> GetNotificationProviderDetail([FromQuery] int id)
         {
@@ -60,7 +75,7 @@ namespace DBGuardAPI.Controllers
                     CreateDate = email.CreateDate,
                     LastEdited = email.LastEditedDate,
                     CreatedByUserId = email.CreatedByUserId,
-                    CreatedByUsername = email.CreatedByUser?.UserName!,
+                    CreatedByUsername = email.CreatedByUser?.UserName,
                     SMTPServer = email.SMTPServer,
                     Username = email.Username,
                     Port = email.Port,
@@ -75,9 +90,18 @@ namespace DBGuardAPI.Controllers
                     LastEdited = http.LastEditedDate,
                     CreatedByUserId = http.CreatedByUserId,
                     CreatedByUsername = http.CreatedByUser?.UserName!
-                }
+                },
+                _ => throw new NotSupportedException($"The notification provider {provider} is not supported")
             };
         }
+        /// <summary>
+        /// Filters, sorts and paginates notification provider records.
+        /// </summary>
+        /// <remarks>Returns a bad request when the <see cref="SieveModel.PageSize"/> or <see cref="SieveModel.Page"/> are missing as its requried for pagination.</remarks>
+        /// <param name="sieveParams">The query params to filter, sort and paginate.</param>
+        /// <returns>The filtered, paginated and sorted records of notification providers and total items, total pages, current page, and page size.</returns>
+        [ProducesResponseType<PagedResponseDTO<NotificationProviderDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet(nameof(GetNotificationProviders))]
         public async Task<ActionResult<PagedResponseDTO<NotificationProviderDTO>>> GetNotificationProviders([FromQuery] SieveModel sieveParams)
         {
@@ -99,6 +123,16 @@ namespace DBGuardAPI.Controllers
                 }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync(sieveParams, query);
         }
+        /// <summary>
+        /// Gets a notification provider to edit.
+        /// </summary>
+        /// <remarks>Returns a conflict if the provider to edit is a system generated provider.</remarks>
+        /// <param name="providerId">The id of the provider to edit.</param>
+        /// <returns>The notification provider to edit.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when the provider pattern does not match an existing provider type.</exception>
+        [ProducesResponseType<CreateNotificationProviderDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpGet(nameof(GetProviderToEdit))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult<CreateNotificationProviderDTO>> GetProviderToEdit([FromQuery] int providerId)
@@ -110,7 +144,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogWarning("A get provider to edit request was made on an invalid provider id {ProviderId}", providerId);
                 return NotFound();
             }
-            if(provider.CreatedByUserId is null)
+            if(provider.ProviderType == NotificationType.HTTP)
             {
                 return Conflict(new { Message = "System made providers cannot be edited"});
             }
@@ -129,6 +163,16 @@ namespace DBGuardAPI.Controllers
             _ => throw new InvalidOperationException()
             };
         }
+
+        /// <summary>
+        /// Adds a new notification provider.
+        /// </summary>
+        /// <remarks>If the <see cref="CreateNotificationProviderDTO.VerifyProvider"/> is true, it will attempt to test the provider.</remarks>
+        /// <param name="newProvider">The new provider to create.</param>
+        /// <returns>The created notification provider.</returns>
+        [ProducesResponseType<NotificationProviderDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPost(nameof(PostNotificationProvider))]
         public async Task<ActionResult<NotificationProviderDTO>> PostNotificationProvider(CreateNotificationProviderDTO newProvider)
@@ -177,9 +221,17 @@ namespace DBGuardAPI.Controllers
             await context.SaveChangesAsync();
             _logger.LogInformation("A notification provider was created {ProviderId}", newProvider.Id);
             NotificationProvider providerToReturn = (await context.NotificationProviders.AsNoTracking().Where(existingProvider => provider.Id == existingProvider.Id).Include(existingProvider => existingProvider.CreatedByUser).FirstOrDefaultAsync())!;
-            return NotificationProviderHelper.MapToDTO(providerToReturn);
+            return NotificationProviderHelper.MapToDTO(providerToReturn); // We dont return the CreatedAction object since it was not working with Json mapping.
         }
 
+        /// <summary>
+        /// Tests a provider.
+        /// </summary>
+        /// <param name="providerId">The id of the provider to test.</param>
+        /// <returns>A status code of the test result.</returns>
+        [ProducesResponseType<ActionResult>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
         [HttpPost(nameof(TestNotificationProvider))]
         public async  Task<ActionResult> TestNotificationProvider([FromQuery] int providerId)
         {
@@ -208,6 +260,21 @@ namespace DBGuardAPI.Controllers
                 return StatusCode(StatusCodes.Status502BadGateway, new {  ex.Message });
             }
         }
+
+        /// <summary>
+        /// Updates a notification provider.
+        /// </summary>
+        /// <remarks>
+        /// Checks that <see cref="CreateNotificationProviderDTO.Id"/> is not null since the type is also used to create new providers.
+        /// If <see cref="CreateNotificationProviderDTO.VerifyProvider"/> is true, it will test the provider before updating.
+        /// </remarks>
+        /// <param name="updatedProvider">The updated provider to edit.</param>
+        /// <returns>The updated provider.</returns>
+        [ProducesResponseType<NotificationProviderDTO>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
         [Authorize(Roles = RoleNames.Admin)]
         [HttpPut(nameof(PutNotificationProvider))]
         public async Task<ActionResult<NotificationProviderDTO>> PutNotificationProvider(CreateNotificationProviderDTO updatedProvider)
@@ -224,7 +291,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogWarning("A notification provider edit was attempted with an invalid provider id {ProviderId}", updatedProvider.Id);
                 return NotFound();
             }
-            if(providerToEdit.CreatedByUserId is null)
+            if(GuardNotificationHelper.SystemNotificationTypes.Contains(updatedProvider.ProviderType))
             {
                 return Conflict(new { Message = "System made providers cannot be edited" });
             }
@@ -267,6 +334,19 @@ namespace DBGuardAPI.Controllers
             NotificationProvider providerDTO = (await context.NotificationProviders.Where(provider => provider.Id == updatedProvider.Id).Include(provider => provider.CreatedByUser).FirstOrDefaultAsync())!;
             return NotificationProviderHelper.MapToDTO(providerDTO);
         }
+
+        /// <summary>
+        /// Deletes a notification provider.
+        /// </summary>
+        /// <remarks>
+        /// Returns a conflict if there are guard notifications using this provider.
+        /// Returns a conflict if the provider to delete is a system generated provider.
+        /// </remarks>
+        /// <param name="providerId">The id of the notification provider to delete.</param>
+        /// <returns>A status result of the deletion.</returns>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpDelete(nameof(DeleteProvider))]
         [Authorize(Roles = RoleNames.Admin)]
         public async Task<ActionResult> DeleteProvider([FromQuery] int providerId)
@@ -279,7 +359,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A provider deleting was attempted on a non-existing provider {ProviderId}", providerId);
                 return NotFound();
             }
-            if(providerToDel.CreatedByUserId is null)
+            if(GuardNotificationHelper.SystemNotificationTypes.Contains(providerToDel.ProviderType))
             {
                 return Conflict(new { Message = "System made providers cannot be deleted"});
             }

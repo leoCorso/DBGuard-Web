@@ -11,11 +11,14 @@
     <span class="provider-value">{{ getEnumLabel(notificationTypes, notificationProvider().providerType) }}</span>
     <span class="provider-key">Created by</span>
     <span class="provider-value">
-        @if (notificationProvider().createdByUserId) {
-            <p-button [outlined]="true" severity="contrast" [label]="notificationProvider().createdByUsername" [routerLink]="['/users/detail', notificationProvider().createdByUserId]"></p-button>
+        @if(notificationProvider().providerType === notificationTypes.Http){
+            <p-tag severity="info" value="System"></p-tag>
+        }
+        @else if(notificationProvider().createdByUserId === null){
+            <p-tag severity="danger" value="Deleted"></p-tag>
         }
         @else {
-            <p-tag severity="info" value="System"></p-tag>
+            <p-button [outlined]="true" severity="contrast" [label]="notificationProvider().createdByUsername" [routerLink]="['/users/detail', notificationProvider().createdByUserId]"></p-button>
         }
     </span>
 </div>

@@ -43,13 +43,15 @@
                 <td>{{ provider.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>{{ provider.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
-
-                    @if (provider.createdByUsername) {
-                    <p-button [label]="provider.createdByUsername"
-                        [routerLink]="['/users/detail', provider.createdByUserId]" [link]="true"></p-button>
+                    @if (provider.notificationType === notificationType.Http) {
+                        <p-tag value="System" severity="info"></p-tag>
+                    }
+                    @else if (provider.createdByUsername) {
+                        <p-button [label]="provider.createdByUsername"
+                                [routerLink]="['/users/detail', provider.createdByUserId]" [link]="true"></p-button>
                     }
                     @else {
-                    <p-tag value="System" severity="info"></p-tag>
+                        <p-tag value="Deleted" severity="danger"></p-tag>
                     }
                 </td>
             </tr>

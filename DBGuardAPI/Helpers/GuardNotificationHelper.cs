@@ -1,5 +1,6 @@
 ﻿using DBGuardAPI.Data.DTOs.NotificationProviderDTOs;
 using DBGuardAPI.Data.DTOs.NotificationsDTOs;
+using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models.GuardNotifications;
 using DBGuardAPI.Data.Models.ServiceProviders;
 
@@ -7,6 +8,8 @@ namespace DBGuardAPI.Helpers
 {
     public static class GuardNotificationHelper
     {
+        public static NotificationType[] SystemNotificationTypes { get; } = [NotificationType.HTTP]; // The notification types that are system generated.
+
         public static GuardNotification MapToEntity(CreateNotificationDTO newNotification)
         {
             return newNotification switch
