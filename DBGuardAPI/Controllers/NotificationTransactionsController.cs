@@ -13,6 +13,7 @@ using Sieve.Services;
 
 namespace DBGuardAPI.Controllers
 {
+    [ApiController]
     [Authorize]
     [Route("api/[controller]")]
     public class NotificationTransactionsController: ControllerBase
