@@ -420,7 +420,7 @@ namespace DBGuardAPI.Controllers
                     NotifyOnError = newGuard.NotifyOnError,
                     NotifyOnTrigger = newGuard.NotifyOnTrigger,
                     RunPeriodInMinutes = newGuard.RunPeriodInMinutes,
-                    GuardNotifications = newGuard.Notifications.Select(notification => GuardNotificationHelper.MapToEntity(notification)).ToList()
+                    GuardNotifications = newGuard.Notifications.Select(notification => GuardNotificationHelper.MapToEntity(notification, user.Id)).ToList()
                 };
                 await context.Guards.AddAsync(guard);
                 await context.SaveChangesAsync();
@@ -481,6 +481,7 @@ namespace DBGuardAPI.Controllers
                 return BadRequest();
             }
             using var context = await _dbContextFactory.CreateDbContextAsync();
+            User user = (await _userManager.GetUserAsync(User))!;
             // Update guard properties
             Guard? guard = await context.Guards
                 .Where(guard => guard.Id == guardEdits.Id)
@@ -516,7 +517,7 @@ namespace DBGuardAPI.Controllers
             context.GuardNotifications.RemoveRange(notificationToRemove);
 
             // Add new notifications
-            List<GuardNotification> newNotifications = guardEdits.Notifications.Where(notification => notification.Id is null).Select(GuardNotificationHelper.MapToEntity).ToList();
+            List<GuardNotification> newNotifications = guardEdits.Notifications.Where(notification => notification.Id is null).Select(n => GuardNotificationHelper.MapToEntity(n, user.Id)).ToList();
             foreach(GuardNotification notification in newNotifications)
             {
                 guard.GuardNotifications.Add(notification);

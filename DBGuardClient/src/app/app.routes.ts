@@ -123,5 +123,13 @@ export const routes: Routes = [
         path: 'settings',
         component: SettingsWebpage,
         canActivate: [loggedInGuard]
+    },
+
+
+    // Fallback route
+    {
+        path: '**',
+        redirectTo: '',
+        pathMatch: 'full'
     }
 ];

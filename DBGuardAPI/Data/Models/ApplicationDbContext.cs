@@ -71,6 +71,7 @@ namespace DBGuardAPI.Data.Models
                     .WithOne(gn => gn.Guard)
                     .HasForeignKey(gn => gn.GuardId)
                     .OnDelete(DeleteBehavior.Cascade);
+
                 guard.HasMany(g => g.GuardChangeTransactions)
                     .WithOne(gct => gct.Guard)
                     .HasForeignKey(gct => gct.GuardId)
@@ -116,6 +117,12 @@ namespace DBGuardAPI.Data.Models
                 .WithOne(nt => nt.GuardNotification)
                 .HasForeignKey(nt => nt.GuardNotificationId)
                 .OnDelete(DeleteBehavior.SetNull);
+                guardNotification
+                .HasOne(n => n.CreatedByUser)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.CreatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             });
             builder.Entity<HTTPNotification>(httpNotification =>
             {

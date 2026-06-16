@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using DBGuardAPI.Data.Models.GuardNotifications;
 using DBGuardAPI.Data.Models.ServiceProviders;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +16,7 @@ namespace DBGuardAPI.Data.Models
         public ICollection<User> CreatedUsers { get; set; } = [];
         public ICollection<DatabaseConnection> DatabaseConnections { get; set; } = [];
         public ICollection<NotificationProvider> NotificationProviders { get; set; } = [];
+        public ICollection<GuardNotification> Notifications { get; set; } = [];
         public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     }
 }

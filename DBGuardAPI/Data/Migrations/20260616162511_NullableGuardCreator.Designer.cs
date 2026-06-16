@@ -10,11 +10,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace DBGuardAPI.Data.Migrations
+namespace DBGuardAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260429165847_Initial")]
-    partial class Initial
+    [Migration("20260616162511_NullableGuardCreator")]
+    partial class NullableGuardCreator
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,6 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -88,17 +87,11 @@ namespace DBGuardAPI.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CountColumn")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("count_column");
-
                     b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -154,6 +147,11 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("total_triggers");
 
+                    b.Property<string>("TriggerColumn")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_column");
+
                     b.Property<int>("TriggerOperator")
                         .HasColumnType("integer")
                         .HasColumnName("trigger_operator");
@@ -202,7 +200,6 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnName("database_connection_id");
 
                     b.Property<string>("DatabaseConnectionUsername")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("database_connection_username");
 
@@ -215,22 +212,9 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("guard_id");
 
-                    b.Property<int>("GuardOperator")
-                        .HasColumnType("integer")
-                        .HasColumnName("guard_operator");
-
-                    b.Property<string>("GuardQuery")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("guard_query");
-
                     b.Property<int>("GuardState")
                         .HasColumnType("integer")
                         .HasColumnName("guard_state");
-
-                    b.Property<int>("GuardValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("guard_value");
 
                     b.Property<string>("Message")
                         .HasColumnType("text")
@@ -240,13 +224,26 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("previous_guard_state");
 
-                    b.Property<int?>("ResultValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("result_value");
-
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
+
+                    b.Property<int>("TriggerOperator")
+                        .HasColumnType("integer")
+                        .HasColumnName("trigger_operator");
+
+                    b.Property<string>("TriggerQuery")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_query");
+
+                    b.Property<int>("TriggerValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("trigger_value");
+
+                    b.Property<int?>("TriggeredValue")
+                        .HasColumnType("integer")
+                        .HasColumnName("triggered_value");
 
                     b.HasKey("Id")
                         .HasName("pk_guard_change_transactions");
@@ -361,6 +358,46 @@ namespace DBGuardAPI.Data.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("DBGuardAPI.Data.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_revoked");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("token");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_refresh_tokens");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
+
+                    b.ToTable("refresh_tokens", (string)null);
+                });
+
             modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", b =>
                 {
                     b.Property<int>("Id")
@@ -375,7 +412,6 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -505,11 +541,6 @@ namespace DBGuardAPI.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    b.Property<string>("CountColumn")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("count_column");
-
                     b.Property<DateTimeOffset>("CreateDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("create_date");
@@ -564,6 +595,11 @@ namespace DBGuardAPI.Data.Migrations
                     b.Property<int>("TotalTriggers")
                         .HasColumnType("integer")
                         .HasColumnName("total_triggers");
+
+                    b.Property<string>("TriggerColumn")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("trigger_column");
 
                     b.Property<int>("TriggerOperator")
                         .HasColumnType("integer")
@@ -784,19 +820,36 @@ namespace DBGuardAPI.Data.Migrations
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("DBGuardAPI.Data.Models.GuardNotifications.TextNotification", b =>
+            modelBuilder.Entity("DBGuardAPI.Data.Models.GuardNotifications.HTTPNotification", b =>
                 {
                     b.HasBaseType("DBGuardAPI.Data.Models.GuardNotifications.GuardNotification");
 
-                    b.PrimitiveCollection<List<string>>("PhoneNumbers")
-                        .IsRequired()
-                        .HasColumnType("text[]")
-                        .HasColumnName("phone_numbers");
+                    b.Property<string>("BodyData")
+                        .HasColumnType("text")
+                        .HasColumnName("body_data");
 
-                    b.Property<string>("TextMessage")
+                    b.Property<int?>("BodyType")
+                        .HasColumnType("integer")
+                        .HasColumnName("body_type");
+
+                    b.Property<int>("HttpMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("http_method");
+
+                    b.Property<Dictionary<string, string>>("QueryParameters")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("query_parameters");
+
+                    b.Property<Dictionary<string, string>>("RequestHeaders")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("request_headers");
+
+                    b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("text_message");
+                        .HasColumnName("url");
 
                     b.ToTable("guard_notifications", (string)null);
 
@@ -837,21 +890,55 @@ namespace DBGuardAPI.Data.Migrations
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("DBGuardAPI.Data.Models.NotificationTransactions.TextNotificationTransaction", b =>
+            modelBuilder.Entity("DBGuardAPI.Data.Models.NotificationTransactions.HTTPNotificationTransaction", b =>
                 {
                     b.HasBaseType("DBGuardAPI.Data.Models.NotificationTransactions.NotificationTransaction");
 
-                    b.Property<string>("PhoneNumbers")
-                        .IsRequired()
+                    b.Property<string>("BodyData")
                         .HasColumnType("text")
-                        .HasColumnName("phone_numbers");
+                        .HasColumnName("body_data");
 
-                    b.Property<string>("TextMessage")
+                    b.Property<int?>("BodyType")
+                        .HasColumnType("integer")
+                        .HasColumnName("body_type");
+
+                    b.Property<int>("HttpMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("http_method");
+
+                    b.Property<Dictionary<string, string>>("QueryParameters")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("query_parameters");
+
+                    b.Property<Dictionary<string, string>>("RequestHeaders")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("request_headers");
+
+                    b.Property<int?>("ResponseCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("response_code");
+
+                    b.Property<string>("ResponseMessage")
+                        .HasColumnType("text")
+                        .HasColumnName("response_message");
+
+                    b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("text_message");
+                        .HasColumnName("url");
 
                     b.ToTable("notification_transactions", (string)null);
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("DBGuardAPI.Data.Models.NotificationProviders.HTTPProvider", b =>
+                {
+                    b.HasBaseType("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider");
+
+                    b.ToTable("notification_providers", (string)null);
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -889,27 +976,12 @@ namespace DBGuardAPI.Data.Migrations
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.TextProvider", b =>
-                {
-                    b.HasBaseType("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("phone_number");
-
-                    b.ToTable("notification_providers", (string)null);
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("DBGuardAPI.Data.Models.DatabaseConnection", b =>
                 {
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
                         .WithMany("DatabaseConnections")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_database_connections_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");
@@ -920,8 +992,7 @@ namespace DBGuardAPI.Data.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
                         .WithMany("Guards")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_guards_users_created_by_user_id");
 
                     b.HasOne("DBGuardAPI.Data.Models.DatabaseConnection", "DatabaseConnection")
@@ -982,7 +1053,6 @@ namespace DBGuardAPI.Data.Migrations
                         .WithMany("NotificationTransactions")
                         .HasForeignKey("GuardChangeTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_notification_transactions_guard_change_transactions_guard_c");
 
                     b.HasOne("DBGuardAPI.Data.Models.Guard", "Guard")
@@ -994,7 +1064,7 @@ namespace DBGuardAPI.Data.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.GuardNotifications.GuardNotification", "GuardNotification")
                         .WithMany("NotificationTransactions")
                         .HasForeignKey("GuardNotificationId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_notification_transactions_guard_notifications_guard_notific");
 
                     b.Navigation("Guard");
@@ -1004,13 +1074,24 @@ namespace DBGuardAPI.Data.Migrations
                     b.Navigation("GuardNotification");
                 });
 
+            modelBuilder.Entity("DBGuardAPI.Data.Models.RefreshToken", b =>
+                {
+                    b.HasOne("DBGuardAPI.Data.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DBGuardAPI.Data.Models.ServiceProviders.NotificationProvider", b =>
                 {
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
                         .WithMany("NotificationProviders")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_notification_providers_asp_net_users_created_by_user_id");
 
                     b.Navigation("CreatedByUser");
@@ -1124,6 +1205,8 @@ namespace DBGuardAPI.Data.Migrations
                     b.Navigation("Guards");
 
                     b.Navigation("NotificationProviders");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

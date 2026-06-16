@@ -31,11 +31,11 @@
     <span class="change-value">{{ changeHistoryDetail().triggerValue }}</span>
     <span class="change-key"><strong>Triggered value:</strong></span>
     <span class="change-value">
-        @if (changeHistoryDetail().triggeredValue !== undefined) {
+        @if (changeHistoryDetail().triggeredValue !== null) {
             {{ changeHistoryDetail().triggeredValue }}
         }
         @else {
-            <em>None</em>
+            <p-tag value="Not applicable" severity="info"></p-tag>
         }
     </span>
     <span class="change-key"><strong>Database connection id</strong></span>

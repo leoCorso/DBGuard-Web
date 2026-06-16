@@ -212,12 +212,16 @@ namespace DBGuardAPI.Controllers
         }
         [HttpPost(nameof(LogOut))]
         [AllowAnonymous]
-        public async Task<ActionResult> LogOut()
+        public async Task<ActionResult<AuthResult>> LogOut()
         {
             User? user = await _userManager.GetUserAsync(User);
             if(user is null)
             {
-                return NotFound();
+                return new AuthResult
+                {
+                    Success = false,
+                    Message = "User not found or logged in"
+                };
             }
             string? token = Request.Cookies["refreshToken"]; // Get refresh token in cookie
             // Revoke refresh token in database
@@ -231,9 +235,11 @@ namespace DBGuardAPI.Controllers
                 HttpOnly = true,
                 //Secure = true,
                 //SameSite = SameSiteMode.None,
-            }); 
-
-            return Ok();
+            });
+            return new AuthResult
+            {
+                Success = true
+            };
         }
         [HttpPost(nameof(RefreshToken))]
         [AllowAnonymous]

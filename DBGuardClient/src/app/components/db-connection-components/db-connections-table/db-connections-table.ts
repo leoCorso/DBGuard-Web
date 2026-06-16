@@ -13,10 +13,11 @@ import { SortValue } from '../../../interfaces/sorting';
 import { Column } from '../../../interfaces/table-items';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
+import { Tag } from 'primeng/tag';
 
 @Component({
   selector: 'app-db-connections-table',
-  imports: [TableModule, Button, FilterItem, RouterLink, DatePipe],
+  imports: [TableModule, Button, FilterItem, RouterLink, DatePipe, Tag],
   templateUrl: './db-connections-table.html',
   styleUrl: './db-connections-table.scss',
 })

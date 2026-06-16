@@ -16,7 +16,14 @@
     <span class="info-value">{{ notificationDetail().lastEdited | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
     <span class="info-key">Created by:</span>
     <span class="info-value">
-        <p-button [label]="notificationDetail().createdByUsername" [routerLink]="['/users/detail', notificationDetail().createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+        @if(notificationDetail().createdByUserId === null){
+            <div>
+                <p-tag value="Deleted" severity="danger"></p-tag>
+            </div>
+        }
+        @else {
+            <p-button [label]="notificationDetail().createdByUsername" [routerLink]="['/users/detail', notificationDetail().createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+        }
     </span>
 </div>
 <p-divider></p-divider>

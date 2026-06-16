@@ -56,8 +56,13 @@
                         [routerLink]="['/providers/detail', notification.notificationProviderId]"></p-button>
                 </td>
                 <td>
-                    <p-button [label]="notification.createdByUsername" [link]="true"
-                        [routerLink]="['/users/detail', notification.createdByUserId]"></p-button>
+                    @if (notification.createdByUsername === null) {
+                        <p-tag value="Deleted" severity="danger"></p-tag>
+                    }
+                    @else {
+                        <p-button [label]="notification.createdByUsername" [link]="true"
+                            [routerLink]="['/users/detail', notification.createdByUserId]"></p-button>
+                    }
                 </td>
             </tr>
         </ng-template>

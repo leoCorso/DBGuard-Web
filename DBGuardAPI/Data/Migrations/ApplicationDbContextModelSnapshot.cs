@@ -89,7 +89,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -268,6 +267,10 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("create_date");
 
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("created_by_user_id");
+
                     b.Property<int>("GuardId")
                         .HasColumnType("integer")
                         .HasColumnName("guard_id");
@@ -286,6 +289,9 @@ namespace DBGuardAPI.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_guard_notifications");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_guard_notifications_created_by_user_id");
 
                     b.HasIndex("GuardId")
                         .HasDatabaseName("ix_guard_notifications_guard_id");
@@ -544,7 +550,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnName("create_date");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
@@ -608,7 +613,6 @@ namespace DBGuardAPI.Migrations
                         .HasColumnName("trigger_value");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_name");
 
@@ -990,8 +994,7 @@ namespace DBGuardAPI.Migrations
                     b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
                         .WithMany("Guards")
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_guards_users_created_by_user_id");
 
                     b.HasOne("DBGuardAPI.Data.Models.DatabaseConnection", "DatabaseConnection")
@@ -1027,6 +1030,12 @@ namespace DBGuardAPI.Migrations
 
             modelBuilder.Entity("DBGuardAPI.Data.Models.GuardNotifications.GuardNotification", b =>
                 {
+                    b.HasOne("DBGuardAPI.Data.Models.User", "CreatedByUser")
+                        .WithMany("Notifications")
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_guard_notifications_asp_net_users_created_by_user_id");
+
                     b.HasOne("DBGuardAPI.Data.Models.Guard", "Guard")
                         .WithMany("GuardNotifications")
                         .HasForeignKey("GuardId")
@@ -1040,6 +1049,8 @@ namespace DBGuardAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_guard_notifications_notification_providers_notification_pro");
+
+                    b.Navigation("CreatedByUser");
 
                     b.Navigation("Guard");
 
@@ -1204,6 +1215,8 @@ namespace DBGuardAPI.Migrations
                     b.Navigation("Guards");
 
                     b.Navigation("NotificationProviders");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("RefreshTokens");
                 });

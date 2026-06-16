@@ -10,12 +10,13 @@ namespace DBGuardAPI.Helpers
     {
         public static NotificationType[] SystemNotificationTypes { get; } = [NotificationType.HTTP]; // The notification types that are system generated.
 
-        public static GuardNotification MapToEntity(CreateNotificationDTO newNotification)
+        public static GuardNotification MapToEntity(CreateNotificationDTO newNotification, string userId)
         {
             return newNotification switch
             {
                 CreateEmailNotificationDTO emailNotification => new EmailNotification
                 {
+                    CreatedByUserId = userId,
                     NotificationProviderId = newNotification.NotificationProvider.Id,
                     EmailSubject = emailNotification.EmailSubject.Trim(),
                     EmailBody = emailNotification.EmailBody.Trim(),
@@ -84,8 +85,8 @@ namespace DBGuardAPI.Helpers
                     ToEmails = emailDetail.ToEmails,
                     CCEmails = emailDetail.CCEmails,
                     BCCEmails = emailDetail.BCCEmails,
-                    CreatedByUserId = emailDetail.Guard!.CreatedByUserId,
-                    CreatedByUsername = emailDetail.Guard.CreatedByUser!.UserName!
+                    CreatedByUserId = emailDetail.CreatedByUser != null ? emailDetail.CreatedByUserId : null,
+                    CreatedByUsername = emailDetail.CreatedByUser != null ? emailDetail.CreatedByUser.UserName : null
                 },
                 HTTPNotification httpDetail => new HttpNotificationDetailDTO
                 {
@@ -101,8 +102,8 @@ namespace DBGuardAPI.Helpers
                     QueryParameters = httpDetail.QueryParameters,
                     BodyType = httpDetail.BodyType,
                     BodyData = httpDetail.BodyData,
-                    CreatedByUserId = httpDetail.Guard!.CreatedByUserId,
-                    CreatedByUsername = httpDetail.Guard.CreatedByUser!.UserName!
+                    CreatedByUserId = httpDetail.CreatedByUser != null ? httpDetail.CreatedByUserId : null,
+                    CreatedByUsername = httpDetail.CreatedByUser != null ? httpDetail.CreatedByUser.UserName : null
                 },
                 _ => throw new NotSupportedException("This notification type is not supported")
             };

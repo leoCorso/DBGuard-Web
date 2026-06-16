@@ -26,7 +26,14 @@
                     <p-badge [value]="guardData().totalErrors" severity="danger"></p-badge>
                 </div>
                 <label class="info" for="created-by"><strong>Created by:</strong></label>
-                <p-button class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
+                @if (guardData().createdByUserId === null) {
+                    <div style="display: flex; align-items: center;;">
+                        <p-tag value="Deleted" severity="danger"></p-tag>
+                    </div>
+                }
+                @else {
+                    <p-button class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
+                }
                 <label class="info" for="expression"><strong>Trigger expression:</strong></label>
                 <p class="info" id="expression">{{ guardData().triggerColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</p>
             </div>

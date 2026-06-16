@@ -14,9 +14,9 @@ namespace DBGuardAPI.Data.Views
         [Sieve(CanSort = true, CanFilter = true)]
         public DateTimeOffset? LastRun { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CreatedByUserId { get; set; }
+        public string? CreatedByUserId { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string UserName { get; set; }
+        public string? UserName { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public required string TriggerColumn { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]

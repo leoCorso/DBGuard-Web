@@ -59,11 +59,11 @@
                 <td>{{ formatEnumKey(getEnumLabel(guardOperator, change.triggerOperator)) }}</td>
                 <td>{{ change.triggerValue }}</td>
                 <td>
-                    @if (change.triggeredValue !== undefined) {
+                    @if (change.triggeredValue !== null) {
                         {{ change.triggeredValue }}
                     }
                     @else {
-                    <p-tag value="None" severity="info"></p-tag>
+                    <p-tag value="Not applicable" severity="info"></p-tag>
                     }
                 </td>
                 <td><p-button [link]="true" [label]="change.databaseConnectionId"

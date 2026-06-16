@@ -15,8 +15,8 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
         public int NotificationProviderId { get; set; }
         public DateTimeOffset CreateDate { get; set; }
         public DateTimeOffset LastEdited { get; set; }
-        public required string CreatedByUserId { get; set; }
-        public required string CreatedByUsername { get; set; }
+        public string? CreatedByUserId { get; set; }
+        public string? CreatedByUsername { get; set; }
     }
     public class EmailNotificationDetailDTO : NotificationDetailDTO
     {

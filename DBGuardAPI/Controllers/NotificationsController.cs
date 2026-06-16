@@ -41,8 +41,7 @@ namespace DBGuardAPI.Controllers
             }
             using var context = await _dbContextFactory.CreateDbContextAsync();
             IQueryable<GuardNotificationDTO> query = context.GuardNotifications.AsNoTracking()
-            .Include(notification => notification.Guard)
-            .ThenInclude(guard => guard!.CreatedByUser)
+                .Include(n => n.CreatedByUser)
             .Select(notification => new GuardNotificationDTO
             {
                 Id = notification.Id,
@@ -51,8 +50,8 @@ namespace DBGuardAPI.Controllers
                 CreateDate = notification.CreateDate,
                 LastEdited = notification.LastEdited,
                 NotificationProviderId = notification.NotificationProviderId,
-                CreatedByUserId = notification.Guard!.CreatedByUserId,
-                CreatedByUsername = notification.Guard!.CreatedByUser!.UserName!
+                CreatedByUserId = notification.CreatedByUserId != null ? notification.CreatedByUserId : null,
+                CreatedByUsername = notification.CreatedByUser != null ? notification.CreatedByUser.UserName : null
             }).AsQueryable();
             PagedResponseDTO<GuardNotificationDTO> response = await _entityViewGetter.GetPagedResponseAsync<GuardNotificationDTO>(sieveParams, query);
             return response;
@@ -63,8 +62,7 @@ namespace DBGuardAPI.Controllers
             using var context = await _dbContextFactory.CreateDbContextAsync();
             GuardNotification? notification = await context.GuardNotifications.AsNoTracking()
                 .Where(notification => notification.Id == notificationId)
-                .Include(notification => notification.Guard)
-                .ThenInclude(guard => guard!.CreatedByUser)
+                .Include(n => n.CreatedByUser)
                 .FirstOrDefaultAsync();
             if(notification is null)
             {

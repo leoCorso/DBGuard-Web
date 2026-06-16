@@ -18,8 +18,8 @@ namespace DBGuardAPI.Data.DTOs.NotificationsDTOs
         [Sieve(CanSort = true, CanFilter = true)]
         public int NotificationProviderId { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CreatedByUserId { get; set; }
+        public string? CreatedByUserId { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public required string CreatedByUsername { get; set; }
+        public string? CreatedByUsername { get; set; }
     }
 }
