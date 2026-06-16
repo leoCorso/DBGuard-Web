@@ -31,7 +31,7 @@ You can use the following docker compose file to get DBGuard running quickly:
           retries: 5
     
       dbguard:
-        image: dbguard:1.0.4
+        image: dbguard:latest
         restart: unless-stopped
         ports:
           - "8080:8080"
