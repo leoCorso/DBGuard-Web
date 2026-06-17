@@ -48,3 +48,8 @@ html, body {
   align-items: center;
   gap: .5rem;
 }
+.trigger-query-view {
+    max-width: 20rem;
+    max-height: 10rem;
+    overflow: auto;
+}
