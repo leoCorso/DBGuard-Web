@@ -4,6 +4,8 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import Material from '@primeuix/themes/material';
+import { MyPreset } from './theme-preset';
+
 import { DialogService } from 'primeng/dynamicdialog';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -17,11 +19,13 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     providePrimeNG({
       theme: {
-        preset: Material,
+        preset: MyPreset,
         options: {
             darkModeSelector: '.my-app-dark'
         }
-      }
+      },
+      ripple: true,
+      
     }),
     DialogService,
     MessageService,

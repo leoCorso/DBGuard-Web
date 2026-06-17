@@ -177,7 +177,8 @@ export class CreateGuard implements OnInit, OnDestroy {
           notifyOnError: guard.notifyOnError,
           notifyOnTrigger: guard.notifyOnTrigger,
           runPeriodInMinutes: guard.runPeriodInMinutes,
-          notifications: guard.notifications
+          notifications: guard.notifications,
+          runAfter: guard.runAfter ? new Date(guard.runAfter) : null
         });
       }
     });

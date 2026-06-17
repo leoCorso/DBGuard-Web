@@ -18,6 +18,15 @@
     </span>
     <span class="guard-key">Last edited:</span>
     <span class="guard-value">{{ guardDetail().lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
+    <span class="guard-key">Run after:</span>
+    <span class="guard-value">
+        @if (guardDetail().runAfter) {
+            {{ guardDetail().runAfter | date: 'MM/dd/yyyy hh:mm:ss a' }}
+        }
+        @else {
+            <p-tag value="Not set" severity="info"></p-tag>
+        }
+    </span>
     <span class="guard-key">Trigger query:</span>
     <span class="guard-value">{{ guardDetail().triggerQuery }}</span>
     <span class="guard-key">Trigger column:</span>

@@ -31,8 +31,11 @@
         </div>
         }
         @else {
-        @for(item of items; track $index){
-        <app-view-guard-item [guardData]="item"></app-view-guard-item>
+        @for(item of items; track $index;){
+            <app-view-guard-item [guardData]="item"></app-view-guard-item>
+            @if ($index !== items.length - 1) {
+                <p-divider style="margin: 0;"></p-divider>
+            }
         }
         }
 

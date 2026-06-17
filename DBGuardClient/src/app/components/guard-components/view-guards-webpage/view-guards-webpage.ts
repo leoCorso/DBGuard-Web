@@ -17,10 +17,11 @@ import { PaginatedDataView } from '../../shared/paginated-data-view/paginated-da
 import { SortSelectControl } from '../../shared/sort-select-control/sort-select-control';
 import { GuardFilters } from '../guard-filters/guard-filters';
 import { ViewGuardItem } from '../view-guard-item/view-guard-item';
+import { Divider } from 'primeng/divider';
 
 @Component({
   selector: 'app-view-guards-webpage',
-  imports: [Drawer,GuardFilters, Button, TooltipModule, DataView, SortSelectControl, ReactiveFormsModule, ViewGuardItem, ProgressSpinner],
+  imports: [Drawer, GuardFilters, Button, TooltipModule, DataView, SortSelectControl, ReactiveFormsModule, ViewGuardItem, ProgressSpinner, Divider],
   templateUrl: './view-guards-webpage.html',
   styleUrl: './view-guards-webpage.scss',
 })

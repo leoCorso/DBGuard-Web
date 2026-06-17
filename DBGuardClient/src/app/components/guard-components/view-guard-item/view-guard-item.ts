@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { Tag } from 'primeng/tag';
 import { Badge } from 'primeng/badge';
@@ -15,7 +15,7 @@ import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
 
 @Component({
   selector: 'app-view-guard-item',
-  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button],
+  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button, NgClass],
   templateUrl: './view-guard-item.html',
   styleUrl: './view-guard-item.scss',
 })

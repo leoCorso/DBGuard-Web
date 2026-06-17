@@ -1,6 +1,7 @@
 .view-item {
     display: flex;
     justify-content: space-between;
+    padding: 1.3rem;
 }
 .first-pane {
     display: flex;
@@ -63,15 +64,16 @@
   padding: 0;
   margin: 0;
   list-style: none; /* removes bullets */
+  justify-content: end;
 }
 
 .inline-list li {
-  display: flex;
-  align-items: center;
-  font-size: small;
-  gap: .3rem;
+    display: flex;
+    align-items: center;
+    font-size: small;
+    gap: .3rem;
+    justify-content: center;
 }
-
 .inline-list li:not(:last-child)::after {
   content: "•";
   margin: 0 8px;
@@ -111,6 +113,7 @@
 @media(max-width: 992px){
     .third-top {
         display: flex;
+        flex-direction: column;
         justify-content: space-around;
         align-content: center;
         gap: 1rem;

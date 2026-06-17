@@ -1,60 +1,64 @@
-<p-card>
-    <div class="view-item">
-        <div class="first-pane">
-            <div class="first-top">
-                <p-button  severity="contrast" [label]="guardData().guardName" [rounded]="true" [routerLink]="['/guards/detail', guardData().id]"></p-button>
-                <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getGuardStateSeverity(guardData().guardState)"></p-tag>
-            </div>
-            <div class="first-mid">
-                <label class="info" for="created"><strong>Created:</strong></label>
-                <p class="info" id="created">{{ guardData().createDate | date: 'MM/dd/yyy hh:mm a' }}</p>
-                <label class="info" for="last-run"><strong>Last ran:</strong></label>
-                @if(guardData().lastRun){
-                    <p class="info" id="last-ran">{{ guardData().lastRun | date: 'MM/dd/yyyy hh:mm a'}}</p>
-                }
-                @else {
-                    <div class="info">
-                        <p-tag value="Not ran" severity="info"></p-tag>
-                    </div>
-                }
-                <label class="info" for="total-triggers"><strong>Total triggers:</strong></label>
-                <div class="info">
-                    <p-badge [value]="guardData().totalTriggers" severity="warn"></p-badge>
-                </div>
-                <label class="info" for="total-errors"><strong>Total errors:</strong></label>
-                <div class="info">
-                    <p-badge [value]="guardData().totalErrors" severity="danger"></p-badge>
-                </div>
-                <label class="info" for="created-by"><strong>Created by:</strong></label>
-                @if (guardData().createdByUserId === null) {
-                    <div style="display: flex; align-items: center;;">
-                        <p-tag value="Deleted" severity="danger"></p-tag>
-                    </div>
-                }
-                @else {
-                    <p-button class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
-                }
-                <label class="info" for="expression"><strong>Trigger expression:</strong></label>
-                <p class="info" id="expression">{{ guardData().triggerColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</p>
-            </div>
+<div class="view-item">
+    <div class="first-pane">
+        <div class="first-top">
+            <p-button  severity="contrast" [label]="guardData().guardName" [rounded]="true" [routerLink]="['/guards/detail', guardData().id]"></p-button>
+            <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getGuardStateSeverity(guardData().guardState)"></p-tag>
         </div>
-        <div class="third-pane">
-            <div class="third-top">
-                <div style="display: flex;justify-content: end;align-items: center;">
-                    <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
+        <div class="first-mid">
+            <label class="info" for="created"><strong>Created:</strong></label>
+            <p class="info" id="created">{{ guardData().createDate | date: 'MM/dd/yyy hh:mm a' }}</p>
+            <label class="info" for="last-run"><strong>Last ran:</strong></label>
+            @if(guardData().lastRun){
+                <p class="info" id="last-ran">{{ guardData().lastRun | date: 'MM/dd/yyyy hh:mm a'}}</p>
+            }
+            @else {
+                <div class="info">
+                    <p-tag value="Not ran" severity="info"></p-tag>
                 </div>
-                <div>
-                    <label style="margin-right: .5rem;" for="run-period">Run period:</label>
-                    <p-tag [value]="guardData().runPeriodInMinutes | formatRunPeriod" severity="contrast"></p-tag>
+            }
+            <label class="info" for="total-triggers"><strong>Total triggers:</strong></label>
+            <div class="info">
+                <p-badge [value]="guardData().totalTriggers" severity="warn"></p-badge>
+            </div>
+            <label class="info" for="total-errors"><strong>Total errors:</strong></label>
+            <div class="info">
+                <p-badge [value]="guardData().totalErrors" severity="danger"></p-badge>
+            </div>
+            <label class="info" for="created-by"><strong>Created by:</strong></label>
+            @if (guardData().createdByUserId === null) {
+                <div style="display: flex; align-items: center;;">
+                    <p-tag value="Deleted" severity="danger"></p-tag>
                 </div>
-            </div>
-            <div class="third-bottom">
-                <ul class="inline-list">
-                    <li><strong>Database engine: </strong><p>{{ getEnumLabel(databaseEngine, guardData().databaseEngine) }}</p></li>
-                    <li><strong>Database endpoint: </strong><p>{{ guardData().endPoint }}</p></li>
-                    <li><strong>Database name: </strong><p>{{ guardData().databaseName }}</p></li>
-                </ul>
-            </div>
+            }
+            @else {
+                <p-button class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
+            }
+            <label class="info" for="expression"><strong>Trigger expression:</strong></label>
+            <p class="info" id="expression">{{ guardData().triggerColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</p>
         </div>
     </div>
-</p-card>
+    <div class="third-pane">
+        <div class="third-top">
+            <div style="display: flex;justify-content: center;align-items: center;">
+                <label style="margin-right: .5rem;" for="run-period">Run period:</label>
+                <p-tag [value]="guardData().runPeriodInMinutes | formatRunPeriod" severity="contrast"></p-tag>
+            </div>
+            @if (guardData().runAfter) {
+                <div style="display: flex;justify-content: center;align-items: center;">
+                    <label style="margin-right: .5rem;" for="run-after">Run after:</label>
+                    <span id="run-after">{{ guardData().runAfter | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
+                </div>
+            }
+            <div style="display: flex;justify-content: center;align-items: center;">
+                <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
+            </div>
+        </div>
+        <div class="third-bottom">
+            <ul class="inline-list">
+                <li><strong>Database engine: </strong><p>{{ getEnumLabel(databaseEngine, guardData().databaseEngine) }}</p></li>
+                <li><strong>Database endpoint: </strong><p>{{ guardData().endPoint }}</p></li>
+                <li><strong>Database name: </strong><p>{{ guardData().databaseName }}</p></li>
+            </ul>
+        </div>
+    </div>
+</div>
