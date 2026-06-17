@@ -48,7 +48,7 @@ namespace DBGuardAPI.Services
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
             List<int> guardIds = await context.Guards
-                .Where(guard => guard.LastRun == null || (DateTimeOffset.UtcNow - guard.LastRun.Value).TotalMinutes >= guard.RunPeriodInMinutes)
+                .Where(guard => guard.LastRun == null || (DateTimeOffset.UtcNow - guard.LastRun.Value).TotalMinutes >= guard.RunPeriodInMinutes && (guard.RunAfter == null || DateTimeOffset.UtcNow >= guard.RunAfter)) // Guard is ready to process only if it hasnt ran or time has elapsed and there is no run after time or run after time is in the past
                 .Select(guard => guard.Id)
                 .ToListAsync(stoppingToken);
             return guardIds;

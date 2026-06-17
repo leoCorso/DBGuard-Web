@@ -27,11 +27,12 @@ import { NotificationProviderDTO } from '../../../interfaces/notification-provid
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { CreateDbConnection } from '../../db-connection-components/create-db-connection/create-db-connection';
 import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
+import { CodeText } from '../../../directives/code-text';
 
 @Component({
   selector: 'app-create-guard',
   imports: [Card, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
-    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, FormsModule, Checkbox],
+    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, FormsModule, Checkbox, CodeText],
   templateUrl: './create-guard.html',
   styleUrl: './create-guard.scss',
 })

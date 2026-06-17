@@ -26,6 +26,7 @@ namespace DBGuardAPI.Data.Models
         public int TotalTriggers { get; set; } = 0;
         public DateTimeOffset? LastRun { get; set; }
         public double RunPeriodInMinutes { get; set; } = 1;
+        public DateTimeOffset? RunAfter { get; set; } // Guard will only be ran if the current time is after specified time or its null
         public User? CreatedByUser { get; set; }
         public DatabaseConnection? DatabaseConnection { get; set; }
         public ICollection<NotificationTransaction> NotificationTransactions { get; set; } = [];

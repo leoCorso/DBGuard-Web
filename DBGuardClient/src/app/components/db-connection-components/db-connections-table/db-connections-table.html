@@ -41,6 +41,7 @@
                         [routerLink]="['/db-connections/detail', connection.id]"></p-button></td>
                 <td>{{ connection.endpoint }}</td>
                 <td>{{ getEnumLabel(databaseEngine, connection.databaseEngine) }}</td>
+                <td>{{ connection.databaseName }}</td>
                 <td>{{ connection.username }}</td>
                 <td>{{ connection.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>{{ connection.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
