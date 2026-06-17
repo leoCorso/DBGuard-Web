@@ -20,6 +20,7 @@ export interface CreateGuardDTO {
     notifyOnError: boolean,
     notifyOnTrigger: boolean,
     runPeriodInMinutes: number,
+    runAfter?: Date,
     notifications: CreateGuardNotificationDTO[],
     validateGuard?: boolean
 }
@@ -54,6 +55,7 @@ export interface GuardDTO {
     totalErrors: number,
     totalTriggers: number,
     runPeriodInMinutes: number,
+    runAfter?: Date,
     databaseConnectionId: number
 }
 export interface GuardView {
@@ -74,7 +76,8 @@ export interface GuardView {
     isActive: boolean,
     totalErrors: number,
     totalTriggers: number,
-    runPeriodInMinutes: number
+    runPeriodInMinutes: number,
+    runAfter?: Date
 }
 
 export interface GuardDetailDTO {
@@ -98,5 +101,6 @@ export interface GuardDetailDTO {
     totalErrors: number,
     totalTriggers: number,
     runPeriodInMinutes: number,
+    runAfter?: Date,
     databaseConnectionId: number
 }

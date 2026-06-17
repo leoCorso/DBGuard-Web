@@ -19,6 +19,6 @@
         @if (authService.loginError()) {
             <p-message severity="error">{{ authService.loginError() }}</p-message>
         }
-        <p-button label="Login" [rounded]="true" [disabled]="loginForm.invalid" type="submit"></p-button>
+        <p-button [loading]="authService.loggingIn()" label="Login" [rounded]="true" [disabled]="loginForm.invalid" type="submit"></p-button>
     </form>
 </p-card>

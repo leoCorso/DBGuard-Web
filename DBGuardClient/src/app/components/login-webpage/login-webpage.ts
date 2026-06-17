@@ -11,6 +11,7 @@ import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../services/auth-service';
 import { ThemeService } from '../../services/theme-service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login-webpage',

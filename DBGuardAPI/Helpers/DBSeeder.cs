@@ -115,7 +115,7 @@ namespace DBGuardAPI.Helpers
                 CREATE OR REPLACE VIEW guard_view AS
                 SELECT g.id, g.guard_name, g.create_date, g.last_run, 
                     g.created_by_user_id, u.user_name, g.trigger_column, 
-                    g.trigger_operator, g.trigger_value, g.database_connection_id, d.end_point, d.database_engine, d.database_name, g.guard_state, g.is_active, g.total_errors, g.total_triggers, g.run_period_in_minutes 
+                    g.trigger_operator, g.trigger_value, g.database_connection_id, d.end_point, d.database_engine, d.database_name, g.guard_state, g.is_active, g.total_errors, g.total_triggers, g.run_period_in_minutes, g.run_after
                 FROM guards g 
                 LEFT JOIN ""AspNetUsers"" u ON g.created_by_user_id = u.id
                 JOIN database_connections d ON g.database_connection_id = d.id

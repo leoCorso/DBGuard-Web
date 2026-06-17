@@ -127,6 +127,7 @@ namespace DBGuardAPI.Controllers
                     TotalErrors = guard.TotalErrors,
                     TotalTriggers = guard.TotalTriggers,
                     RunPeriodInMinutes = guard.RunPeriodInMinutes,
+                    RunAfter = guard.RunAfter,
                     DatabaseConnectionId = guard.DatabaseConnectionId
                 })
             .Where(guard => guard.Id == id)
@@ -270,6 +271,7 @@ namespace DBGuardAPI.Controllers
                     NotifyOnError = guard.NotifyOnError,
                     NotifyOnTrigger = guard.NotifyOnTrigger,
                     RunPeriodInMinutes = guard.RunPeriodInMinutes,
+                    RunAfter = guard.RunAfter,
                     DatabaseConnection = new SimpleDatabaseConnectionDTO
                     {
                         Id = guard.DatabaseConnection!.Id,
@@ -420,6 +422,7 @@ namespace DBGuardAPI.Controllers
                     NotifyOnError = newGuard.NotifyOnError,
                     NotifyOnTrigger = newGuard.NotifyOnTrigger,
                     RunPeriodInMinutes = newGuard.RunPeriodInMinutes,
+                    RunAfter = newGuard.RunAfter,
                     GuardNotifications = newGuard.Notifications.Select(notification => GuardNotificationHelper.MapToEntity(notification, user.Id)).ToList()
                 };
                 await context.Guards.AddAsync(guard);
@@ -509,6 +512,7 @@ namespace DBGuardAPI.Controllers
             guard.NotifyOnError = guardEdits.NotifyOnError;
             guard.NotifyOnTrigger = guardEdits.NotifyOnTrigger;
             guard.RunPeriodInMinutes = guardEdits.RunPeriodInMinutes;
+            guard.RunAfter = guardEdits.RunAfter;
 
             // Remove notifications not in guard
             List<GuardNotification> notificationToRemove = guard.GuardNotifications

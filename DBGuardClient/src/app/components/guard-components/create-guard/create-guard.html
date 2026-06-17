@@ -47,6 +47,20 @@
         </p-floatlabel>
         <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-inputnumber fluid id="run-period" formControlName="runPeriodInMinutes" [showButtons]="true"></p-inputnumber>
+            <label for="run-period">Run period (minutes)</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
+    <div>
+        <p-floatlabel variant="on">
+            <p-datepicker id="run-after" inputId="run-after" formControlName="runAfter" [showTime]="true" hourFormat="12" fluid></p-datepicker>
+            <label for="run-after">Run after date</label>
+        </p-floatlabel>
+        <p-message variant="simple" size="small" severity="info">Required</p-message>
+    </div>
     <div >
         <div class="control-with-btn">
             <p-inputgroup>
@@ -84,13 +98,7 @@
         </div>
         <p-message variant="simple" size="small" severity="info">Required</p-message>
     </div>
-    <div>
-        <p-floatlabel variant="on">
-            <p-inputnumber fluid id="run-period" formControlName="runPeriodInMinutes" [showButtons]="true"></p-inputnumber>
-            <label for="run-period">Run period (minutes)</label>
-        </p-floatlabel>
-        <p-message variant="simple" size="small" severity="info">Required</p-message>
-    </div>
+
     <p-card header="Notifications">
         <app-create-notification-control formControlName="notifications"
             [notificationProviders]="notificationProviders()"></app-create-notification-control>

@@ -28,11 +28,12 @@ import { EntityChangeService } from '../../../services/entity-change-service';
 import { CreateDbConnection } from '../../db-connection-components/create-db-connection/create-db-connection';
 import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
 import { CodeText } from '../../../directives/code-text';
+import { DatePicker } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-create-guard',
   imports: [Card, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
-    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, FormsModule, Checkbox, CodeText],
+    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, FormsModule, Checkbox, CodeText, DatePicker],
   templateUrl: './create-guard.html',
   styleUrl: './create-guard.scss',
 })
@@ -68,6 +69,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     notifyOnError: new FormControl<boolean>(true, [Validators.required]),
     notifyOnTrigger: new FormControl<boolean>(true, [Validators.required]),
     runPeriodInMinutes: new FormControl<number>(5, [Validators.required, Validators.min(1)]),
+    runAfter: new FormControl<Date | null>(null),
     notifications: new FormControl<CreateGuardNotificationDTO[]>([]),
     validateGuard: new FormControl<boolean>(true)
   });
@@ -133,6 +135,7 @@ export class CreateGuard implements OnInit, OnDestroy {
       notifyOnError: values.notifyOnError!,
       notifyOnTrigger: values.notifyOnTrigger!,
       runPeriodInMinutes: values.runPeriodInMinutes!,
+      runAfter: values.runAfter ?? undefined,
       notifications: values.notifications!,
       validateGuard: values.validateGuard!
     };    
