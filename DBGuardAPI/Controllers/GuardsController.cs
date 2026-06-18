@@ -499,6 +499,41 @@ namespace DBGuardAPI.Controllers
             {
                 return BadRequest();
             }
+            DatabaseConnection? dbConnection = await context.DatabaseConnections.FindAsync(guardEdits.DatabaseConnection.Id);
+            if(dbConnection is null)
+            {
+                return NotFound();
+            }
+            if (guardEdits.ValidateGuard)
+            {
+                try
+                {
+                    string? password = null;
+                    if (!string.IsNullOrWhiteSpace(dbConnection.Password))
+                    {
+                        password = _credentialProtector.Decrypt(dbConnection.Password);
+                    }
+                    string connectionString = QueryHelper.BuildConnectionString(dbConnection.DatabaseEngine, dbConnection.EndPoint, dbConnection.DatabaseName, dbConnection.Username, password);
+                    DbConnection connection = QueryHelper.GetDatabaseConnection(dbConnection.DatabaseEngine, connectionString);
+                    // Test query and ensure it executes
+                    IDictionary<string, object> resultSet = connection.QuerySingle(guardEdits.TriggerQuery);
+                    // Ensure query contains column specified
+                    if (!TriggerHelper.ColumnExistsInSet(guardEdits.TriggerColumn, resultSet))
+                    {
+                        throw new InvalidDataException($"The column {guardEdits.TriggerColumn} is not present in the querys result set");
+                    }
+
+                    // Ensure row and column value is int
+                    if (!int.TryParse(resultSet[guardEdits.TriggerColumn].ToString(), out int count))
+                    {
+                        throw new InvalidDataException($"The count column in result set is not a int parseable value.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Conflict(new { ex.Message });
+                }
+            }
             guard.GuardName = guardEdits.GuardName?.Trim();
             guard.GuardDescription = guardEdits.GuardDescription?.Trim();
             guard.LastEditedDate = DateTimeOffset.UtcNow;
