@@ -29,6 +29,7 @@ export class App implements OnInit {
   
   ngOnInit(): void {
     this.themeService.initThemeMode();
+    this.configureNotificationPermissions();
     this.authService.initUser();
     this.setupInactivityListeners();
   }
@@ -48,5 +49,14 @@ export class App implements OnInit {
       });
     });
     this.inactivityService.countdownStopped$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.dialogRef?.close());
+  }
+  private configureNotificationPermissions(): void {
+    if(!("Notification" in window)){
+      console.log("Notifications are not supported in this environment");
+      return;
+    }
+    Notification.requestPermission((result) => {
+      console.log(`Notification permission request: ${result}`);
+    })
   }
 }

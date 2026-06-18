@@ -1,6 +1,7 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
+import { ThemeService } from './theme-service';
 
 const IDLE_SECONDS = 840;
 const WARNING_SECONDS = 60;
@@ -9,6 +10,8 @@ const WARNING_SECONDS = 60;
   providedIn: 'root',
 })
 export class InactivityService {
+  private themeService = inject(ThemeService);
+
   public readonly onIdleWarning$ = new Subject<number>();
   public readonly onTimeout$ = new Subject<void>();
   public readonly countdownStarted$ = new Subject<void>();
@@ -34,7 +37,7 @@ export class InactivityService {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.startWarningCountdown());
   }
-  public stop() {
+  public stop(): void {
     this.cancelCountdown();
     this.mainSubscription?.unsubscribe();
     this.mainSubscription = null;
@@ -46,16 +49,24 @@ export class InactivityService {
       this.countDownSubscription = null;
     }
   }
-  private startWarningCountdown() {
+  private startWarningCountdown(): void {
     this.countdownStarted$.next();
     let count = WARNING_SECONDS;
     this.countDownSubscription = timer(0, 1000).subscribe(() => {
       if (count <= 0) {
         this.onTimeout$.next();
         this.cancelCountdown();
+        this.sendIdleNotification();
         return;
       }
       this.onIdleWarning$.next(count--);
     });
+  }
+  private sendIdleNotification(): void {
+    // If the document is focused we dont need to send a notification
+    if(document.hasFocus()){
+      return;
+    }
+    new Notification("Idle logout", { body: 'You are idle and will be logged out.', icon: this.themeService.logoName});
   }
 }
