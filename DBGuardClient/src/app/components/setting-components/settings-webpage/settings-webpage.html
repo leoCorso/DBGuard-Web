@@ -3,7 +3,13 @@
         <app-edit-self></app-edit-self>
     </p-card>
     <p-card header="Other settings">
-        <p-button [rounded]="true" [outlined]="true" label="Toggle dark mode"
-            (onClick)="themeService.toggleDarkMode()"></p-button>
+        <div class="other-settings">
+            <p-button [rounded]="true" [outlined]="true" label="Toggle dark mode"
+                (onClick)="themeService.toggleDarkMode()"></p-button>
+            <div style="display: flex; flex-direction: column;">
+                <label>Current consent: <p-tag [value]="analyticsService.consentStatus() ? 'Granted' : 'Denied'" [severity]="analyticsService.consentStatus() ? 'success' : 'danger'"></p-tag></label>
+                <p-button (onClick)="analyticsService.getConsent()" label="Show consent banner"></p-button>
+            </div>
+        </div>
     </p-card>
 </div>

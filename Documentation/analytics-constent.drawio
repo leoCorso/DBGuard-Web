@@ -1,0 +1,137 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="R6c7XpDjlwG1ztmRhS09">
+    <mxGraphModel dx="1627" dy="2078" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-16" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="550" width="480" x="210" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-9" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-16" source="b6JMBlyCFUMBSasDkpCZ-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-1" parent="b6JMBlyCFUMBSasDkpCZ-16" style="rounded=0;whiteSpace=wrap;html=1;" value="User logs-in" vertex="1">
+          <mxGeometry height="30" width="80" x="160" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-8" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-16" source="b6JMBlyCFUMBSasDkpCZ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-2" parent="b6JMBlyCFUMBSasDkpCZ-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Prompt for analytics consent" vertex="1">
+          <mxGeometry height="50" width="160" x="120" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-7" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-16" source="b6JMBlyCFUMBSasDkpCZ-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-13" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-16" source="b6JMBlyCFUMBSasDkpCZ-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="110" y="200" />
+              <mxPoint x="110" y="320" />
+              <mxPoint x="210" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-3" parent="b6JMBlyCFUMBSasDkpCZ-16" style="rhombus;whiteSpace=wrap;html=1;" value="Granted?" vertex="1">
+          <mxGeometry height="80" width="80" x="160" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-12" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-16" source="b6JMBlyCFUMBSasDkpCZ-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="355" y="320" />
+              <mxPoint x="210" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-14" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-16" source="b6JMBlyCFUMBSasDkpCZ-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-10" parent="b6JMBlyCFUMBSasDkpCZ-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Store choice in local storage" vertex="1">
+          <mxGeometry height="60" width="120" x="150" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-11" parent="b6JMBlyCFUMBSasDkpCZ-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Send choice to backend to log" vertex="1">
+          <mxGeometry height="60" width="120" x="150" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-15" parent="b6JMBlyCFUMBSasDkpCZ-16" style="swimlane;whiteSpace=wrap;html=1;" value="Initial Prompt" vertex="1">
+          <mxGeometry height="550" width="480" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-4" parent="b6JMBlyCFUMBSasDkpCZ-15" style="rounded=0;whiteSpace=wrap;html=1;" value="Send granted information including IP, UserAgent, Username to GA stream" vertex="1">
+          <mxGeometry height="70" width="150" x="280" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-17" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Change via settings" vertex="1">
+          <mxGeometry height="470" width="480" x="210" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-20" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-17" source="b6JMBlyCFUMBSasDkpCZ-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-18" parent="b6JMBlyCFUMBSasDkpCZ-17" style="rounded=0;whiteSpace=wrap;html=1;" value="User updates consent via settings" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-22" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-17" source="b6JMBlyCFUMBSasDkpCZ-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-25" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-17" source="b6JMBlyCFUMBSasDkpCZ-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="b6JMBlyCFUMBSasDkpCZ-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="160" />
+              <mxPoint x="180" y="280" />
+              <mxPoint x="240" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-19" parent="b6JMBlyCFUMBSasDkpCZ-17" style="rhombus;whiteSpace=wrap;html=1;" value="Granted?" vertex="1">
+          <mxGeometry height="80" width="80" x="200" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-26" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-17" source="b6JMBlyCFUMBSasDkpCZ-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="375" y="280" />
+              <mxPoint x="240" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-21" parent="b6JMBlyCFUMBSasDkpCZ-17" style="rounded=0;whiteSpace=wrap;html=1;" value="Send granted information including IP, UserAgent, Username to GA stream" vertex="1">
+          <mxGeometry height="70" width="150" x="300" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-27" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-17" source="b6JMBlyCFUMBSasDkpCZ-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-23" parent="b6JMBlyCFUMBSasDkpCZ-17" style="rounded=0;whiteSpace=wrap;html=1;" value="Store choice in local storage" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-24" parent="b6JMBlyCFUMBSasDkpCZ-17" style="rounded=0;whiteSpace=wrap;html=1;" value="Send choice to backend to log" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-29" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Handle user event" vertex="1">
+          <mxGeometry height="400" width="450" x="730" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-32" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-29" source="b6JMBlyCFUMBSasDkpCZ-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-30" parent="b6JMBlyCFUMBSasDkpCZ-29" style="rounded=0;whiteSpace=wrap;html=1;" value="User event occurs" vertex="1">
+          <mxGeometry height="40" width="90" x="180" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-35" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-29" source="b6JMBlyCFUMBSasDkpCZ-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-31" parent="b6JMBlyCFUMBSasDkpCZ-29" style="rounded=0;whiteSpace=wrap;html=1;" value="Call event handler" vertex="1">
+          <mxGeometry height="40" width="100" x="175" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-37" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-29" source="b6JMBlyCFUMBSasDkpCZ-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-34" parent="b6JMBlyCFUMBSasDkpCZ-29" style="rounded=0;whiteSpace=wrap;html=1;" value="Get consent choice via local storage" vertex="1">
+          <mxGeometry height="50" width="110" x="170" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-39" edge="1" parent="b6JMBlyCFUMBSasDkpCZ-29" source="b6JMBlyCFUMBSasDkpCZ-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b6JMBlyCFUMBSasDkpCZ-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-36" parent="b6JMBlyCFUMBSasDkpCZ-29" style="rhombus;whiteSpace=wrap;html=1;" value="Granted?" vertex="1">
+          <mxGeometry height="80" width="80" x="185" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="b6JMBlyCFUMBSasDkpCZ-38" parent="b6JMBlyCFUMBSasDkpCZ-29" style="rounded=0;whiteSpace=wrap;html=1;" value="Send event info to GA stream" vertex="1">
+          <mxGeometry height="50" width="120" x="280" y="320" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

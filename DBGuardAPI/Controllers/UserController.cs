@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using DBGuardAPI.Data.DTOs.AuthDTOs;
 using DBGuardAPI.Data.DTOs.RequestResponseDTOs;
 using DBGuardAPI.Data.DTOs.UserDTOs;
@@ -350,6 +351,23 @@ namespace DBGuardAPI.Controllers
                 CreatedByUsername = currentUser.UserName,
                 IsActive = user.IsActive
             };
+        }
+        [HttpPost(nameof(AnalyticsConsentUpdated))]
+        public async Task<ActionResult> AnalyticsConsentUpdated([FromQuery] bool granted)
+        {
+            User user = (await _userManager.GetUserAsync(User))!;
+            string? userAgent = HttpContext.Request.Headers.UserAgent;
+            IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            await context.AnalyticsConsents.AddAsync(new()
+            {
+                IPAddress = ipAddress,
+                UserAgent = userAgent,
+                UserId = user.Id,
+                IsGranted = granted
+            });
+            await context.SaveChangesAsync();
+            return Ok();
         }
         [HttpPut(nameof(PutUser))]
         [Authorize(Roles = RoleNames.Admin)]

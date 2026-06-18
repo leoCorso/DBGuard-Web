@@ -2,11 +2,15 @@
 
 
 
+### 1.2.0
+
+
+
 
 
 ### 2.0.0
 
 * Add closed hours that can be specified for each day
 * Ask to record analytics data and record analytics if granted
-* Add a web worker to handle idle detection so that it works when tab is not focused
-
+* Make change message in change history have a max width and height.
+* Include change message if available in email message

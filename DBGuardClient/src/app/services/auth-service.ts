@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { LoginRequest } from '../interfaces/login-request';
 import { AuthResult } from '../interfaces/login-result';
 import { InactivityService } from './inactivity-service';
+import { AnalyticsService } from './analytics-service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,8 @@ export class AuthService {
   private httpClient = inject(HttpClient);
   private router = inject(Router);
   private inactivityService = inject(InactivityService);
-  
+  private analyticsService = inject(AnalyticsService);
+
   public loggedIn = signal<boolean>(false);
   public loginError = signal<string | undefined>(undefined);
   public defaultAdminError = signal<string | null>(null);
@@ -55,6 +57,8 @@ export class AuthService {
     if(hasToken){
       this.loggedIn.set(true);
       this.inactivityService.start();
+      this.analyticsService.initConsent();
+
     }
     if(hasToken && this.tokenInvalid()) {
       this.refreshToken();
@@ -80,6 +84,7 @@ export class AuthService {
             this.defaultAdminError.set("You're using the default admin account. For best security practices, please create a new admin account and delete this default.");
           }
           this.inactivityService.start();
+          this.analyticsService.initConsent();
         }
         else {
           this.loginError.set(authResponse.message);

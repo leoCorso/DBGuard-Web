@@ -18,5 +18,6 @@ namespace DBGuardAPI.Data.Models
         public ICollection<NotificationProvider> NotificationProviders { get; set; } = [];
         public ICollection<GuardNotification> Notifications { get; set; } = [];
         public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+        public ICollection<AnalyticsConsent> AnalyticsConsents { get; set; } = [];
     }
 }

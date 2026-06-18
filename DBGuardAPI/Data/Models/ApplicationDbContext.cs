@@ -133,6 +133,13 @@ namespace DBGuardAPI.Data.Models
                 .Property(hn => hn.QueryParameters)
                 .HasColumnType("jsonb");
             });
+            builder.Entity<AnalyticsConsent>(analyticsConsent =>
+            {
+                analyticsConsent.HasOne(a => a.User)
+                .WithMany(u => u.AnalyticsConsents)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
             base.OnModelCreating(builder);
         }
         public DbSet<Guard> Guards { get; set; }
@@ -143,6 +150,7 @@ namespace DBGuardAPI.Data.Models
         public DbSet<NotificationProvider> NotificationProviders { get; set; }
         public DbSet<NotificationTransaction> NotificationTransactions { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<AnalyticsConsent> AnalyticsConsents { get; set; }
 
     }
 }
