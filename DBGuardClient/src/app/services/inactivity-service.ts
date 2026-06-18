@@ -1,10 +1,14 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent, merge, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
+import { fromEvent, merge, of, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
 import { ThemeService } from './theme-service';
 
-const IDLE_SECONDS = 840;
-const WARNING_SECONDS = 60;
+// const IDLE_SECONDS = 840;
+// const WARNING_SECONDS = 60;
+
+const IDLE_SECONDS = 3;
+const WARNING_SECONDS = 3;
+
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +35,12 @@ export class InactivityService {
   );
 
   public start(): void {
-    this.mainSubscription = this.activityEvents$.pipe(
+    // Use a of(null) that fires right away so we dont need to wait for first event
+    const activityStart$ = merge(
+      this.activityEvents$,
+      of(null)
+    )
+    this.mainSubscription = activityStart$.pipe(
       tap(() => this.cancelCountdown()),
       switchMap(() => timer(IDLE_SECONDS * 1000)),
       takeUntilDestroyed(this.destroyRef),
