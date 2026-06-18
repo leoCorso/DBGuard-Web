@@ -75,6 +75,21 @@ namespace DBGuardAPI.Services
             email.Subject = $"[{guard.GuardState.ToString()}] {notification.EmailSubject}";
             string guardStateColor = GuardStateColorMapper.Map(guardChange.GuardState);
 
+
+            string changeMessageElement = !string.IsNullOrWhiteSpace(guardChange.Message) ? $"""
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                          <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Change message</td>
+                          <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;"> {guardChange.Message}</td>
+                        </tr>
+                    """ : "";
+            string triggerValueElement = guardChange.TriggeredValue is not null ? $"""
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Triggered value</td>
+                            <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;"> {guardChange.TriggeredValue?.ToString()}</td>
+                        </tr>
+                """
+                : "";
+
             BodyBuilder bodyBuilder = new()
             {
                 HtmlBody =
@@ -140,10 +155,11 @@ $$"""
                   </td>
                 </tr>
 
-                <tr style="border-bottom: 1px solid #f0f0f0;">
-                  <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Triggered value</td>
-                  <td style="padding: 10px 0; color:#1a1a2e; font-size:13px; vertical-align:top;"> {{guardChange.TriggeredValue?.ToString() ?? "NA"}}</td>
-                </tr>
+                 <!-- Add change message if it exists -->
+                {{ changeMessageElement }}
+                
+                <!-- Add trigger value  -->
+                {{ triggerValueElement }}
 
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 10px 0; color:#666666; font-size:13px; font-weight:bold; vertical-align:top;">Expression</td>

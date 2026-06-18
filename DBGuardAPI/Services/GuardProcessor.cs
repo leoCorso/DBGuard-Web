@@ -50,6 +50,7 @@ namespace DBGuardAPI.Services
                         // Update guard state to error
                         await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' not found in query result");
                     }
+                    return;
                 }
                 if (!int.TryParse(resultSet[countColumn].ToString(), out int count))
                 {
@@ -59,6 +60,7 @@ namespace DBGuardAPI.Services
                         // Update guard state to error
                         await ProcessGuardChangeAsync(guard.Id, guard.GuardState, GuardState.Error, $"Count column '{countColumn}' value is not an integer");
                     }
+                    return;
                 }
                 if (TriggerHelper.EvaluateTriggerCondition(count, guard.TriggerValue, guard.TriggerOperator))
                 {
