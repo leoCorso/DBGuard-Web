@@ -2,12 +2,7 @@ import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, merge, of, Subject, Subscription, switchMap, tap, timer } from 'rxjs';
 import { ThemeService } from './theme-service';
-
-// const IDLE_SECONDS = 840;
-// const WARNING_SECONDS = 60;
-
-const IDLE_SECONDS = 3;
-const WARNING_SECONDS = 3;
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -15,6 +10,8 @@ const WARNING_SECONDS = 3;
 })
 export class InactivityService {
   private themeService = inject(ThemeService);
+  private idleSeconds = environment.inactivityTimes.idleSeconds;
+  private warningSeconds = environment.inactivityTimes.warningSeconds;
 
   public readonly onIdleWarning$ = new Subject<number>();
   public readonly onTimeout$ = new Subject<void>();
@@ -42,7 +39,7 @@ export class InactivityService {
     )
     this.mainSubscription = activityStart$.pipe(
       tap(() => this.cancelCountdown()),
-      switchMap(() => timer(IDLE_SECONDS * 1000)),
+      switchMap(() => timer(this.idleSeconds * 1000)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.startWarningCountdown());
   }
@@ -60,7 +57,7 @@ export class InactivityService {
   }
   private startWarningCountdown(): void {
     this.countdownStarted$.next();
-    let count = WARNING_SECONDS;
+    let count = this.warningSeconds;
     this.countDownSubscription = timer(0, 1000).subscribe(() => {
       if (count <= 0) {
         this.onTimeout$.next();
