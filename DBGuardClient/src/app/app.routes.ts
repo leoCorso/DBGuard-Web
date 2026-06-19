@@ -28,12 +28,14 @@ export const routes: Routes = [
     {
         path: '',
         component: DashboardWebpage,
-        canActivate: [loggedInGuard]
+        canActivate: [loggedInGuard],
+        title: 'DBGuard - Dashboard'
     },
     {
         path: 'login',
         component: LoginWebpage,
-        canActivate: [notLoggedInGuard]
+        canActivate: [notLoggedInGuard],
+        title: 'DBGuard - Login'
     },
     {
         path: 'guards',
@@ -42,35 +44,43 @@ export const routes: Routes = [
         children: [
             {
                 path: 'view-all',
-                component: ViewGuardsWebpage
+                component: ViewGuardsWebpage,
+                title: 'DBGuard - View guards'
             },
             {
                 path: 'detail/:id',
-                component: GuardDetailWebpage
+                component: GuardDetailWebpage,
+                title: 'DBGuard - Guard detail'
             },
             {
                 path: 'change-history',
-                component: GuardsChangeHistoryWebpage
+                component: GuardsChangeHistoryWebpage,
+                title: 'DBGuard - View guard changes'
             },
             {
                 path: 'history-detail/:id',
-                component: GuardChangeDetailWebpage
+                component: GuardChangeDetailWebpage,
+                title: 'DBGuard - Guard change detail'
             },
             {
                 path: 'notification-transactions',
-                component: NotificationTransactionsWebpage
+                component: NotificationTransactionsWebpage,
+                title: 'DBGuard - Notification transactions'
             },
             {
                 path: 'notification-transaction-detail/:id',
-                component: NotificationTransactionDetailWebpage
+                component: NotificationTransactionDetailWebpage,
+                title: 'DBGuard - Notification transaction detail'
             },
             {
                 path: 'configured-notifications',
-                component: GuardNotificationsWebpage
+                component: GuardNotificationsWebpage,
+                title: 'DBGuard - Configured notifications'
             },
             {
                 path: 'notification-config-detail/:id',
-                component: NotificationDetailWebpage
+                component: NotificationDetailWebpage,
+                title: 'DBGuard - Notification details'
             }
         ],
     },
@@ -81,11 +91,13 @@ export const routes: Routes = [
         children: [
             {
                 path: 'view-all',
-                component: NotificationProvidersWebpage
+                component: NotificationProvidersWebpage,
+                title: 'DBGuard - View notification providers'
             },
             {
                 path: 'detail/:id',
-                component: NotificationProviderDetailWebpage
+                component: NotificationProviderDetailWebpage,
+                title: 'DBGuard - Notification details'
             }
         ]
     },
@@ -96,11 +108,13 @@ export const routes: Routes = [
         children: [
             {
                 path: 'view-all',
-                component: DbConnectionsWebpage
+                component: DbConnectionsWebpage,
+                title: 'DBGuard - View database connections'
             },
             {
                 path: 'detail/:id',
-                component: DbConnectionsDetailWebpage
+                component: DbConnectionsDetailWebpage,
+                title: 'DBGuard - Database connection details'
             }
         ]
     },
@@ -111,18 +125,21 @@ export const routes: Routes = [
         children: [
             {
                 path: 'view-all',
-                component: UsersWebpage
+                component: UsersWebpage,
+                title: 'DBGuard - View users'
             },
             {
                 path: 'detail/:id',
-                component: UserDetailsWebpage
+                component: UserDetailsWebpage,
+                title: 'DBGuard - User details'
             }
         ]
     },
     {
         path: 'settings',
         component: SettingsWebpage,
-        canActivate: [loggedInGuard]
+        canActivate: [loggedInGuard],
+        title: 'DBGuard - Settings'
     },
 
 
