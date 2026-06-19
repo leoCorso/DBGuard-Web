@@ -14,13 +14,13 @@
                 <p-floatlabel variant="over">
                     <label for="emails">Email Address</label>
                     <input id="emails" type="text" pInputText fluid formControlName="emailAddress"
-                        (keydown.enter)="addEmailAddress()">
+                        (keydown.enter)="addEmailAddressViaEnterKey()">
                 </p-floatlabel>
                 <p-inputgroup-addon>
                     <p-select [options]="['to', 'cc', 'bcc']" formControlName="emailType"></p-select>
                 </p-inputgroup-addon>
                 <p-inputgroup-addon>
-                    <p-button (onClick)="addEmailAddress()" icon="pi pi-plus" [text]="true" pTooltip="Add email"
+                    <p-button (onClick)="addEmailAddressViaEnterKey()" icon="pi pi-plus" [text]="true" pTooltip="Add email"
                         [disabled]="emailAddressInput.invalid"></p-button>
                 </p-inputgroup-addon>
             </p-inputgroup>
@@ -37,7 +37,7 @@
     <div style="display: flex; gap: .5rem;">
         <p-button (onClick)="saveNotification()" pTooltip="Add notification" [label]="notificationToEdit() !== undefined ? 'Save' : 'Add'" icon="pi pi-plus"
             [rounded]="true" [outlined]="true" [disabled]="emailNotificationFormGroup.invalid"></p-button>
-        <p-button (onClick)="cancelForm.emit()" label="Cancel" severity="danger" [rounded]="true" pTooltip="Cancel form changes"></p-button>
+        <p-button (onClick)="cancelNotificationForm()" label="Cancel" severity="danger" [rounded]="true" pTooltip="Cancel form changes"></p-button>
     </div>
 
 </form>

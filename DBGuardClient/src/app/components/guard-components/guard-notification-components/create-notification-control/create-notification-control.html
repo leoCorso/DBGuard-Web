@@ -30,7 +30,7 @@
     <!-- Notification provider selection -->
     <p-inputgroup style="margin-bottom: 1rem;">
         <p-floatlabel variant="on">
-            <p-select fluid id="notification-provider" [options]="currentProviders()" [showClear]="true"
+            <p-select fluid id="notification-provider" [options]="currentProviders()" [showClear]="true" (onClear)="notificationProviderCleared()" (onChange)="providerChanged($event)"
                 [formControl]="notificationProviderSelection" appendTo="body">
                 <ng-template #selectedItem let-selectedOption>
                     <!-- Display provider item selection depending on type -->

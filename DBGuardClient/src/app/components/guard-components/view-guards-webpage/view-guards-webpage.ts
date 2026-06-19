@@ -18,6 +18,7 @@ import { SortSelectControl } from '../../shared/sort-select-control/sort-select-
 import { GuardFilters } from '../guard-filters/guard-filters';
 import { ViewGuardItem } from '../view-guard-item/view-guard-item';
 import { Divider } from 'primeng/divider';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-view-guards-webpage',
@@ -29,6 +30,7 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
   public filterVisible = false;
   public override filters = signal<Map<string, FilterValue>>(new Map([]));
   private entityChangeService = inject(EntityChangeService);
+  private analyticsService = inject(AnalyticsService);
   public override sortOptions: SortOption[] = [
     {field: 'guardName', label: 'Guard name'},
     {field: 'createDate', label: 'Create date'},
@@ -56,6 +58,7 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
   }
   public toggleFilterVisibility(): void {
     this.filterVisible = !this.filterVisible;
+    this.analyticsService.logEvent('guards_filter_toggle', { visible: this.filterVisible });
   }
   public loadDataPage(event: DataViewLazyLoadEvent): void {
     const url = [environment.api.uri, 'Guards', 'GetGuardsView'].join('/');

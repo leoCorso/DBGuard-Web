@@ -4,6 +4,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { GuardsToolbar } from '../guards-toolbar/guards-toolbar';
 import { CreateGuard } from '../create-guard/create-guard';
 import { AuthService } from '../../../services/auth-service';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-guards-section-wrapper',
@@ -15,9 +16,11 @@ export class GuardsSectionWrapper implements OnDestroy {
   
   private dialogService = inject(DialogService);
   public authService = inject(AuthService);
+  private analyticsService = inject(AnalyticsService);
   private dialogRef?: DynamicDialogRef<CreateGuard> | null;
 
   public createGuardClicked(): void {
+    this.analyticsService.logEvent('create_guard_button_click');
     this.dialogRef = this.dialogService.open(CreateGuard, {
       header: 'Create guard',
       maximizable: true,

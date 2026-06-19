@@ -8,6 +8,7 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { environment } from '../../../../environments/environment';
 import { GuardState } from '../../../enums/guard-state';
 import { GuardChangeItemDTO } from '../../../interfaces/guard-change-transaction-dto';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-guard-change-data-chart',
@@ -23,6 +24,7 @@ export class GuardChangeDataChart implements OnInit {
   public data: any;
   public options: any;
   private cd = inject(ChangeDetectorRef);
+  private analyticsService = inject(AnalyticsService);
 
   constructor() {
     effect(() => {
@@ -38,7 +40,8 @@ export class GuardChangeDataChart implements OnInit {
     this.yearSelection.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (selection) => {
         if (selection) {
-          this.getData()
+          this.getData();
+          this.analyticsService.logEvent('guard_changes_chart_year_change', { change_year: selection.getFullYear() });
         }
       }
     });

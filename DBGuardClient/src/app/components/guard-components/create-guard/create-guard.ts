@@ -29,6 +29,7 @@ import { CreateDbConnection } from '../../db-connection-components/create-db-con
 import { CreateNotificationControl } from '../guard-notification-components/create-notification-control/create-notification-control';
 import { CodeText } from '../../../directives/code-text';
 import { DatePicker } from 'primeng/datepicker';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-create-guard',
@@ -51,6 +52,7 @@ export class CreateGuard implements OnInit, OnDestroy {
   public getEnumLabel = getEnumLabel;
   public databaseEngine = DatabaseEngine;
   private dialogService = inject(DialogService);
+  private analyticsService = inject(AnalyticsService);
   private dialogRef = inject(DynamicDialogRef);
   private createDbConnectionRef?: DynamicDialogRef<CreateDbConnection> | null;
 
@@ -97,6 +99,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     });
   }
   public addDatabaseConnection(): void {
+    this.analyticsService.logEvent('add_database_connection_click', { source: 'create_guard_form'});
     this.createDbConnectionRef = this.dialogService.open(CreateDbConnection, {
       header: 'Create new database connection',
       closable: true,
@@ -152,7 +155,9 @@ export class CreateGuard implements OnInit, OnDestroy {
         }
         else {
           this.guardService.guardCreated.next(newGuard.id);
+
         }
+        this.analyticsService.logEvent(this.guardToEdit() ? 'guard_edit_submit' : 'guard_create_submit', { trigger_operator: guard.triggerOperator, trigger_value: guard.triggerValue, run_period: guard.runPeriodInMinutes, run_after_date: guard.runAfter ? true : false, database_engine: guard.databaseConnection.databaseEngine, notifications: guard.notifications.map(n => n.notificationType), notify_on_clear: guard.notifyOnClear, notify_on_error: guard.notifyOnError, notify_on_trigger: guard.notifyOnTrigger, validate_guard: guard.validateGuard})
         this.dialogRef.close(newGuard);
       }
     });

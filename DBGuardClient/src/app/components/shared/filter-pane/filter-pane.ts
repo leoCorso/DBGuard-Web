@@ -1,6 +1,7 @@
-import { Component, model, output, QueryList, ViewChildren } from '@angular/core';
+import { Component, inject, model, output, QueryList, ViewChildren } from '@angular/core';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { FilterItem } from '../filter-item/filter-item';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-filter-pane',
@@ -12,6 +13,7 @@ export abstract class FilterPane {
   public abstract filtersConfig: FilterConfig[];
   public filters = model<Map<string, FilterValue>>();
   public filterChanged = output<Map<string, FilterValue> | undefined>();
+  private analyticsService = inject(AnalyticsService);
   @ViewChildren(FilterItem) protected filterItems!: QueryList<FilterItem>;
 
   public onFilterValueChanged(filter: FilterValue): void {
@@ -30,10 +32,12 @@ export abstract class FilterPane {
       });
     }
     this.filterChanged.emit(this.filters());
+    this.analyticsService.logEvent('filter_change', { filter_field: filter.field, filter_operator: filter.operator});
   }
   public clearFilters(): void {
     this.filters()?.clear();
     this.filterItems.forEach(filter => filter.initFilters());
     this.filterChanged.emit(undefined);
+    this.analyticsService.logEvent('filter_cleared');
   }
 }

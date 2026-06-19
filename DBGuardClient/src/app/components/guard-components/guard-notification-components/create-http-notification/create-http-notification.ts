@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
@@ -19,6 +19,7 @@ import { enumToOptions } from '../../../../helpers/enum-helper';
 import { mapToArray, mapToRecords } from '../../../../helpers/http-notification-record-helper';
 import { CreateHTTPGuardNotificationDTO, CreateHTTPGuardNotificationDTOWIndex } from '../../../../interfaces/notification-dto';
 import { CreateNotification } from '../create-notification/create-notification';
+import { AnalyticsService } from '../../../../services/analytics-service';
 @Component({
   selector: 'app-create-http-notification',
   imports: [InputTextModule, TextareaModule , InputGroup, InputGroupAddon, FloatLabel, Message, ReactiveFormsModule, Select, 
@@ -55,6 +56,8 @@ export class CreateHttpNotification extends CreateNotification<CreateHTTPGuardNo
   [{ label: 'Guard id', value: "{{_guardId}}" }, { label: 'Guard name', value: '{{_guardName}}' }, { label: 'Timestamp', value: '{{_timestamp}}' },
   { label: 'Current guard state', value: '{{_currentGuardState}}' }, { label: 'Previous guard state', value: '{{_previousGuardState}}' }, { label: 'Guard query', value: '{{_guardQuery}}' }, { label: 'Guard operator', value: '{{_guardOperator}}' }, { label: 'Guard value', value: '{{_guardValue}}' }, { label: 'Result value', value: '{{_resultValue}}' },
   { label: 'Change message', value: '{{_changeMessage}}' }, { label: 'Database endpoint', value: '{{_databaseEndpoint}}' }, { label: 'Database engine', value: '{{_databaseEngine}}' }, { label: 'Database name', value: '{{_databaseName}}' }, { label: 'Database username', value: '{{_databaseUsername}}' }];
+  
+  private analyticsService = inject(AnalyticsService);
 
   ngOnInit(): void {
     if(this.notificationToEdit()){
@@ -101,6 +104,8 @@ export class CreateHttpNotification extends CreateNotification<CreateHTTPGuardNo
       };
       this.notificationAdded.emit(newNotification);
     }
+    this.analyticsService.logEvent(this.notificationToEdit() ? 'notification_edit' : 'notification_add', 
+      { notification_type: 'http', http_action: httpData.actionType, body_type: httpData.bodyType, query_parameters: this.queryParameters.length, headers: this.requestHeaders.length });
   }
   public addKey(type: 'query' | 'header'): void {
     const form = type === 'query' ? this.queryParameterForm : this.requestHeaderForm;
