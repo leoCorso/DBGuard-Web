@@ -156,7 +156,32 @@ namespace DBGuardAPI.Controllers
                 return BadRequest();
             }
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            IQueryable<GuardView> query = context.GuardView.AsNoTracking().AsQueryable();
+            IQueryable<GuardView> query = context.Guards
+                .Include(g => g.DatabaseConnection)
+                .Include(g => g.CreatedByUser)
+                .Select(g => new GuardView
+                {
+                    Id = g.Id,
+                    GuardName = g.GuardName,
+                    CreateDate = g.CreateDate,
+                    LastRun = g.LastRun,
+                    CreatedByUserId = g.CreatedByUserId,
+                    UserName = g.CreatedByUser != null ? g.CreatedByUser.UserName : null,
+                    TriggerColumn = g.TriggerColumn,
+                    TriggerOperator = g.TriggerOperator,
+                    TriggerValue = g.TriggerValue,
+                    DatabaseConnectionId = g.DatabaseConnectionId,
+                    EndPoint = g.DatabaseConnection!.EndPoint,
+                    DatabaseEngine = g.DatabaseConnection.DatabaseEngine,
+                    DatabaseName = g.DatabaseConnection.DatabaseName,
+                    GuardState = g.GuardState,
+                    IsActive = g.IsActive,
+                    TotalErrors = g.TotalErrors,
+                    TotalTriggers = g.TotalTriggers,
+                    RunPeriodInMinutes = g.RunPeriodInMinutes,
+                    RunAfter = g.RunAfter
+                })
+                .AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardView>(sieveParams, query);
         }
         /// <summary>

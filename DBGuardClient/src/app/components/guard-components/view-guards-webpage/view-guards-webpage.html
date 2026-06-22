@@ -1,5 +1,5 @@
 <!-- Filter drawer -->
-<p-drawer [(visible)]="filterVisible" header="Filters">
+<p-drawer [(visible)]="filterVisible" header="Filters" ()>
     <app-guard-filters (filterChanged)="filtersChanged()" [(filters)]="filters"></app-guard-filters>
 </p-drawer>
 

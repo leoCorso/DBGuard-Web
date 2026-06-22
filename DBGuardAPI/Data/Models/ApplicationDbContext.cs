@@ -81,11 +81,6 @@ namespace DBGuardAPI.Data.Models
                     .HasForeignKey(gnt => gnt.GuardId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
-            builder.Entity<GuardView>(guardView =>
-            {
-                guardView.HasKey(g => g.Id);
-                guardView.ToView("guard_view");
-            });
             builder.Entity<NotificationTransaction>(notificationTransactions =>
             {
                 notificationTransactions.HasDiscriminator<NotificationType>(nameof(NotificationTransaction.NotificationType))
@@ -143,7 +138,6 @@ namespace DBGuardAPI.Data.Models
             base.OnModelCreating(builder);
         }
         public DbSet<Guard> Guards { get; set; }
-        public DbSet<GuardView> GuardView { get; set; }
         public DbSet<DatabaseConnection> DatabaseConnections { get; set; }
         public DbSet<GuardNotification> GuardNotifications { get; set; }
         public DbSet<GuardChangeTransaction> GuardChangeTransactions { get; set; }

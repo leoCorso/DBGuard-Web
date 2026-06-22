@@ -23,7 +23,7 @@ export class GuardFilters extends FilterPane {
   public isActiveOptions = [{label: 'Active', value: true}, {label: 'In-active', value: false}];
   
   public override filtersConfig: FilterConfig[] = [
-    { field:'id', label: 'Id', type: 'text', isTableFilter: false, placeholder: 'Filter by id' },
+    { field:'id', label: 'Id', type: 'numeric', isTableFilter: false, placeholder: 'Filter by id' },
     { field: 'guardName', label: 'Guard name', type: 'text', isTableFilter: false, placeholder: 'Filter by guard name'},
     { field: 'createDate', label: 'Create date', type: 'datetime', isTableFilter: false, placeholder: 'Filter by creation' },
     { field: 'lastRun', label: 'Last run', type: 'datetime', isTableFilter: false, placeholder: 'Filter by last run' },
