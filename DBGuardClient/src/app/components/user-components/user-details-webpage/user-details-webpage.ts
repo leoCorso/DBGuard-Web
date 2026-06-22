@@ -14,10 +14,12 @@ import { GuardsDetailTable } from '../../guard-components/guards-detail-table/gu
 import { NotificationProvidersTable } from '../../notification-provider-components/notification-providers-table/notification-providers-table';
 import { CreateUser } from '../create-user/create-user';
 import { UserDetailsPane } from '../user-details-pane/user-details-pane';
+import { TrackClick } from '../../../directives/track-click';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-user-details-webpage',
-  imports: [UserDetailsPane, Card, GuardsDetailTable, DbConnectionsTable, NotificationProvidersTable, ButtonGroup, Button, ConfirmPopup],
+  imports: [UserDetailsPane, Card, GuardsDetailTable, DbConnectionsTable, NotificationProvidersTable, ButtonGroup, Button, ConfirmPopup, TrackClick],
   templateUrl: './user-details-webpage.html',
   styleUrl: './user-details-webpage.scss',
 })
@@ -29,6 +31,7 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   public userId = signal<string | null>(null);
   private editUserDialog?: DynamicDialogRef<CreateUser> | null;
+  private analyticsService = inject(AnalyticsService);
   public deletingUser = signal<boolean>(false);
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -68,6 +71,7 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteUser(): void {
+    this.analyticsService.logEvent('delete_user_submit');
     this.deletingUser.set(true);
     const url = [environment.api.uri, 'User', 'DeleteUser'].join('/');
     const params = new HttpParams().set('userId', this.userId()!);

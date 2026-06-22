@@ -16,11 +16,11 @@
                         <span >{{ userInfo()!.username }}</span>
                     }
                     @if (editingUsername()) {
-                        <p-button (onClick)="saveUsernameEdit()" [text]="true" icon="pi pi-check" severity="secondary" [disabled]="usernameControl.pristine"></p-button>
-                        <p-button (onClick)="cancelUsernameEdit()" [text]="true" icon="pi pi-times" severity="secondary"></p-button>
+                        <p-button appTrackClick eventName="edit_username_submit" (onClick)="saveUsernameEdit()" [text]="true" icon="pi pi-check" severity="secondary" [disabled]="usernameControl.pristine"></p-button>
+                        <p-button appTrackClick eventName="cancel_username_edit_click" (onClick)="cancelUsernameEdit()" [text]="true" icon="pi pi-times" severity="secondary"></p-button>
                     }
                     @else {
-                        <p-button (onClick)="editingUsername.set(true)" [text]="true" icon="pi pi-pencil" severity="secondary"></p-button>
+                        <p-button appTrackClick eventName="edit_username_click" (onClick)="editingUsername.set(true)" [text]="true" icon="pi pi-pencil" severity="secondary"></p-button>
                     }
                 </div>
         
@@ -34,6 +34,6 @@
                 </div>
             </span>
         </div>
-        <p-button [link]="true" (onClick)="changePassword()" label="Change password" [rounded]="true"></p-button>
+        <p-button appTrackClick eventName="change_user_password_click" [link]="true" (onClick)="changePassword()" label="Change password" [rounded]="true"></p-button>
     }
 }

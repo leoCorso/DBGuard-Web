@@ -5,7 +5,7 @@ import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { GuardState } from '../../../enums/guard-state';
 import { enumToOptions } from '../../../helpers/enum-helper';
-import { FilterConfig } from '../../../interfaces/filters';
+import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { FilterPane } from '../../shared/filter-pane/filter-pane';
 

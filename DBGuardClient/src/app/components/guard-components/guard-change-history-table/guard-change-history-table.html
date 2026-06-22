@@ -39,12 +39,12 @@
         <ng-template #body let-change let-rowIndex="rowIndex">
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
-                <td><p-button [link]="true" [label]="change.id"
+                <td><p-button appTrackClick eventName="guard_change_detail_click" [eventData]="{source: 'guard_changes_table'}" [link]="true" [label]="change.id"
                         [routerLink]="['/guards/history-detail', change.id]"></p-button></td>
                 <td>{{ change.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
                     @if (change.guardId !== undefined) {
-                    <p-button [link]="true" [label]="change.guardId"
+                    <p-button appTrackClick eventName="guard_detail_click" [eventData]="{source: 'guard_changes_table'}" [link]="true" [label]="change.guardId"
                         [routerLink]="['/guards/detail', change.guardId]"></p-button>
                     }
                     @else {
@@ -66,7 +66,7 @@
                     <p-tag value="Not applicable" severity="info"></p-tag>
                     }
                 </td>
-                <td><p-button [link]="true" [label]="change.databaseConnectionId"
+                <td><p-button appTrackClick eventName="db_connection_detail_click" [eventData]="{ source: 'guard_changes_table' }" [link]="true" [label]="change.databaseConnectionId"
                         [routerLink]="['/db-connections/detail', change.databaseConnectionId]"></p-button></td>
                 <td>{{ change.databaseConnectionEndpoint }}</td>
                 <td>{{ change.databaseName }}</td>

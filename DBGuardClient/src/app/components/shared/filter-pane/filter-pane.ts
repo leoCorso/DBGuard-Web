@@ -32,7 +32,6 @@ export abstract class FilterPane {
       });
     }
     this.filterChanged.emit(this.filters());
-    this.analyticsService.logEvent('filter_change', { filter_field: filter.field, filter_operator: filter.operator});
   }
   public clearFilters(): void {
     this.filters()?.clear();

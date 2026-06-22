@@ -6,10 +6,11 @@ import { HttpBodyType } from '../../../../enums/http-body-type';
 import { Tag } from 'primeng/tag';
 import { HTTPAction } from '../../../../enums/http-action';
 import { getHttpSeverity } from '../../../../helpers/http-severity-mapper';
+import { TrackClick } from '../../../../directives/track-click';
 
 @Component({
   selector: 'app-http-notification-detail-pane',
-  imports: [Tag],
+  imports: [Tag, TrackClick],
   templateUrl: './http-notification-detail-pane.html',
   styleUrl: './http-notification-detail-pane.scss',
 })

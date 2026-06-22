@@ -13,10 +13,11 @@ import { UserDTO } from '../../../interfaces/user.dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-users-table',
-  imports: [TableModule, DatePipe, Button, RouterModule, FilterItem, Tag],
+  imports: [TableModule, DatePipe, Button, RouterModule, FilterItem, Tag, TrackClick],
   templateUrl: './users-table.html',
   styleUrl: './users-table.scss',
 })

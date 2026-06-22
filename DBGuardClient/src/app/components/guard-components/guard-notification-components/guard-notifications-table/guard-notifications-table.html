@@ -37,11 +37,11 @@
         <ng-template #body let-notification let-rowIndex="rowIndex">
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
-                <td><p-button [label]="notification.id" [link]="true"
+                <td><p-button appTrackClick eventName="notification_detail_click" [eventData]="{ source: 'guard_notification_table' }" [label]="notification.id" [link]="true"
                         [routerLink]="['/guards/notification-config-detail', notification.id]"></p-button></td>
                 <td>
                     @if (notification.guardId) {
-                    <p-button [label]="notification.guardId" [link]="true"
+                    <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'guard_notification_table' }" [label]="notification.guardId" [link]="true"
                         [routerLink]="['/guards/detail', notification.guardId]"></p-button>
                     }
                     @else {
@@ -52,7 +52,7 @@
                 <td>{{ notification.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>{{ notification.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
-                    <p-button [link]="true" [label]="notification.notificationProviderId"
+                    <p-button appTrackClick eventName="provider_detail_click" [eventData]="{ source: 'guard_notification_table' }" [link]="true" [label]="notification.notificationProviderId"
                         [routerLink]="['/providers/detail', notification.notificationProviderId]"></p-button>
                 </td>
                 <td>
@@ -60,7 +60,7 @@
                         <p-tag value="Deleted" severity="danger"></p-tag>
                     }
                     @else {
-                        <p-button [label]="notification.createdByUsername" [link]="true"
+                        <p-button appTrackClick eventName="created_by_detail_click" [eventData]="{ source: 'guard_notification_table'}" [label]="notification.createdByUsername" [link]="true"
                             [routerLink]="['/users/detail', notification.createdByUserId]"></p-button>
                     }
                 </td>

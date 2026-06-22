@@ -8,7 +8,7 @@
     <div class="user-details">
         <span class="user-key">Id:</span>
         <span class="user-value">
-            <p-button [label]="userDetails()?.id?.toString()" [routerLink]="['/users/detail', userDetails()?.id]" [outlined]="true" severity="contrast"></p-button>
+            <p-button appTrackClick eventName="user_detail_click" [eventData]="{ source: 'user_details_pane'}" [label]="userDetails()?.id?.toString()" [routerLink]="['/users/detail', userDetails()?.id]" [outlined]="true" severity="contrast"></p-button>
         </span>
         <span class="user-key">Username:</span>
         <span class="user-value">{{ userDetails()?.username }}</span>
@@ -33,7 +33,7 @@
         }
         <!-- Else show created by user info -->
         @else {
-            <p-button [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+            <p-button appTrackClick eventName="created_by_user_detail_click" [eventData]="{ source: 'user_details_pane' }" [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
         }
         </span>
         <span class="user-key">Roles:</span>

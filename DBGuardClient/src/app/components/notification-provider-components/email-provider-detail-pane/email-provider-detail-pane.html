@@ -10,9 +10,9 @@
         <span class="email-key">Password:</span>
         <div class="email-value">
             <span>{{ showPassword() ? emailProviderDetails().password : '*******' }}</span>
-            <p-button [icon]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" (onClick)="showPassword.set(!showPassword())"></p-button>
+            <p-button [icon]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" [text]="true" (onClick)="toggleShowPassword()"></p-button>
         </div>
     }
     <span class="email-key">Sender email</span>
-    <span class="email-value"><a [href]="'mailto:' + emailProviderDetails().senderEmail">{{ emailProviderDetails().senderEmail }}</a></span>
+    <span class="email-value"><a appTrackClick eventName="email_address_sender_click" [eventData]="{ source: 'email_provider_detail_pane'}" [href]="'mailto:' + emailProviderDetails().senderEmail">{{ emailProviderDetails().senderEmail }}</a></span>
 </div>

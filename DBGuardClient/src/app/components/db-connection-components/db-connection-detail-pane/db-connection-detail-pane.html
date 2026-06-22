@@ -9,7 +9,7 @@
         <div class="database-info">
             <span class="connection-key"><strong>Id:</strong></span>
             <span class="connection-value">
-                <p-button [label]="databaseConnectionInfo()!.id?.toString()" [routerLink]="['/db-connections/detail', databaseConnectionInfo()?.id]" [outlined]="true" severity="contrast"></p-button>
+                <p-button appTrackClick eventName="db_connection_detail_click" [eventData]="{ source: 'db_connection_detail_pane' }" [label]="databaseConnectionInfo()!.id?.toString()" [routerLink]="['/db-connections/detail', databaseConnectionInfo()?.id]" [outlined]="true" severity="contrast"></p-button>
             </span>
             <span class="connection-key"><strong>Create date:</strong></span>
             <span class="connection-value">{{ databaseConnectionInfo()!.createDate | date:'MM/dd/yyyy hh:mm:ss a' }}</span>
@@ -26,13 +26,13 @@
             @if (authService.hasRoles(['Admin']) && databaseConnectionInfo()!.password) {
                 <span class="connection-key"><strong>Password: </strong></span>
                 <div class="connection-value">
-                    <span>{{ viewPassword() ? databaseConnectionInfo()!.password : '********' }}</span>
-                    <p-button (onClick)="viewPassword.set(!viewPassword())" [link]="true" [icon]="viewPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'" pTooltip="View password"></p-button>
+                    <span>{{ passwordVisible() ? databaseConnectionInfo()!.password : '********' }}</span>
+                    <p-button (onClick)="togglePasswordVisible()" [link]="true" [icon]="passwordVisible() ? 'pi pi-eye-slash' : 'pi pi-eye'" pTooltip="View password"></p-button>
                 </div>
             }
             <span class="connection-key"><strong>Created by:</strong></span>
             @if (databaseConnectionInfo()!.createdByUserId !== null) {
-                <span class="connection-value"><p-button [label]="databaseConnectionInfo()!.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
+                <span class="connection-value"><p-button appTrackClick eventName="created_by_detail_click" [eventData]="{ source: 'db_connection_detail_pane' }" [label]="databaseConnectionInfo()!.createdByUsername" [routerLink]="['/users/detail', databaseConnectionInfo()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button></span>
             }
             @else {
                 <div>

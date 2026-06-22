@@ -23,7 +23,7 @@
         <span class="email-value">
             <div class="emails">
                 @for(email of emailNotificationConfig().bccEmails; track $index){
-                    <a [href]="'mailto:' + email">{{ email }}</a>
+                    <a appTrackClick eventName="notification_email_address_click" [eventData]="{ source: 'email_notification_detail_pane'}" [href]="'mailto:' + email">{{ email }}</a>
                 }
             </div>
         </span>

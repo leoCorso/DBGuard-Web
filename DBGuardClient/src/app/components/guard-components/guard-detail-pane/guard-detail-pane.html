@@ -1,6 +1,8 @@
 <div class="guard-info">
     <span class="guard-key">Id:</span>
-    <span class="guard-value"><p-button [label]="guardDetail().id.toString()" severity="contrast" [outlined]="true" [routerLink]="['/guards/detail', guardDetail().id]"></p-button></span>
+    <span class="guard-value">
+        <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'guard_detail_pane' }" [label]="guardDetail().id.toString()" severity="contrast" [outlined]="true" [routerLink]="['/guards/detail', guardDetail().id]"></p-button>
+    </span>
     <span class="guard-key">Guard name: </span>
     <span class="guard-value">{{ guardDetail().guardName ?? 'Unnamed' }}</span>
     <span class="guard-key">Guard description:</span>
@@ -57,7 +59,7 @@
     <span class="guard-value">{{ guardDetail().totalTriggers }}</span>
     <span class="guard-key">Created by:</span>
     @if (guardDetail().createdByUserId !== null) {
-        <p-button [label]="guardDetail().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardDetail().createdByUserId]"></p-button>
+        <p-button appTrackClick eventName="created_by_detail_click" [eventData]="{ source: 'guard_detail_pane'}" [label]="guardDetail().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardDetail().createdByUserId]"></p-button>
     }
     @else {
         <div>

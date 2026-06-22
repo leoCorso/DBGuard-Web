@@ -2,7 +2,7 @@
 <div class="http-info">
     <span class="http-key">Url:</span>
     <span class="http-value">
-        <a [href]="httpTransactionInfo().url" target="_blank">{{ httpTransactionInfo().url }}</a>
+        <a appTrackClick eventName="notification_transaction_url_click" [eventData]="{ source: 'http_transaction_detail_pane'}" [href]="httpTransactionInfo().url" target="_blank">{{ httpTransactionInfo().url }}</a>
     </span>
     <span class="http-key">Http method:</span>
     <span class="http-value"><p-tag [value]="getEnumLabel(httpMethods, httpTransactionInfo().httpMethod)" [severity]="getHttpSeverity(httpTransactionInfo().httpMethod)"></p-tag></span>

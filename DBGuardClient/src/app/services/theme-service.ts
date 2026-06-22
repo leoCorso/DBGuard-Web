@@ -23,4 +23,7 @@ export class ThemeService {
 
     }
   }
+  public getMode(): string | null {
+    return localStorage.getItem('theme-mode');
+  }
 }

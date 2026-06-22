@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
@@ -9,6 +9,7 @@ import { SelectButton } from 'primeng/selectbutton';
 import { Slider } from 'primeng/slider';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { FilterConfig, FilterOperator, FilterValue, NumberFilterOperators, TextFilterOperators } from '../../../interfaces/filters';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-filter-item',
@@ -29,6 +30,7 @@ export class FilterItem {
 
   // Component properties
   private destroy = new Subject<void>();
+  private analyticsService = inject(AnalyticsService);
 
   ngOnInit(): void {
     this.initFilters();
@@ -69,6 +71,7 @@ export class FilterItem {
         operator: this.filterConfig().type === 'text' || this.filterConfig().type === 'numeric' || this.filterConfig().type === 'datetime' ? this.selectedFilterOperator.value?.operator : this.filterConfig().customOperator,
         type: this.filterConfig().type
       });
+      this.analyticsService.logEvent('filter_change', {field: this.filterConfig().field, type: this.filterConfig().type, operator: this.selectedFilterOperator.value?.operatorLabel});
     });
     // Listen to changes when operator changes
     this.selectedFilterOperator.valueChanges.pipe(takeUntil(this.destroy), debounceTime(500), distinctUntilChanged()).subscribe((operator: FilterOperator | null) => {
@@ -79,6 +82,7 @@ export class FilterItem {
           operator: this.filterConfig().type === 'text' || this.filterConfig().type === 'numeric' || this.filterConfig().type === 'datetime' ? operator.operator : this.filterConfig().customOperator,
           type: this.filterConfig().type
         });
+        this.analyticsService.logEvent('filter_change', {field: this.filterConfig().field, type: this.filterConfig().type, operator: this.selectedFilterOperator.value?.operatorLabel});
       }
     });
   }

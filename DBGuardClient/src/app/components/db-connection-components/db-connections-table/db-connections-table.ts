@@ -14,10 +14,11 @@ import { Column } from '../../../interfaces/table-items';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
 import { Tag } from 'primeng/tag';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-db-connections-table',
-  imports: [TableModule, Button, FilterItem, RouterLink, DatePipe, Tag],
+  imports: [TableModule, Button, FilterItem, RouterLink, DatePipe, Tag, TrackClick],
   templateUrl: './db-connections-table.html',
   styleUrl: './db-connections-table.scss',
 })

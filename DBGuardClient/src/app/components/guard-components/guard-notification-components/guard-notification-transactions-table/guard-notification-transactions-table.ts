@@ -15,10 +15,11 @@ import { Column } from '../../../../interfaces/table-items';
 import { EntityChangeService } from '../../../../services/entity-change-service';
 import { FilterItem } from '../../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../../shared/preview-table/preview-table';
+import { TrackClick } from '../../../../directives/track-click';
 
 @Component({
   selector: 'app-guard-notification-transactions-table',
-  imports: [TableModule, FilterItem, DatePipe, Tag, Button, RouterModule],
+  imports: [TableModule, FilterItem, DatePipe, Tag, Button, RouterModule, TrackClick],
   templateUrl: './guard-notification-transactions-table.html',
   styleUrl: './guard-notification-transactions-table.scss',
 })

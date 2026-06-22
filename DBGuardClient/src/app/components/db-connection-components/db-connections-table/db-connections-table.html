@@ -37,7 +37,7 @@
         <ng-template #body let-connection let-rowIndex="rowIndex">
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
-                <td><p-button [link]="true" [label]="connection.id"
+                <td><p-button appTrackClick eventName="db_connection_detail_click" [eventData]="{ source: 'db_connection_table'}" [link]="true" [label]="connection.id"
                         [routerLink]="['/db-connections/detail', connection.id]"></p-button></td>
                 <td>{{ connection.endpoint }}</td>
                 <td>{{ getEnumLabel(databaseEngine, connection.databaseEngine) }}</td>

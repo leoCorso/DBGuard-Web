@@ -23,6 +23,7 @@ import { CreateGuard } from '../../create-guard/create-guard';
 import { GuardDetailPane } from '../../guard-detail-pane/guard-detail-pane';
 import { GuardNotificationTransactionsTable } from '../guard-notification-transactions-table/guard-notification-transactions-table';
 import { NotificationDetailPane } from '../notification-detail-pane/notification-detail-pane';
+import { AnalyticsService } from '../../../../services/analytics-service';
 
 @Component({
   selector: 'app-notification-detail-webpage',
@@ -47,6 +48,7 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
   public guardDetail = signal<GuardDetailDTO | null>(null);
   private editGuardDialog?: DynamicDialogRef<CreateGuard> | null;
   private entityChangeService = inject(EntityChangeService);
+  private analyticsService = inject(AnalyticsService);
   public notificationProvider = signal<NotificationProviderDTO | null>(null);
 
   ngOnInit(): void {
@@ -79,6 +81,7 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
       })
   }
   public editGuardNotification(): void {
+    this.analyticsService.logEvent('edit_notification_click', { type: this.notificationDetail()?.notificationType });
     this.editGuardDialog = this.dialogService.open(CreateGuard, {
       header: 'Edit guard',
       draggable: true,
@@ -88,9 +91,10 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
       inputValues: {
         guardToEditId: this.notificationDetail()?.guardId
       }
-    })
+    });
   }
   public deleteClicked(event: Event): void {
+    this.analyticsService.logEvent('delete_notification_click', { type: this.notificationDetail()?.notificationType });
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
       message: 'Are you sure you want to delete the notification for this guard?',
@@ -113,10 +117,12 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
     this.httpClient.delete(url, {params: params}).pipe(finalize(() => this.deletingNotification.set(false))).subscribe({
       next: () => {
         this.router.navigate(['/guards/configured-notifications']);
+        this.analyticsService.logEvent('notification_delete_submit', {type: this.notificationDetail()?.notificationType});
       }
     })
   }
   public testNotification(): void {
+    this.analyticsService.logEvent('test_notification_click', { type: this.notificationDetail()?.notificationType });
     this.testingNotification.set(true);
     const url = [environment.api.uri, 'Notifications', 'TestGuardNotification'].join('/');
     const params = new HttpParams().set('notificationId', this.notificationConfigId()!);

@@ -16,6 +16,7 @@ import { passwordRequirementsRegex } from '../../../helpers/password-requirement
 import { CreateUserDTO, CreateUserReferenceData, UserDTO } from '../../../interfaces/user.dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { FormControlError } from '../../shared/form-control-error/form-control-error';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-create-user',
@@ -27,6 +28,7 @@ export class CreateUser implements OnInit {
   private dialogRef = inject(DynamicDialogRef);
   private entityChangeService = inject(EntityChangeService);
   private httpClient = inject(HttpClient);
+  private analyticsService = inject(AnalyticsService);
   public referenceData = signal<CreateUserReferenceData | null>(null);
   public userIdToEdit = input<string>();
   public userToEdit = signal<CreateUserDTO | null>(null);
@@ -76,6 +78,7 @@ export class CreateUser implements OnInit {
     };
     this.userToEdit() ? url.push('PutUser') : url.push('PostUser');
     const request = this.userToEdit() ? this.httpClient.put<UserDTO>(url.join('/'), user) : this.httpClient.post<UserDTO>(url.join('/'), user);
+    this.analyticsService.logEvent(this.userIdToEdit() ? 'edit_user_submit' : 'create_user_submit', { roles: userValues.roles, is_active: userValues.isActive });
     request.pipe(finalize(() => this.savingUser.set(true))).subscribe({
       next: (user: UserDTO) => {
         if(this.userIdToEdit()){

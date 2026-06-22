@@ -9,10 +9,11 @@ import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-guard-detail-pane',
-  imports: [Tag, FormatRunPeriodPipe, DatePipe, Button, RouterLink, RouterModule],
+  imports: [Tag, FormatRunPeriodPipe, DatePipe, Button, RouterLink, RouterModule, TrackClick],
   templateUrl: './guard-detail-pane.html',
   styleUrl: './guard-detail-pane.scss',
 })

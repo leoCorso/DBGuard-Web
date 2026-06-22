@@ -9,10 +9,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { UserDetailDTO } from '../../../interfaces/user.dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-user-details-pane',
-  imports: [DatePipe, Button, RouterLink, RouterModule, Tag, ProgressSpinner],
+  imports: [DatePipe, Button, RouterLink, RouterModule, Tag, ProgressSpinner, TrackClick],
   templateUrl: './user-details-pane.html',
   styleUrl: './user-details-pane.scss',
 })

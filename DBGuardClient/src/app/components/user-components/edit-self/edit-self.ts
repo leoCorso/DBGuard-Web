@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -8,12 +8,15 @@ import { Tag } from 'primeng/tag';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
-import { EditUsernameDTO, ViewUserSelfDTO } from '../../../interfaces/user.dto';
+import { EditPasswordDTO, EditUsernameDTO, ViewUserSelfDTO } from '../../../interfaces/user.dto';
 import { ChangePassword } from '../change-password/change-password';
+import { TrackClick } from '../../../directives/track-click';
+import { AnalyticsService } from '../../../services/analytics-service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-edit-self',
-  imports: [InputText, Button, Tag, ReactiveFormsModule],
+  imports: [InputText, Button, Tag, ReactiveFormsModule, TrackClick],
   templateUrl: './edit-self.html',
   styleUrl: './edit-self.scss',
 })
@@ -26,6 +29,8 @@ export class EditSelf implements OnInit, OnDestroy {
 
   public editPasswordDialog?: DynamicDialogRef<ChangePassword> | null;
   private dialogService = inject(DialogService);
+  private destroyRef = inject(DestroyRef);
+  private analyticsService = inject(AnalyticsService);
 
   ngOnInit(): void {
     this.getUserInfo().subscribe({
@@ -68,5 +73,12 @@ export class EditSelf implements OnInit, OnDestroy {
       resizable: true,
       draggable: true
     });
+    this.editPasswordDialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (editedPassword: EditPasswordDTO | null) => {
+        if(!editedPassword){{
+          this.analyticsService.logEvent('password_change_cancelled');
+        }}
+      }
+    })
   }
 }

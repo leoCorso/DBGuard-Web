@@ -38,7 +38,7 @@
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
                 <td>
-                    <p-button [label]="guard.id" [link]="true" [routerLink]="['/guards/detail', guard.id]"></p-button>
+                    <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'guard_detail_table' }" [label]="guard.id" [link]="true" [routerLink]="['/guards/detail', guard.id]"></p-button>
                 </td>
                 <td>{{ guard.guardName }}</td>
                 <td>{{ guard.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
@@ -46,7 +46,7 @@
                 <td>{{ guard.lastRun | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
                     @if (guard.createdByUserId) {
-                        <p-button [label]="guard.userName" [link]="true"
+                        <p-button appTrackClick eventName="guard_created_by_click" [eventData]="{ source: 'guard_detail_table'}" [label]="guard.userName" [link]="true"
                             [routerLink]="['/users/detail', guard.createdByUserId]"></p-button>
                     }
                     @else {
@@ -72,7 +72,7 @@
                 <td>{{ guard.totalTriggers }}</td>
                 <td>{{ guard.runPeriodInMinutes }}</td>
                 <td>
-                    <p-button [link]="true" [label]="guard.databaseConnectionId"
+                    <p-button appTrackClick eventName="db_connection_detail_click" [eventData]="{ source: 'guard_detail_table'}" [link]="true" [label]="guard.databaseConnectionId"
                         [routerLink]="['/db-connections/dfetail', guard.databaseConnectionId]"></p-button>
                 </td>
             </tr>

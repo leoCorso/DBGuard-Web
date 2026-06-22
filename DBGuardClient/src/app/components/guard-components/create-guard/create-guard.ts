@@ -145,9 +145,8 @@ export class CreateGuard implements OnInit, OnDestroy {
     const url = [environment.api.uri, 'Guards'];
     this.guardToEdit() ? url.push('PutGuard') : url.push('PostGuard');
     const urlString = url.join('/');
-    const request = this.guardToEdit() ? this.httpClient.put<SimpleGuardDTO>(urlString, guard) : this.httpClient.post<SimpleGuardDTO>(urlString, guard);
-    
-
+    const request = this.guardToEdit() ? this.httpClient.put<SimpleGuardDTO>(urlString, guard) : this.httpClient.post<SimpleGuardDTO>(urlString, guard);    
+    this.analyticsService.logEvent(this.guardToEdit() ? 'guard_edit_submit' : 'guard_create_submit', { trigger_operator: guard.triggerOperator, trigger_value: guard.triggerValue, run_period: guard.runPeriodInMinutes, run_after_date: guard.runAfter ? true : false, database_engine: guard.databaseConnection.databaseEngine, notifications: guard.notifications.map(n => n.notificationType), notify_on_clear: guard.notifyOnClear, notify_on_error: guard.notifyOnError, notify_on_trigger: guard.notifyOnTrigger, validate_guard: guard.validateGuard})
     request.pipe(finalize(() => this.creatingGuard.set(false))).subscribe({
       next: (newGuard: SimpleGuardDTO) => {
         if(this.guardToEdit()){
@@ -157,7 +156,6 @@ export class CreateGuard implements OnInit, OnDestroy {
           this.guardService.guardCreated.next(newGuard.id);
 
         }
-        this.analyticsService.logEvent(this.guardToEdit() ? 'guard_edit_submit' : 'guard_create_submit', { trigger_operator: guard.triggerOperator, trigger_value: guard.triggerValue, run_period: guard.runPeriodInMinutes, run_after_date: guard.runAfter ? true : false, database_engine: guard.databaseConnection.databaseEngine, notifications: guard.notifications.map(n => n.notificationType), notify_on_clear: guard.notifyOnClear, notify_on_error: guard.notifyOnError, notify_on_trigger: guard.notifyOnTrigger, validate_guard: guard.validateGuard})
         this.dialogRef.close(newGuard);
       }
     });

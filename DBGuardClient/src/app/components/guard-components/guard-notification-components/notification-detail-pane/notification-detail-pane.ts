@@ -9,10 +9,11 @@ import { EmailNotificationDetailDTO, HttpNotificationDetailDTO, NotificationDeta
 import { EmailNotificationDetailPane } from '../email-notification-detail-pane/email-notification-detail-pane';
 import { HttpNotificationDetailPane } from '../http-notification-detail-pane/http-notification-detail-pane';
 import { Tag } from 'primeng/tag';
+import { TrackClick } from '../../../../directives/track-click';
 
 @Component({
   selector: 'app-notification-detail-pane',
-  imports: [Divider, EmailNotificationDetailPane, HttpNotificationDetailPane, Button, DatePipe, RouterModule, Tag],
+  imports: [Divider, EmailNotificationDetailPane, HttpNotificationDetailPane, Button, DatePipe, RouterModule, Tag, TrackClick],
   templateUrl: './notification-detail-pane.html',
   styleUrl: './notification-detail-pane.scss',
 })

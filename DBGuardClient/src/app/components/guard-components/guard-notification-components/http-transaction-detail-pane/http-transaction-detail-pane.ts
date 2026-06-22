@@ -9,10 +9,11 @@ import { getEnumLabel } from '../../../../helpers/enum-helper';
 import { mapToArray } from '../../../../helpers/http-notification-record-helper';
 import { getHttpSeverity } from '../../../../helpers/http-severity-mapper';
 import { HttpNotificationTransactionDTO } from '../../../../interfaces/notification-dto';
+import { TrackClick } from '../../../../directives/track-click';
 
 @Component({
   selector: 'app-http-transaction-detail-pane',
-  imports: [Tag, Dialog, Button],
+  imports: [Tag, Dialog, Button, TrackClick],
   templateUrl: './http-transaction-detail-pane.html',
   styleUrl: './http-transaction-detail-pane.scss',
 })

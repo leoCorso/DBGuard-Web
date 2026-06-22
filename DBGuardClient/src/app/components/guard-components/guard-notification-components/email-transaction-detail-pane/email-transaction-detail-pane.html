@@ -8,7 +8,7 @@
     <span class="email-value">
         @if(emailTransactionInfo().toEmails.length > 0){
             @for (email of emailTransactionInfo().toEmails; track $index) {
-                <a [href]="'mailto:' + email">{{ email }}</a>
+                <a appTrackClick eventName="notification_transaction_email_click" [eventData]="{source: 'email_transaction_detail_pane', type: 'to'}" [href]="'mailto:' + email">{{ email }}</a>
             }
         }
         @else {
@@ -19,7 +19,7 @@
     <span class="email-value">
         @if(emailTransactionInfo().ccEmails.length > 0){
             @for (email of emailTransactionInfo().ccEmails; track $index) {
-                <a [href]="'mailto:' + email">{{ email }}</a>
+                <a appTrackClick eventName="notification_transaction_email_click" [eventData]="{source: 'email_transaction_detail_pane', type: 'cc'}" [href]="'mailto:' + email">{{ email }}</a>
             }
         }
         @else {
@@ -30,7 +30,7 @@
     <span class="email-value">
         @if(emailTransactionInfo().bccEmails.length > 0){
             @for (email of emailTransactionInfo().bccEmails; track $index) {
-                <a [href]="'mailto:' + email">{{ email }}</a>
+                <a appTrackClick eventName="notification_transaction_email_click" [eventData]="{source: 'email_transaction_detail_pane', type: 'bcc'}" [href]="'mailto:' + email">{{ email }}</a>
             }
         }
         @else {

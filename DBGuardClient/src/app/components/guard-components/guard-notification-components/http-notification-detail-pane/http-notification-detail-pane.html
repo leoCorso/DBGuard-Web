@@ -2,7 +2,7 @@
 <div class="http-info">
     <span class="http-key">URL:</span>
     <span class="http-value">
-        <a [href]="httpNotificationDetail().url" target="_blank">{{ httpNotificationDetail().url }}</a>
+        <a appTrackClick eventName="http_notification_url_click" [eventData]="{ source: 'http_notification_detail_pane' }" [href]="httpNotificationDetail().url" target="_blank">{{ httpNotificationDetail().url }}</a>
     </span>
     <span class="http-key">Request headers:</span>
     <span class="http-value">

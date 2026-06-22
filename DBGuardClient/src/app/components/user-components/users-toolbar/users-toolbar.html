@@ -1,6 +1,6 @@
 <p-toolbar>
     <ng-template #start>
-        <p-button label="User" icon="pi pi-plus" [text]="true" severity="secondary" pTooltip="Create new user" (onClick)="createUserClicked.emit()"></p-button>
+        <p-button appTrackClick eventName="create_user_click" label="User" icon="pi pi-plus" [text]="true" severity="secondary" pTooltip="Create new user" (onClick)="createUserClicked.emit()"></p-button>
     </ng-template>
 </p-toolbar>
 

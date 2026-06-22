@@ -1,11 +1,11 @@
 <div class="notification-info">
     <span class="info-key">Id:</span>
     <span class="info-value">
-        <p-button [outlined]="true" severity="contrast" [label]="notificationDetail().id.toString()" [routerLink]="['/guards/notification-config-detail', notificationDetail().guardId]"></p-button>
+        <p-button appTrackClick eventName="notification_transaction_detail_click" [eventData]="{ source: 'notification_detail_pane' }" [outlined]="true" severity="contrast" [label]="notificationDetail().id.toString()" [routerLink]="['/guards/notification-config-detail', notificationDetail().guardId]"></p-button>
     </span>
     <span class="info-key">Guard id:</span>
     <span class="info-value">
-        <p-button [label]="notificationDetail().guardId.toString()" [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', notificationDetail().guardId]">
+        <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'notification_detail_pane' }" [label]="notificationDetail().guardId.toString()" [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', notificationDetail().guardId]">
 
         </p-button></span>
     <span class="info-key">Notification type:</span>
@@ -22,7 +22,7 @@
             </div>
         }
         @else {
-            <p-button [label]="notificationDetail().createdByUsername" [routerLink]="['/users/detail', notificationDetail().createdByUserId]" [outlined]="true" severity="contrast"></p-button>
+            <p-button appTrackClick eventName="created_by_user_detail_click" [eventData]="{ source: 'notification_detail_pane' }" [label]="notificationDetail().createdByUsername" [routerLink]="['/users/detail', notificationDetail().createdByUserId]" [outlined]="true" severity="contrast"></p-button>
         }
     </span>
 </div>

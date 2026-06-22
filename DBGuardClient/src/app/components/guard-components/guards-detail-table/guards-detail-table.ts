@@ -15,10 +15,11 @@ import { SortValue } from '../../../interfaces/sorting';
 import { Column } from '../../../interfaces/table-items';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-guards-detail-table',
-  imports: [TableModule, Button, FilterItem, DatePipe, RouterLink, RouterModule, Tag],
+  imports: [TableModule, Button, FilterItem, DatePipe, RouterLink, RouterModule, Tag, TrackClick],
   templateUrl: './guards-detail-table.html',
   styleUrl: './guards-detail-table.scss',
 })

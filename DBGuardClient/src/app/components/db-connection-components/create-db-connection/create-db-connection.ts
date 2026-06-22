@@ -16,10 +16,13 @@ import { DatabaseEngine } from '../../../enums/database-engines';
 import { enumToOptions } from '../../../helpers/enum-helper';
 import { CreateDatabaseConnectionDTO, DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
+import { TrackClick } from '../../../directives/track-click';
+import { AnalyticsService } from '../../../services/analytics-service';
+import { ButtonGroup } from 'primeng/buttongroup';
 
 @Component({
   selector: 'app-create-db-connection',
-  imports: [ReactiveFormsModule, FloatLabel, InputText, Select, Message, Password, Button, TooltipModule, Checkbox],
+  imports: [ReactiveFormsModule, FloatLabel, InputText, Select, Message, Password, Button, TooltipModule, Checkbox, TrackClick, ButtonGroup],
   templateUrl: './create-db-connection.html',
   styleUrl: './create-db-connection.scss',
 })
@@ -27,6 +30,7 @@ export class CreateDbConnection implements OnInit {
 
   public dbConnectionToEditId = input<number>();
   private dbConnectionToEdit = signal<CreateDatabaseConnectionDTO | null>(null);
+  private analyticsService = inject(AnalyticsService);
   public databaseEngines = enumToOptions(DatabaseEngine, {PostgreSQL: 'PostgreSQL', SQLite: 'SQLite', SQLServer: 'SQL Server', MySql: 'MySQL'});
   private httpClient = inject(HttpClient);
   public savingConnection = signal<boolean>(false);
@@ -64,6 +68,7 @@ export class CreateDbConnection implements OnInit {
     this.dbConnectionToEditId() ? url.push("PutDatabaseConnection") : url.push('PostDatabaseConnection');
     const urlString = url.join('/');
     const request = this.dbConnectionToEditId() ? this.httpClient.put<DatabaseConnectionDTO>(urlString, newConnection) : this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection);
+    this.analyticsService.logEvent(this.dbConnectionToEditId() ? 'edit_db_connection_submit' : 'create_db_connection_submit', { type: formValues.databaseEngine, validate_connection: formValues.validateConnection });
     request.pipe(finalize(() => this.savingConnection.set(false))).subscribe({
       next: (newConnection: DatabaseConnectionDTO) => {
         if(this.dbConnectionToEditId()){
@@ -76,6 +81,10 @@ export class CreateDbConnection implements OnInit {
         this.savingConnection.set(false);
       }
     });
+  }
+  public cancelDbCreation(): void {
+    this.analyticsService.logEvent('db_create_connection_cancel');
+    this.dialogRef.close();
   }
   private getConnectionToEdit(): void {
     const url = [environment.api.uri, 'DatabaseConnection', 'GetDatabaseConnectionToEdit'].join('/');

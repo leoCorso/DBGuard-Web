@@ -37,7 +37,7 @@
         <ng-template #body let-provider let-rowIndex="rowIndex">
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
-                <td><p-button [link]="true" [label]="provider.id"
+                <td><p-button appTrackClick eventName="provider_detail_click" [eventData]="{ source: 'providers_table' }" [link]="true" [label]="provider.id"
                         [routerLink]="['/providers/detail', provider.id]"></p-button></td>
                 <td>{{ getEnumLabel(notificationType, provider.notificationType) }}</td>
                 <td>{{ provider.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
@@ -47,7 +47,7 @@
                         <p-tag value="System" severity="info"></p-tag>
                     }
                     @else if (provider.createdByUsername) {
-                        <p-button [label]="provider.createdByUsername"
+                        <p-button appTrackClick eventName="created_by_detail" [eventData]="{ source: 'providers_table'}" [label]="provider.createdByUsername"
                                 [routerLink]="['/users/detail', provider.createdByUserId]" [link]="true"></p-button>
                     }
                     @else {

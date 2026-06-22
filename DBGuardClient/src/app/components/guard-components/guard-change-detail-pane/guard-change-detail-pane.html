@@ -1,14 +1,14 @@
 <div class="change-detail">
     <span class="change-key"><strong>Id:</strong></span>
     <span class="change-value">
-        <p-button [outlined]="true" severity="contrast" [label]="changeHistoryDetail().id.toString()" [routerLink]="['/guards/history-detail', changeHistoryDetail().id]"></p-button>
+        <p-button appTrackClick eventName="guard_change_detail_click" [eventData]="{ source: 'guard_change_detail_pane'}" [outlined]="true" severity="contrast" [label]="changeHistoryDetail().id.toString()" [routerLink]="['/guards/history-detail', changeHistoryDetail().id]"></p-button>
     </span>
     <span class="change-key"><strong>Timestamp:</strong></span>
     <span class="change-value">{{ changeHistoryDetail().timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
     <span class="change-key"><strong>Guard id:</strong></span>
     @if (changeHistoryDetail().guardId) {
     <span class="change-value">
-        <p-button [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', changeHistoryDetail().guardId]"
+        <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'guard_change_detail_pane' }" [outlined]="true" severity="contrast" [routerLink]="['/guards/detail', changeHistoryDetail().guardId]"
             [label]="changeHistoryDetail().guardId?.toString()">
 
         </p-button></span>
@@ -40,7 +40,7 @@
     </span>
     <span class="change-key"><strong>Database connection id</strong></span>
     @if (changeHistoryDetail().databaseConnectionId) {
-    <p-button [label]="changeHistoryDetail().databaseConnectionId?.toString()" [outlined]="true" severity="contrast"></p-button>
+    <p-button appTrackClick eventName="db_connection_detail_click" [eventData]="{ source: 'guard_change_detail_pane'}" [label]="changeHistoryDetail().databaseConnectionId?.toString()" [outlined]="true" severity="contrast"></p-button>
     }
     @else {
         <div>

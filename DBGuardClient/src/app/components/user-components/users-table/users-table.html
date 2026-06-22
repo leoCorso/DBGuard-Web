@@ -37,7 +37,7 @@
         <ng-template #body let-user let-rowIndex="rowIndex">
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
-                <td><p-button [link]="true" [label]="user.id" [routerLink]="['/users/detail', user.id]"></p-button></td>
+                <td><p-button appTrackClick eventName="user_detail_click" [eventData]="{ source: 'users_table'}" [link]="true" [label]="user.id" [routerLink]="['/users/detail', user.id]"></p-button></td>
                 <td>{{ user.username }}</td>
                 <td>
                     <p-tag [value]="user.isActive ? 'Active' : 'Inactive'"
@@ -45,7 +45,7 @@
                 </td>
                 <td>
                     @if (user.createdByUserId) {
-                    <p-button [link]="true" [label]="user.createdByUsername"
+                    <p-button appTrackClick eventName="created_by_detail_click" [eventData]="{ source: 'users_table' }" [link]="true" [label]="user.createdByUsername"
                         [routerLink]="['/users/detail', user.createdByUserId]"></p-button>
                     }
                     @else {

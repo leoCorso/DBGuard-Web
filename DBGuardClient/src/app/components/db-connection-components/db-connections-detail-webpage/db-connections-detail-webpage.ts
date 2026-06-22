@@ -15,6 +15,7 @@ import { AuthService } from '../../../services/auth-service';
 import { GuardsDetailTable } from '../../guard-components/guards-detail-table/guards-detail-table';
 import { CreateDbConnection } from '../create-db-connection/create-db-connection';
 import { DbConnectionDetailPane } from '../db-connection-detail-pane/db-connection-detail-pane';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-db-connections-detail-webpage',
@@ -32,6 +33,7 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   public dbConnectionId = signal<number | null>(null);
   private editDbConnectionDialog?: DynamicDialogRef<CreateDbConnection> | null;
+  private analyticsService = inject(AnalyticsService);
   public deletingConnection = signal<boolean>(false);
   public testingConnection = signal<boolean>(false);
 
@@ -47,6 +49,7 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     this.editDbConnectionDialog?.close();
   }
   public editDbConnection(): void {
+    this.analyticsService.logEvent('edit_db_connection_click');
     this.editDbConnectionDialog = this.dialogService.open(CreateDbConnection, {
       header: 'Edit Database Connection',
       maximizable: true,
@@ -59,6 +62,7 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     })
   }
   public onDeleteConnection(event: Event): void {
+    this.analyticsService.logEvent('delete_db_connection_click');
     this.confirmService.confirm({
       target: event.currentTarget as EventTarget,
       message: 'Are you sure you want to delete the database connection?',
@@ -77,6 +81,7 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteConnection(): void {
+    this.analyticsService.logEvent('delete_db_connection_submit');
     this.deletingConnection.set(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'DeleteDatabaseConnection'].join('/');
     const params = new HttpParams().set('connectionId', this.dbConnectionId()!);
@@ -87,6 +92,7 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     });
   }
   public testDatabaseConnection(): void {
+    this.analyticsService.logEvent('test_db_connection_click');
     this.testingConnection.set(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'TestDatabaseConnection'].join('/');
     const params = new HttpParams().set('connectionId', this.dbConnectionId()!);

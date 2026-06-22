@@ -39,7 +39,10 @@
     </div>
 
     <div class="bottom-section">
-        <p-button [loading]="savingConnection()" type="submit" icon="pi pi-save" [rounded]="true" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine"></p-button>
+        <p-buttongroup>
+            <p-button  label="Cancel" severity="secondary" (onClick)="cancelDbCreation()"></p-button>            
+            <p-button [loading]="savingConnection()" type="submit" icon="pi pi-save" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine"></p-button>
+        </p-buttongroup>
     </div>
 
 </form>

@@ -15,10 +15,11 @@ import { Column } from '../../../interfaces/table-items';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-notification-providers-table',
-  imports: [TableModule, Button, FilterItem, RouterModule, DatePipe, Tag],
+  imports: [TableModule, Button, FilterItem, RouterModule, DatePipe, Tag, TrackClick],
   templateUrl: './notification-providers-table.html',
   styleUrl: './notification-providers-table.scss',
 })

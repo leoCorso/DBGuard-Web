@@ -36,7 +36,7 @@ export class ChangePassword {
       confirmNewPassword: passwordEdits.confirmPassword!
     };
     this.httpClient.put(url, passwordRequest).subscribe({
-      next: () => this.dialogRef?.close()
+      next: () => this.dialogRef?.close(passwordRequest)
     });
   }
 }

@@ -18,10 +18,11 @@ import { Column } from '../../../interfaces/table-items';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { FilterItem } from '../../shared/filter-item/filter-item';
 import { PreviewTable } from '../../shared/preview-table/preview-table';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-guard-change-history-table',
-  imports: [TableModule, DatePipe, Tag, FilterItem, RouterModule, Button],
+  imports: [TableModule, DatePipe, Tag, FilterItem, RouterModule, Button, TrackClick],
   templateUrl: './guard-change-history-table.html',
   styleUrl: './guard-change-history-table.scss',
 })

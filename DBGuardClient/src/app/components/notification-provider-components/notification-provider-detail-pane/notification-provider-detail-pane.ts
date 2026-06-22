@@ -9,10 +9,11 @@ import { NotificationType } from '../../../enums/notification-type';
 import { getEnumLabel } from '../../../helpers/enum-helper';
 import { EmailProviderDTO, NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { EmailProviderDetailPane } from '../email-provider-detail-pane/email-provider-detail-pane';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-notification-provider-detail-pane',
-  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, Tag],
+  imports: [Divider, EmailProviderDetailPane, DatePipe, Button, RouterLink, RouterModule, Tag, TrackClick],
   templateUrl: './notification-provider-detail-pane.html',
   styleUrl: './notification-provider-detail-pane.scss',
 })

@@ -14,10 +14,12 @@ import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-d
 import { AuthService } from '../../../services/auth-service';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { Tag } from 'primeng/tag';
+import { TrackClick } from '../../../directives/track-click';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-db-connection-detail-pane',
-  imports: [Button, ProgressSpinner, Tooltip, DatePipe, RouterLink, RouterModule, Tag],
+  imports: [Button, ProgressSpinner, Tooltip, DatePipe, RouterLink, RouterModule, Tag, TrackClick],
   templateUrl: './db-connection-detail-pane.html',
   styleUrl: './db-connection-detail-pane.scss',
 })
@@ -27,12 +29,13 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
   public databaseConnectionInfo = signal<DatabaseConnectionDTO | null>(null);
   private httpClient = inject(HttpClient);
   public authService = inject(AuthService);
+  private analyticsService = inject(AnalyticsService);
   private entityChangeService = inject(EntityChangeService);
   public getEnumLabel = getEnumLabel;
   public databaseEngines = DatabaseEngine;
   private destroy = new Subject<void>();
   public showLoadingUi = signal<boolean>(false);
-  public viewPassword = signal<boolean>(false);
+  public passwordVisible = signal<boolean>(false);
 
   ngOnInit(): void {
     this.entityChangeService.dbConnectionEdited.pipe(takeUntil(this.destroy)).subscribe({
@@ -56,5 +59,9 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
         this.databaseConnectionInfo.set(databaseInfo);
       }
     })
+  }
+  public togglePasswordVisible(): void {
+    this.passwordVisible.set(!this.passwordVisible());
+    this.analyticsService.logEvent('toggle_db_password', { visible: this.passwordVisible() });
   }
 }

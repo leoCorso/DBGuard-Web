@@ -38,13 +38,13 @@
             <tr>
                 <td>{{ rowIndex + 1 }}</td>
                 <td>
-                    <p-button [label]="notification.id" [link]="true"
+                    <p-button appTrackClick eventName="notification_transaction_detail_click" [eventData]="{ source: 'notification_transaction_table'}" [label]="notification.id" [link]="true"
                         [routerLink]="['/guards/notification-transaction-detail', notification.id]"></p-button>
                 </td>
                 <td>{{ notification.timestamp | date: 'MM/dd/yyyy hh:mm:ss a' }}</td>
                 <td>
                     @if (notification.guardId !== undefined) {
-                    <p-button [label]="notification.guardId" [link]="true"
+                    <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'notification_transaction_table' }" [label]="notification.guardId" [link]="true"
                         [routerLink]="['/guards/detail', notification.guardId]"></p-button>
                     }
                     @else {
@@ -53,7 +53,7 @@
                 </td>
                 <td>
                     @if (notification.guardNotificationId !== undefined) {
-                    <p-button [label]="notification.guardNotificationId" [link]="true"
+                    <p-button appTrackClick eventName="guard_notification_detail_click" [eventData]="{ source: 'notification_transaction_table' }" [label]="notification.guardNotificationId" [link]="true"
                         [routerLink]="['/guards/notification-config-detail', notification.guardNotificationId]"></p-button>
                     }
                     @else {
@@ -61,7 +61,7 @@
                     }
                 </td>
                 <td>{{ formatEnumKey(getEnumLabels(notificationType, notification.notificationType)) }}</td>
-                <td><p-button [link]="true" [label]="notification.guardChangeTransactionId"
+                <td><p-button appTrackClick eventName="guard_change_detail_click" [eventData]="{ source: 'notification_transaction_table'}" [link]="true" [label]="notification.guardChangeTransactionId"
                         [routerLink]="['/guards/history-detail', notification.guardChangeTransactionId]"></p-button>
                 </td>
                 <td>

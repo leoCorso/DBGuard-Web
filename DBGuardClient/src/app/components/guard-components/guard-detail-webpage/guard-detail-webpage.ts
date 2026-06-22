@@ -80,6 +80,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     this.editGuardDialogRef?.close();
   }
   public editGuardClicked(): void {
+    this.analyticsService.logEvent('edit_guard_click');
     this.editGuardDialogRef = this.dialogService.open(CreateGuard, {
       header: 'Edit guard',
       closable: true,
@@ -90,7 +91,6 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
         guardToEditId: this.guardDetail()!.id
       }
     });
-    this.analyticsService.logEvent('edit_guard_click');
   }
   public onDeleteGuard(event: Event): void {
     this.analyticsService.logEvent('delete_guard_click')
@@ -112,24 +112,24 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     });
   }
   private deleteGuard(): void {
+    this.analyticsService.logEvent('guard_delete_submit');
     this.deletingGuard.set(true);
     const url = [environment.api.uri, 'Guards', 'DeleteGuard'].join('/');
     const params = new HttpParams().set('guardId', this.guardId()!);
     this.httpClient.delete<void>(url, { params: params }).pipe(finalize(() => this.deletingGuard.set(false))).subscribe({
       next: () => {
         this.entityChangeService.guardDeleted.next(this.guardId()!);
-        this.analyticsService.logEvent('guard_delete');
         this.router.navigate(['/guards/view-all']);
       }
     })
   }
   public runGuard(): void {
+    this.analyticsService.logEvent('guard_manual_run_click');
     this.testingGuard.set(true);
     const url = [environment.api.uri, 'Guards', 'RunGuardManually'].join('/');
     const params = new HttpParams().set('guardId', this.guardId()!);
     this.httpClient.post<GuardState>(url, {}, { params: params }).pipe(finalize(() => this.testingGuard.set(false))).subscribe({
       next: (guardState: GuardState) => {
-        this.analyticsService.logEvent('guard_manual_run');
         this.entityChangeService.guardEdited.next(this.guardId()!);
         this.messageService.add({summary: 'Guard finished', detail: `Guard state: ${getEnumLabel(GuardState, guardState)}`, severity: getGuardStateSeverityTwo(guardState), key: 'guard-run-toast'});
       }

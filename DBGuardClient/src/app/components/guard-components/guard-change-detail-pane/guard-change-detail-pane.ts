@@ -9,10 +9,11 @@ import { GuardState } from '../../../enums/guard-state';
 import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardChangeTransactionDTO } from '../../../interfaces/guard-change-transaction-dto';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-guard-change-detail-pane',
-  imports: [Button, RouterModule, RouterLink, Tag, DatePipe],
+  imports: [Button, RouterModule, RouterLink, Tag, DatePipe, TrackClick],
   templateUrl: './guard-change-detail-pane.html',
   styleUrl: './guard-change-detail-pane.scss',
 })
