@@ -8,7 +8,7 @@
     [paginator]="true" [rows]="pageSize()" emptyMessage="No guards created" [totalRecords]="totalItems()"
     [rowsPerPageOptions]="pageSizeOptions" [sortField]="sortControl.get('sortField')?.value"
     [sortOrder]="sortControl.get('sortOrder')?.value" (onLazyLoad)="loadDataPage($event)" [showCurrentPageReport]="true"
-    currentPageReportTemplate="{totalRecords} records across {totalPages} pages">
+    currentPageReportTemplate="{totalRecords} records across {totalPages} pages" (onPage)="guardsPaginated()">
     <ng-template #header>
         <div class="view-header">
             <p-button label="Filter" icon="pi pi-filter" [text]="true" severity="secondary" pTooltip="Filter guard view"

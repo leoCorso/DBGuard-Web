@@ -1,7 +1,7 @@
 <div class="view-item">
     <div class="first-pane">
         <div class="first-top">
-            <p-button  severity="contrast" [label]="guardData().guardName" [rounded]="true" [routerLink]="['/guards/detail', guardData().id]"></p-button>
+            <p-button appTrackClick eventName="guard_detail_click" [eventData]="{ source: 'guard_item'}" severity="contrast" [label]="guardData().guardName" [rounded]="true" [routerLink]="['/guards/detail', guardData().id]"></p-button>
             <p-tag [rounded]="true" [value]="this.getEnumLabel(guardState, guardData().guardState)" [severity]="getGuardStateSeverity(guardData().guardState)"></p-tag>
         </div>
         <div class="first-mid">
@@ -31,7 +31,7 @@
                 </div>
             }
             @else {
-                <p-button class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
+                <p-button appTrackClick eventName="user_detail_click" [eventData]="{ source: 'guard_item'}" class="info" [label]="guardData().userName" [outlined]="true" severity="contrast" [routerLink]="['/users/detail', guardData().createdByUserId]"></p-button>
             }
             <label class="info" for="expression"><strong>Trigger expression:</strong></label>
             <p class="info" id="expression">{{ guardData().triggerColumn }} {{ formatEnumKey(getEnumLabel(guardOperator, guardData().triggerOperator)) }} {{ guardData().triggerValue }}</p>

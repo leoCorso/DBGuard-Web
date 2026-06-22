@@ -51,9 +51,12 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
       }
     });
     
-    this.sortControl.valueChanges.pipe(takeUntil(this.destroy)).subscribe(() => {
-      const loadEvent = this.dataView.createLazyLoadMetadata();
-      this.loadDataPage(loadEvent);
+    this.sortControl.valueChanges.pipe(takeUntil(this.destroy)).subscribe((sort: SortValue | null) => {
+      if(sort){
+        const loadEvent = this.dataView.createLazyLoadMetadata();
+        this.loadDataPage(loadEvent);
+        this.analyticsService.logEvent("guard_sort", { sort_field: sort.field, sort_order: sort.order});
+      }
     });
   }
   public toggleFilterVisibility(): void {
@@ -95,6 +98,9 @@ export class ViewGuardsWebpage extends PaginatedDataView<GuardView> implements O
         this.errorState.set(true);
       }
     });
+  }
+  public guardsPaginated(): void {
+    this.analyticsService.logEvent('guard_pagination', { page:  this.page(), page_size: this.pageSize()});
   }
 }
 

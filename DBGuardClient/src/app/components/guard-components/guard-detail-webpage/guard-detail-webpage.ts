@@ -25,6 +25,7 @@ import { GuardChangeHistoryTable } from '../guard-change-history-table/guard-cha
 import { GuardDetailPane } from '../guard-detail-pane/guard-detail-pane';
 import { GuardNotificationTransactionsTable } from '../guard-notification-components/guard-notification-transactions-table/guard-notification-transactions-table';
 import { GuardNotificationsTable } from '../guard-notification-components/guard-notifications-table/guard-notifications-table';
+import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-guard-detail-webpage',
@@ -37,6 +38,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
   
   private httpClient = inject(HttpClient);
   private dialogService = inject(DialogService);
+  private analyticsService = inject(AnalyticsService);
   private entityChangeService = inject(EntityChangeService);
   public authService = inject(AuthService);
   private router = inject(Router);
@@ -87,9 +89,11 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
       inputValues: {
         guardToEditId: this.guardDetail()!.id
       }
-    })
+    });
+    this.analyticsService.logEvent('edit_guard_click');
   }
   public onDeleteGuard(event: Event): void {
+    this.analyticsService.logEvent('delete_guard_click')
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
       message: 'Are you sure you want to delete this guard? You can pause them if needed.',
@@ -114,6 +118,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     this.httpClient.delete<void>(url, { params: params }).pipe(finalize(() => this.deletingGuard.set(false))).subscribe({
       next: () => {
         this.entityChangeService.guardDeleted.next(this.guardId()!);
+        this.analyticsService.logEvent('guard_delete');
         this.router.navigate(['/guards/view-all']);
       }
     })
@@ -124,6 +129,7 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     const params = new HttpParams().set('guardId', this.guardId()!);
     this.httpClient.post<GuardState>(url, {}, { params: params }).pipe(finalize(() => this.testingGuard.set(false))).subscribe({
       next: (guardState: GuardState) => {
+        this.analyticsService.logEvent('guard_manual_run');
         this.entityChangeService.guardEdited.next(this.guardId()!);
         this.messageService.add({summary: 'Guard finished', detail: `Guard state: ${getEnumLabel(GuardState, guardState)}`, severity: getGuardStateSeverityTwo(guardState), key: 'guard-run-toast'});
       }

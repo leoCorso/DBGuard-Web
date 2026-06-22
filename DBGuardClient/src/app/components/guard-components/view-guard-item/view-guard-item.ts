@@ -12,10 +12,11 @@ import { formatEnumKey, getEnumLabel } from '../../../helpers/enum-helper';
 import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardView } from '../../../interfaces/guard-dto';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-view-guard-item',
-  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button, NgClass],
+  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button, TrackClick],
   templateUrl: './view-guard-item.html',
   styleUrl: './view-guard-item.scss',
 })
