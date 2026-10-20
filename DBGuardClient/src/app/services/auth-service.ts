@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { EMPTY, finalize, Observable, tap } from 'rxjs';
+import { EMPTY, finalize, Observable, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginRequest } from '../interfaces/login-request';
 import { AuthResult } from '../interfaces/login-result';
-import { InactivityService } from './inactivity-service';
 import { AnalyticsService } from './analytics-service';
+import { InactivityService } from './inactivity-service';
 
 @Injectable({
   providedIn: 'root',
@@ -45,11 +45,13 @@ export class AuthService {
   }
 
   constructor(){
-    this.inactivityService.onTimeout$.subscribe(() => {
-      if(this.loggedIn()){
-        this.logout().pipe(finalize(() => this.inactivityService.stop())).subscribe();
-        this.messageService.add({summary: 'Logged out', detail: 'You were logged out due to inactivity', severity: 'error', key: 'request-error', sticky: true})
-      }
+    this.inactivityService.warningTracker.inactive$
+    .pipe(
+      tap(() => this.messageService.add({summary: 'Logged out', detail: 'You were logged out due to inactivity', severity: 'error', key: 'request-error', sticky: true})),
+      switchMap(() => this.logout())
+    )
+    .subscribe(() => {
+      this.inactivityService.stop();
     });
   }
   public initUser(): void {
@@ -99,7 +101,6 @@ export class AuthService {
         this.clearClaims();
         this.loggedIn.set(false);
         this.router.navigate(['login']);
-        this.inactivityService.stop();
       })
     );
   }
