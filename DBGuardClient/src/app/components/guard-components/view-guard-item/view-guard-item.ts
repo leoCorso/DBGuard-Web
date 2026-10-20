@@ -1,5 +1,5 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { Tag } from 'primeng/tag';
 import { Badge } from 'primeng/badge';
 import { Card } from 'primeng/card';
@@ -18,6 +18,7 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-view-guard-item',
   imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button, TrackClick],
   templateUrl: './view-guard-item.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './view-guard-item.scss',
 })
 export class ViewGuardItem {
@@ -27,6 +28,6 @@ export class ViewGuardItem {
   public guardState = GuardState;
   public guardOperator = GuardOperator;
   public databaseEngine = DatabaseEngine;
-  
+
   public getGuardStateSeverity = getGuardStateSeverity;
 }

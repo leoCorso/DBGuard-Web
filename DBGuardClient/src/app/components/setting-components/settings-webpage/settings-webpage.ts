@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { ThemeService } from '../../../services/theme-service';
@@ -11,6 +11,7 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-settings-webpage',
   imports: [Button, Card, EditSelf, Tag, TrackClick],
   templateUrl: './settings-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings-webpage.scss',
 })
 export class SettingsWebpage {
@@ -19,6 +20,6 @@ export class SettingsWebpage {
 
   public toggleDarkMode(): void {
     this.themeService.toggleDarkMode();
-    this.analyticsService.logEvent('dark_mode_toggle_click', { mode: this.themeService.getMode()});
+    this.analyticsService.logEvent('dark_mode_toggle_click', { mode: this.themeService.getMode() });
   }
 }

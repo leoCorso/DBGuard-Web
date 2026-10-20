@@ -1,7 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterModule } from "@angular/router";
+import {
+  Component,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { RouterLink, RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tag } from 'primeng/tag';
@@ -15,6 +23,7 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-user-details-pane',
   imports: [DatePipe, Button, RouterLink, RouterModule, Tag, ProgressSpinner, TrackClick],
   templateUrl: './user-details-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './user-details-pane.scss',
 })
 export class UserDetailsPane implements OnInit, OnDestroy {
@@ -28,11 +37,11 @@ export class UserDetailsPane implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.entityChangeService.userEdited.pipe(takeUntil(this.destroy)).subscribe({
       next: (id: string) => {
-        if(this.userId() === id){
+        if (this.userId() === id) {
           this.loadDetails();
         }
-      }
-    })
+      },
+    });
     this.loadDetails();
   }
   ngOnDestroy(): void {
@@ -47,7 +56,7 @@ export class UserDetailsPane implements OnInit, OnDestroy {
       next: (userDetails: UserDetailDTO) => {
         this.userDetails.set(userDetails);
         this.loadingUser.set(false);
-      }
+      },
     });
   }
 }

@@ -1,10 +1,18 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterModule } from "@angular/router";
+import {
+  Component,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { RouterLink, RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Tooltip } from "primeng/tooltip";
+import { Tooltip } from 'primeng/tooltip';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { withDelayedLoading } from '../../../custom-operators/delayed-loading';
@@ -21,6 +29,7 @@ import { AnalyticsService } from '../../../services/analytics-service';
   selector: 'app-db-connection-detail-pane',
   imports: [Button, ProgressSpinner, Tooltip, DatePipe, RouterLink, RouterModule, Tag, TrackClick],
   templateUrl: './db-connection-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './db-connection-detail-pane.scss',
 })
 export class DbConnectionDetailPane implements OnInit, OnDestroy {
@@ -40,10 +49,10 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.entityChangeService.dbConnectionEdited.pipe(takeUntil(this.destroy)).subscribe({
       next: (dbId) => {
-        if(this.databaseConnectionId() == dbId){
+        if (this.databaseConnectionId() == dbId) {
           this.getInfo();
         }
-      }
+      },
     });
     this.getInfo();
   }
@@ -51,14 +60,19 @@ export class DbConnectionDetailPane implements OnInit, OnDestroy {
     this.destroy.next();
     this.destroy.complete();
   }
-  private getInfo(): void {    
-    const url = [environment.api.uri, 'DatabaseConnection', 'GetDatabaseConnectionDetail'].join('/');
+  private getInfo(): void {
+    const url = [environment.api.uri, 'DatabaseConnection', 'GetDatabaseConnectionDetail'].join(
+      '/',
+    );
     const params = new HttpParams().set('databaseConnectionId', this.databaseConnectionId());
-    this.httpClient.get<DatabaseConnectionDTO>(url, { params: params }).pipe(withDelayedLoading((val) => this.showLoadingUi.set(val))).subscribe({
-      next: (databaseInfo: DatabaseConnectionDTO) => {
-        this.databaseConnectionInfo.set(databaseInfo);
-      }
-    })
+    this.httpClient
+      .get<DatabaseConnectionDTO>(url, { params: params })
+      .pipe(withDelayedLoading((val) => this.showLoadingUi.set(val)))
+      .subscribe({
+        next: (databaseInfo: DatabaseConnectionDTO) => {
+          this.databaseConnectionInfo.set(databaseInfo);
+        },
+      });
   }
   public togglePasswordVisible(): void {
     this.passwordVisible.set(!this.passwordVisible());

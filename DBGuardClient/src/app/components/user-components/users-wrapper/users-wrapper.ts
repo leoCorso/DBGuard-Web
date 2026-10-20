@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CreateUser } from '../create-user/create-user';
@@ -11,6 +11,7 @@ import { UserDTO } from '../../../interfaces/user.dto';
   selector: 'app-users-wrapper',
   imports: [RouterOutlet, UsersToolbar],
   templateUrl: './users-wrapper.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './users-wrapper.scss',
 })
 export class UsersWrapper implements OnDestroy {
@@ -28,14 +29,14 @@ export class UsersWrapper implements OnDestroy {
       draggable: true,
       closable: true,
       resizable: true,
-      maximizable: true
+      maximizable: true,
     });
     this.userCreateDialogRef?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user: UserDTO | null) => {
-        if(!user){
+        if (!user) {
           this.analyticsService.logEvent('create_user_cancelled');
         }
-      }
-    })
+      },
+    });
   }
 }

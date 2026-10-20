@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from 'primeng/button';
@@ -15,8 +15,19 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login-webpage',
-  imports: [ReactiveFormsModule, InputGroup, InputText, InputGroupAddon, Password, Card, Button, Image, Message],
+  imports: [
+    ReactiveFormsModule,
+    InputGroup,
+    InputText,
+    InputGroupAddon,
+    Password,
+    Card,
+    Button,
+    Image,
+    Message,
+  ],
   templateUrl: './login-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './login-webpage.scss',
 })
 export class LoginWebpage implements OnInit {
@@ -26,10 +37,10 @@ export class LoginWebpage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   public returnUrl?: string;
 
-  constructor(){
+  constructor() {
     effect(() => {
       const loggedIn = this.authService.loggedIn();
-      if(loggedIn){
+      if (loggedIn) {
         const returnUrl = this.returnUrl ? this.returnUrl : '';
         this.router.navigate([returnUrl]);
       }
@@ -40,19 +51,19 @@ export class LoginWebpage implements OnInit {
   }
   public loginForm = new FormGroup({
     username: new FormControl<string | null>(null, [Validators.required]),
-    password: new FormControl<string | null>(null, [Validators.required])
+    password: new FormControl<string | null>(null, [Validators.required]),
   });
 
   public loginClicked(): void {
-    const username = this.loginForm.get('username')?.value
+    const username = this.loginForm.get('username')?.value;
     const password = this.loginForm.get('password')?.value;
-    if(!username || !password){
+    if (!username || !password) {
       return;
     }
     this.authService.login(username, password).subscribe({
       next: () => {
         this.router.navigate([this.returnUrl]);
-      }
-    })
+      },
+    });
   }
 }

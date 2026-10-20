@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -21,9 +21,13 @@ import { TrackClick } from '../../../../directives/track-click';
   selector: 'app-guard-notification-transactions-table',
   imports: [TableModule, FilterItem, DatePipe, Tag, Button, RouterModule, TrackClick],
   templateUrl: './guard-notification-transactions-table.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guard-notification-transactions-table.scss',
 })
-export class GuardNotificationTransactionsTable extends PreviewTable<NotificationTransactionDTO> implements OnInit {
+export class GuardNotificationTransactionsTable
+  extends PreviewTable<NotificationTransactionDTO>
+  implements OnInit
+{
   public notificationTypes = enumToOptions(NotificationType);
   public guardId = input<number>();
   public guardChangeId = input<number>();
@@ -35,70 +39,70 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
   public notificationType = NotificationType;
 
   public override columns: Column[] = [
-    {field: 'id', header: 'Id', sortable: true},
-    {field: 'timestamp', header: 'Timestamp', sortable: true},
-    {field: 'guardId', header: 'GuardId', sortable: false},
-    {field: 'guardNotificationId', header: 'Guard notification id', sortable: true},
-    {field: 'notificationType', header: 'Notification type', sortable: true},
-    {field: 'guardChangeTransactionId', header: 'Guard change transaction id', sortable: true},
-    {field: 'successful', header: 'Status', sortable: true},
-    {field: 'errorMessage', header: 'Error', sortable: true}
+    { field: 'id', header: 'Id', sortable: true },
+    { field: 'timestamp', header: 'Timestamp', sortable: true },
+    { field: 'guardId', header: 'GuardId', sortable: false },
+    { field: 'guardNotificationId', header: 'Guard notification id', sortable: true },
+    { field: 'notificationType', header: 'Notification type', sortable: true },
+    { field: 'guardChangeTransactionId', header: 'Guard change transaction id', sortable: true },
+    { field: 'successful', header: 'Status', sortable: true },
+    { field: 'errorMessage', header: 'Error', sortable: true },
   ];
-  public override defaultSort: SortValue[] = [
-    {field: 'timestamp', order: -1}
-  ];
-  public override fetchUrl: string = [environment.api.uri, 'NotificationTransactions', 'GetNotificationTransactions'].join('/');
+  public override defaultSort: SortValue[] = [{ field: 'timestamp', order: -1 }];
+  public override fetchUrl: string = [
+    environment.api.uri,
+    'NotificationTransactions',
+    'GetNotificationTransactions',
+  ].join('/');
   public override filtersConfig: FilterConfig[] = [];
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
-  
+
   ngOnInit(): void {
     this.initFilterInputs();
     this.configureFilters();
     this.guardService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
       next: (guardId: number) => {
-        if(this.guardId() == guardId){
+        if (this.guardId() == guardId) {
           const event = this.viewItemsTable.createLazyLoadMetadata();
           this.loadPreviewData(event);
         }
-      }
-    })
+      },
+    });
   }
   protected override initFilterInputs(): void {
     let filter: FilterValue;
-    if(this.guardId()){
+    if (this.guardId()) {
       filter = {
         field: 'guardId',
         value: this.guardId(),
         operator: '==',
-        type: 'numeric'
+        type: 'numeric',
       };
-      this.filters.update(filters => {
+      this.filters.update((filters) => {
         const newFilters = new Map(filters);
         newFilters.set('guardId', filter);
         return newFilters;
       });
-    }
-    else if(this.guardChangeId()){
+    } else if (this.guardChangeId()) {
       filter = {
         field: 'guardChangeTransactionId',
         value: this.guardChangeId(),
         operator: '==',
-        type: 'numeric'
+        type: 'numeric',
       };
-      this.filters.update(filters => {
+      this.filters.update((filters) => {
         const newFilters = new Map(filters);
         newFilters.set('guardChangeTransactionId', filter);
         return newFilters;
       });
-    }
-    else if(this.guardNotificationId()){
+    } else if (this.guardNotificationId()) {
       filter = {
         field: 'guardNotificationId',
         value: this.guardNotificationId(),
         operator: '==',
-        type: 'numeric'
+        type: 'numeric',
       };
-      this.filters.update(filters => {
+      this.filters.update((filters) => {
         const newFilters = new Map(filters);
         newFilters.set('guardNotificationId', filter);
         return newFilters;
@@ -107,14 +111,53 @@ export class GuardNotificationTransactionsTable extends PreviewTable<Notificatio
   }
   protected override configureFilters(): void {
     this.filtersConfig = [
-      {field: 'id', type: 'numeric', isTableFilter: true, placeholder: 'Filter by id'},
-      {field: 'timestamp', type: 'datetime', isTableFilter: true, placeholder: 'Filter by create time'},
-      {field: 'guardId', type: this.guardId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by guard id'},
-      {field: 'guardNotificationId', type: this.guardNotificationId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by notification config id'},
-      {field: 'notificationType', type: 'multi-select', isTableFilter: true, options: this.notificationTypes, placeholder: 'Filter by notification type'},
-      {field: 'guardChangeTransactionId', type: this.guardChangeId() ? 'empty' : 'numeric', isTableFilter: true, placeholder: 'Filter by change transaction id'},
-      {field: 'successful', type: 'trivalue', isTableFilter: true, options: [{label: 'Sent', value: true}, {label: 'Failed', value: false}]},
-      {field: 'errorMessage', type: 'text', isTableFilter: true, placeholder: 'Filter by error message'}
-    ];  
+      { field: 'id', type: 'numeric', isTableFilter: true, placeholder: 'Filter by id' },
+      {
+        field: 'timestamp',
+        type: 'datetime',
+        isTableFilter: true,
+        placeholder: 'Filter by create time',
+      },
+      {
+        field: 'guardId',
+        type: this.guardId() ? 'empty' : 'numeric',
+        isTableFilter: true,
+        placeholder: 'Filter by guard id',
+      },
+      {
+        field: 'guardNotificationId',
+        type: this.guardNotificationId() ? 'empty' : 'numeric',
+        isTableFilter: true,
+        placeholder: 'Filter by notification config id',
+      },
+      {
+        field: 'notificationType',
+        type: 'multi-select',
+        isTableFilter: true,
+        options: this.notificationTypes,
+        placeholder: 'Filter by notification type',
+      },
+      {
+        field: 'guardChangeTransactionId',
+        type: this.guardChangeId() ? 'empty' : 'numeric',
+        isTableFilter: true,
+        placeholder: 'Filter by change transaction id',
+      },
+      {
+        field: 'successful',
+        type: 'trivalue',
+        isTableFilter: true,
+        options: [
+          { label: 'Sent', value: true },
+          { label: 'Failed', value: false },
+        ],
+      },
+      {
+        field: 'errorMessage',
+        type: 'text',
+        isTableFilter: true,
+        placeholder: 'Filter by error message',
+      },
+    ];
   }
 }

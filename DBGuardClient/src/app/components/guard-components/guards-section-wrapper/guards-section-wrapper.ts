@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { GuardsToolbar } from '../guards-toolbar/guards-toolbar';
@@ -12,10 +12,10 @@ import { SimpleGuardDTO } from '../../../interfaces/guard-dto';
   selector: 'app-guards-section-wrapper',
   imports: [GuardsToolbar, RouterOutlet],
   templateUrl: './guards-section-wrapper.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guards-section-wrapper.scss',
 })
 export class GuardsSectionWrapper implements OnDestroy {
-  
   private dialogService = inject(DialogService);
   public authService = inject(AuthService);
   private analyticsService = inject(AnalyticsService);
@@ -28,15 +28,16 @@ export class GuardsSectionWrapper implements OnDestroy {
       maximizable: true,
       closable: true,
       draggable: true,
-      resizable: true
+      resizable: true,
     });
     this.dialogRef?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (newGuard: SimpleGuardDTO | null) => {
-        if(!newGuard){ //Cancelled
+        if (!newGuard) {
+          //Cancelled
           this.analyticsService.logEvent('create_guard_cancelled');
         }
-      }
-    })
+      },
+    });
   }
   ngOnDestroy(): void {
     this.dialogRef?.close();

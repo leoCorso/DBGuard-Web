@@ -1,5 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  signal,
+  WritableSignal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { FilterValue } from '../../../interfaces/filters';
 import { ViewParamsBuilder } from '../../../services/view-params-builder';
@@ -8,6 +15,7 @@ import { ViewParamsBuilder } from '../../../services/view-params-builder';
   selector: 'app-paginated-view',
   imports: [],
   template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export abstract class PaginatedView<ViewType> implements OnDestroy {
@@ -21,7 +29,7 @@ export abstract class PaginatedView<ViewType> implements OnDestroy {
   public errorState = signal<boolean>(false);
   protected destroy = new Subject<void>();
   public abstract filters: WritableSignal<Map<string, FilterValue> | undefined>;
-  protected httpClient= inject(HttpClient);
+  protected httpClient = inject(HttpClient);
   protected paramsBuilder = inject(ViewParamsBuilder);
 
   ngOnDestroy(): void {

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -21,64 +21,93 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-notification-providers-table',
   imports: [TableModule, Button, FilterItem, RouterModule, DatePipe, Tag, TrackClick],
   templateUrl: './notification-providers-table.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-providers-table.scss',
 })
-export class NotificationProvidersTable extends PreviewTable<NotificationProviderDTO> implements OnInit {
+export class NotificationProvidersTable
+  extends PreviewTable<NotificationProviderDTO>
+  implements OnInit
+{
   public createdByUserId = input<string | undefined>(undefined);
   private entityChangeService = inject(EntityChangeService);
   public override columns: Column[] = [
-    {field: 'id', header: 'Id', sortable: true},
-    {field: 'notificationType', header: 'Provider Type', sortable: true},
-    {field: 'createDate', header: 'Create Date', sortable: true},
-    {field: 'lastEdited', header: 'Last Edited', sortable: true},
-    {field: 'createdByUsername', header: 'Created by', sortable: true}
-  ]
-  public override fetchUrl: string = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviders'].join('/');
-  public override defaultSort: SortValue[] = [
-    {field: 'createDate', order: -1}
+    { field: 'id', header: 'Id', sortable: true },
+    { field: 'notificationType', header: 'Provider Type', sortable: true },
+    { field: 'createDate', header: 'Create Date', sortable: true },
+    { field: 'lastEdited', header: 'Last Edited', sortable: true },
+    { field: 'createdByUsername', header: 'Created by', sortable: true },
   ];
+  public override fetchUrl: string = [
+    environment.api.uri,
+    'NotificationProviders',
+    'GetNotificationProviders',
+  ].join('/');
+  public override defaultSort: SortValue[] = [{ field: 'createDate', order: -1 }];
   public override filtersConfig: FilterConfig[] = [];
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
   public notificationTypes = enumToOptions(NotificationType);
   public getEnumLabel = getEnumLabel;
   public notificationType = NotificationType;
-  
+
   ngOnInit(): void {
-    merge(this.entityChangeService.providerCreated, this.entityChangeService.providerEdited).pipe(takeUntil(this.destroy)).subscribe({
-      next: () => {
-        const event = this.viewItemsTable.createLazyLoadMetadata();
-        this.loadPreviewData(event);
-      }
-    });
+    merge(this.entityChangeService.providerCreated, this.entityChangeService.providerEdited)
+      .pipe(takeUntil(this.destroy))
+      .subscribe({
+        next: () => {
+          const event = this.viewItemsTable.createLazyLoadMetadata();
+          this.loadPreviewData(event);
+        },
+      });
     this.initFilterInputs();
     this.configureFilters();
   }
   protected override initFilterInputs(): void {
     const filters: FilterValue[] = [];
-    if(this.createdByUserId() !== undefined){
+    if (this.createdByUserId() !== undefined) {
       const filter: FilterValue = {
         field: 'createdByUserId',
         value: this.createdByUserId(),
         operator: '==',
-        type: 'text'
-      }
+        type: 'text',
+      };
       filters.push(filter);
     }
-    if(filters.length > 0){
-      this.filters.update(current => {
-        const updated =  new Map(current);
-        filters.forEach(filter => updated.set(filter.field, filter));
+    if (filters.length > 0) {
+      this.filters.update((current) => {
+        const updated = new Map(current);
+        filters.forEach((filter) => updated.set(filter.field, filter));
         return updated;
       });
     }
   }
   protected override configureFilters(): void {
     this.filtersConfig = [
-      {field: 'id', type: 'numeric', isTableFilter: true, placeholder: 'Filter by Id'},
-      {field: 'notificationType', type: 'multi-select', isTableFilter: true, placeholder: 'Filter by Provider Type', options: this.notificationTypes},
-      {field: 'createDate', type: 'datetime', isTableFilter: true, placeholder: 'Filter by Create Date'},
-      {field: 'lastEdited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by Last Edited'},
-      {field: 'createdByUsername', type: this.createdByUserId() === undefined ? 'text' : 'empty', isTableFilter: true, placeholder: 'Filter by Created By'},
+      { field: 'id', type: 'numeric', isTableFilter: true, placeholder: 'Filter by Id' },
+      {
+        field: 'notificationType',
+        type: 'multi-select',
+        isTableFilter: true,
+        placeholder: 'Filter by Provider Type',
+        options: this.notificationTypes,
+      },
+      {
+        field: 'createDate',
+        type: 'datetime',
+        isTableFilter: true,
+        placeholder: 'Filter by Create Date',
+      },
+      {
+        field: 'lastEdited',
+        type: 'datetime',
+        isTableFilter: true,
+        placeholder: 'Filter by Last Edited',
+      },
+      {
+        field: 'createdByUsername',
+        type: this.createdByUserId() === undefined ? 'text' : 'empty',
+        isTableFilter: true,
+        placeholder: 'Filter by Created By',
+      },
     ];
   }
 }

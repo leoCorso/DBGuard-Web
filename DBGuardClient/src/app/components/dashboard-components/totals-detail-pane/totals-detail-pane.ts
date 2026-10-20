@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TotalSummary } from '../../../interfaces/total-summary';
 import { environment } from '../../../../environments/environment';
 
@@ -7,6 +7,7 @@ import { environment } from '../../../../environments/environment';
   selector: 'app-totals-detail-pane',
   imports: [],
   templateUrl: './totals-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './totals-detail-pane.scss',
 })
 export class TotalsDetailPane implements OnInit {
@@ -15,12 +16,12 @@ export class TotalsDetailPane implements OnInit {
   ngOnInit(): void {
     this.loadData();
   }
-  private loadData(): void { 
+  private loadData(): void {
     const url = [environment.api.uri, 'Guards', 'GetTotalSummary'].join('/');
     this.httpClient.get<TotalSummary>(url).subscribe({
       next: (totals: TotalSummary) => {
         this.totals.set(totals);
-      }
-    })
+      },
+    });
   }
 }

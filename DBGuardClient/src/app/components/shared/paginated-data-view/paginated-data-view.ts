@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DataView, DataViewLazyLoadEvent } from 'primeng/dataview';
 import { SortOption, SortValue } from '../../../interfaces/sorting';
@@ -8,6 +8,7 @@ import { PaginatedView } from '../paginated-view/paginated-view';
   selector: 'app-paginated-data-view',
   imports: [],
   template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export abstract class PaginatedDataView<ViewType> extends PaginatedView<ViewType> {

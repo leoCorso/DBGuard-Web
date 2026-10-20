@@ -1,5 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -19,8 +26,19 @@ import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-user-details-webpage',
-  imports: [UserDetailsPane, Card, GuardsDetailTable, DbConnectionsTable, NotificationProvidersTable, ButtonGroup, Button, ConfirmPopup, TrackClick],
+  imports: [
+    UserDetailsPane,
+    Card,
+    GuardsDetailTable,
+    DbConnectionsTable,
+    NotificationProvidersTable,
+    ButtonGroup,
+    Button,
+    ConfirmPopup,
+    TrackClick,
+  ],
   templateUrl: './user-details-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './user-details-webpage.scss',
 })
 export class UserDetailsWebpage implements OnInit, OnDestroy {
@@ -35,7 +53,7 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
   public deletingUser = signal<boolean>(false);
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-    if(id === null){
+    if (id === null) {
       this.router.navigate(['/users/view-all']);
     }
     this.userId.set(id!);
@@ -51,8 +69,8 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
       closable: true,
       maximizable: true,
       inputValues: {
-        userIdToEdit: this.userId()
-      }
+        userIdToEdit: this.userId(),
+      },
     });
   }
   public deleteUserClicked(event: Event): void {
@@ -61,13 +79,13 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
       message: 'Are you sure you want to delete the user?',
       icon: 'pi pi-info-circle',
       rejectButtonProps: {
-        severity: 'secondary'
+        severity: 'secondary',
       },
       acceptButtonProps: {
-        severity: 'danger'
+        severity: 'danger',
       },
       reject: () => {},
-      accept: () => this.deleteUser() 
+      accept: () => this.deleteUser(),
     });
   }
   private deleteUser(): void {
@@ -75,10 +93,13 @@ export class UserDetailsWebpage implements OnInit, OnDestroy {
     this.deletingUser.set(true);
     const url = [environment.api.uri, 'User', 'DeleteUser'].join('/');
     const params = new HttpParams().set('userId', this.userId()!);
-    this.httpClient.delete(url, { params: params}).pipe(finalize(() => this.deletingUser.set(false))).subscribe({
-      next: () => {
-        this.router.navigate(['/users/view-all']);
-      }
-    })
+    this.httpClient
+      .delete(url, { params: params })
+      .pipe(finalize(() => this.deletingUser.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/users/view-all']);
+        },
+      });
   }
 }

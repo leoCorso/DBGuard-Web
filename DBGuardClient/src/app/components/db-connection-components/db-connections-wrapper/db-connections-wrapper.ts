@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DbConnectionToolbar } from '../db-connection-toolbar/db-connection-toolbar';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -10,8 +10,9 @@ import { DatabaseConnectionDTO } from '../../../interfaces/database-connection-d
 
 @Component({
   selector: 'app-db-connections-wrapper',
-  imports: [RouterOutlet,DbConnectionToolbar],
+  imports: [RouterOutlet, DbConnectionToolbar],
   templateUrl: './db-connections-wrapper.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './db-connections-wrapper.scss',
 })
 export class DbConnectionsWrapper implements OnDestroy {
@@ -25,18 +26,18 @@ export class DbConnectionsWrapper implements OnDestroy {
   }
   public createDBConnection(): void {
     this.createConnectionDialog = this.dialogService.open(CreateDbConnection, {
-        header: 'Create Database Connection',
-        draggable: true,
-        closable: true,
-        resizable: true,
-        maximizable: true
-      });
+      header: 'Create Database Connection',
+      draggable: true,
+      closable: true,
+      resizable: true,
+      maximizable: true,
+    });
     this.createConnectionDialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (dbConnection: DatabaseConnectionDTO | null) => {
-        if(!dbConnection){
+        if (!dbConnection) {
           this.analyticsService.logEvent('create_db_connection_cancelled');
         }
-      }
-    })
+      },
+    });
   }
 }

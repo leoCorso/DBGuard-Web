@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { Tag } from 'primeng/tag';
@@ -15,6 +15,7 @@ import { TrackClick } from '../../../../directives/track-click';
   selector: 'app-http-transaction-detail-pane',
   imports: [Tag, Dialog, Button, TrackClick],
   templateUrl: './http-transaction-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './http-transaction-detail-pane.scss',
 })
 export class HttpTransactionDetailPane {
@@ -26,7 +27,7 @@ export class HttpTransactionDetailPane {
   public mapToArray = mapToArray;
   public getHttpSeverity = getHttpSeverity;
   public responseMessageVisible = false;
-  
+
   public showResponseMessageDialog(): void {
     this.responseMessageVisible = true;
   }
@@ -35,13 +36,13 @@ export class HttpTransactionDetailPane {
     const doc = parser.parseFromString(html, 'text/html');
     const serializer = new XMLSerializer();
     let pretty = serializer.serializeToString(doc);
-    
+
     // Basic indent formatting
     return pretty
       .replace(/></g, '>\n<')
       .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
       .join('\n');
   }
   public recordHasItem(record: Record<string, string | null>): boolean {

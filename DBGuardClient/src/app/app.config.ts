@@ -7,11 +7,12 @@ import Material from '@primeuix/themes/material';
 import { MyPreset } from './theme-preset';
 
 import { DialogService } from 'primeng/dynamicdialog';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { requestErrorInterceptor } from './interceptors/request-error-interceptor';
 import { accessTokenInterceptor } from './interceptors/token-interceptor';
 import { refreshTokenInterceptor } from './interceptors/refresh-token-interceptor';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,15 +22,18 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: MyPreset,
         options: {
-            darkModeSelector: '.my-app-dark'
-        }
+          darkModeSelector: '.my-app-dark',
+        },
       },
       ripple: true,
-      
+      license: environment.primeng.license // Add your license here
     }),
     DialogService,
     MessageService,
     ConfirmationService,
-    provideHttpClient(withInterceptors([requestErrorInterceptor, accessTokenInterceptor, refreshTokenInterceptor]))
-  ]
+    provideHttpClient(
+      withXhr(),
+      withInterceptors([requestErrorInterceptor, accessTokenInterceptor, refreshTokenInterceptor]),
+    ),
+  ],
 };

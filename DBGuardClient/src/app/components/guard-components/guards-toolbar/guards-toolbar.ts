@@ -1,14 +1,15 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Toolbar } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../services/auth-service';
-import { TrackClick } from "../../../directives/track-click";
+import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-guards-toolbar',
   imports: [Toolbar, Button, TooltipModule, TrackClick],
   templateUrl: './guards-toolbar.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guards-toolbar.scss',
 })
 export class GuardsToolbar {

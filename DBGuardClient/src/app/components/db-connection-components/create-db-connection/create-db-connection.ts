@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
@@ -9,12 +9,15 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { Select } from 'primeng/select';
-import { TooltipModule } from "primeng/tooltip";
+import { TooltipModule } from 'primeng/tooltip';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { enumToOptions } from '../../../helpers/enum-helper';
-import { CreateDatabaseConnectionDTO, DatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
+import {
+  CreateDatabaseConnectionDTO,
+  DatabaseConnectionDTO,
+} from '../../../interfaces/database-connection-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
 import { TrackClick } from '../../../directives/track-click';
 import { AnalyticsService } from '../../../services/analytics-service';
@@ -22,16 +25,33 @@ import { ButtonGroup } from 'primeng/buttongroup';
 
 @Component({
   selector: 'app-create-db-connection',
-  imports: [ReactiveFormsModule, FloatLabel, InputText, Select, Message, Password, Button, TooltipModule, Checkbox, TrackClick, ButtonGroup],
+  imports: [
+    ReactiveFormsModule,
+    FloatLabel,
+    InputText,
+    Select,
+    Message,
+    Password,
+    Button,
+    TooltipModule,
+    Checkbox,
+    TrackClick,
+    ButtonGroup,
+  ],
   templateUrl: './create-db-connection.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-db-connection.scss',
 })
 export class CreateDbConnection implements OnInit {
-
   public dbConnectionToEditId = input<number>();
   private dbConnectionToEdit = signal<CreateDatabaseConnectionDTO | null>(null);
   private analyticsService = inject(AnalyticsService);
-  public databaseEngines = enumToOptions(DatabaseEngine, {PostgreSQL: 'PostgreSQL', SQLite: 'SQLite', SQLServer: 'SQL Server', MySql: 'MySQL'});
+  public databaseEngines = enumToOptions(DatabaseEngine, {
+    PostgreSQL: 'PostgreSQL',
+    SQLite: 'SQLite',
+    SQLServer: 'SQL Server',
+    MySql: 'MySQL',
+  });
   private httpClient = inject(HttpClient);
   public savingConnection = signal<boolean>(false);
   public dbConnectionForm = new FormGroup({
@@ -40,7 +60,7 @@ export class CreateDbConnection implements OnInit {
     databaseName: new FormControl<string | null>(null, [Validators.required]),
     username: new FormControl<string | null>(null),
     password: new FormControl<string | null>(null),
-    validateConnection: new FormControl<boolean>(true)
+    validateConnection: new FormControl<boolean>(true),
   });
   private dialogRef = inject(DynamicDialogRef<DatabaseConnectionDTO>);
   private entityChangeService = inject(EntityChangeService);
@@ -61,25 +81,31 @@ export class CreateDbConnection implements OnInit {
       databaseName: formValues.databaseName!,
       username: formValues.username ?? undefined,
       password: formValues.password ?? undefined,
-      validateConnection: formValues.validateConnection!
+      validateConnection: formValues.validateConnection!,
     };
     const url = [environment.api.uri, 'DatabaseConnection'];
-    
-    this.dbConnectionToEditId() ? url.push("PutDatabaseConnection") : url.push('PostDatabaseConnection');
+
+    this.dbConnectionToEditId()
+      ? url.push('PutDatabaseConnection')
+      : url.push('PostDatabaseConnection');
     const urlString = url.join('/');
-    const request = this.dbConnectionToEditId() ? this.httpClient.put<DatabaseConnectionDTO>(urlString, newConnection) : this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection);
-    this.analyticsService.logEvent(this.dbConnectionToEditId() ? 'edit_db_connection_submit' : 'create_db_connection_submit', { type: formValues.databaseEngine, validate_connection: formValues.validateConnection });
+    const request = this.dbConnectionToEditId()
+      ? this.httpClient.put<DatabaseConnectionDTO>(urlString, newConnection)
+      : this.httpClient.post<DatabaseConnectionDTO>(urlString, newConnection);
+    this.analyticsService.logEvent(
+      this.dbConnectionToEditId() ? 'edit_db_connection_submit' : 'create_db_connection_submit',
+      { type: formValues.databaseEngine, validate_connection: formValues.validateConnection },
+    );
     request.pipe(finalize(() => this.savingConnection.set(false))).subscribe({
       next: (newConnection: DatabaseConnectionDTO) => {
-        if(this.dbConnectionToEditId()){
+        if (this.dbConnectionToEditId()) {
           this.entityChangeService.dbConnectionEdited.next(newConnection.id!);
-        }
-        else {
+        } else {
           this.entityChangeService.dbConnectionCreated.next(newConnection.id!);
         }
         this.dialogRef.close(newConnection);
         this.savingConnection.set(false);
-      }
+      },
     });
   }
   public cancelDbCreation(): void {
@@ -87,14 +113,16 @@ export class CreateDbConnection implements OnInit {
     this.dialogRef.close();
   }
   private getConnectionToEdit(): void {
-    const url = [environment.api.uri, 'DatabaseConnection', 'GetDatabaseConnectionToEdit'].join('/');
+    const url = [environment.api.uri, 'DatabaseConnection', 'GetDatabaseConnectionToEdit'].join(
+      '/',
+    );
     const params = new HttpParams().set('connectionId', this.dbConnectionToEditId()!);
     const id = this.dbConnectionToEditId();
     this.httpClient.get<CreateDatabaseConnectionDTO>(url, { params: params }).subscribe({
       next: (connectionToEdit: CreateDatabaseConnectionDTO) => {
         this.dbConnectionToEdit.set(connectionToEdit);
         this.dbConnectionForm.patchValue(connectionToEdit);
-      }
-    })
+      },
+    });
   }
 }

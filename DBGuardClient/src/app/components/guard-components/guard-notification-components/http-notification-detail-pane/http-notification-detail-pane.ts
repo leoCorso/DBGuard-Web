@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { HttpNotificationDetailDTO } from '../../../../interfaces/notification-dto';
 import { mapToArray } from '../../../../helpers/http-notification-record-helper';
 import { getEnumLabel } from '../../../../helpers/enum-helper';
@@ -12,6 +12,7 @@ import { TrackClick } from '../../../../directives/track-click';
   selector: 'app-http-notification-detail-pane',
   imports: [Tag, TrackClick],
   templateUrl: './http-notification-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './http-notification-detail-pane.scss',
 })
 export class HttpNotificationDetailPane {

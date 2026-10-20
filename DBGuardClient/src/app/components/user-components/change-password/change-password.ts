@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -16,14 +16,27 @@ import { FormControlError } from '../../shared/form-control-error/form-control-e
   selector: 'app-change-password',
   imports: [ReactiveFormsModule, FloatLabel, Password, Message, Button, FormControlError],
   templateUrl: './change-password.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './change-password.scss',
 })
 export class ChangePassword {
-  public editPasswordForm = new FormGroup({
-    currentPassword: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)]),
-    password: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)]),
-    confirmPassword: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)])
-  }, [passwordMatchValidator()]);
+  public editPasswordForm = new FormGroup(
+    {
+      currentPassword: new FormControl<string | null>(null, [
+        Validators.required,
+        Validators.pattern(passwordRequirementsRegex),
+      ]),
+      password: new FormControl<string | null>(null, [
+        Validators.required,
+        Validators.pattern(passwordRequirementsRegex),
+      ]),
+      confirmPassword: new FormControl<string | null>(null, [
+        Validators.required,
+        Validators.pattern(passwordRequirementsRegex),
+      ]),
+    },
+    [passwordMatchValidator()],
+  );
   private httpClient = inject(HttpClient);
   private dialogRef = inject(DynamicDialogRef);
 
@@ -33,10 +46,10 @@ export class ChangePassword {
     const passwordRequest: EditPasswordDTO = {
       currentPassword: passwordEdits.currentPassword!,
       newPassword: passwordEdits.password!,
-      confirmNewPassword: passwordEdits.confirmPassword!
+      confirmNewPassword: passwordEdits.confirmPassword!,
     };
     this.httpClient.put(url, passwordRequest).subscribe({
-      next: () => this.dialogRef?.close(passwordRequest)
+      next: () => this.dialogRef?.close(passwordRequest),
     });
   }
 }

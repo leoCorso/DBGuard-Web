@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -13,6 +13,7 @@ import { ThemeService } from '../../services/theme-service';
   selector: 'app-top-navbar',
   imports: [Menubar, Button, Image, RouterLink],
   templateUrl: './top-navbar.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './top-navbar.scss',
 })
 export class TopNavbar {
@@ -22,11 +23,11 @@ export class TopNavbar {
   public isMobile = computed(() => this.bpResult()?.matches ?? false);
   public toggleLogin = output<void>();
   public themeService = inject(ThemeService);
-  
+
   public menuItems: MenuItem[] = [
     {
       label: 'Home',
-      icon: 'pi pi-home'
-    }
-  ]
+      icon: 'pi pi-home',
+    },
+  ];
 }

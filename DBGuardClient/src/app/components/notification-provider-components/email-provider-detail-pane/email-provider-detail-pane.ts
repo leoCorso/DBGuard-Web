@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from 'primeng/button';
 import { EmailProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { AuthService } from '../../../services/auth-service';
@@ -9,6 +9,7 @@ import { AnalyticsService } from '../../../services/analytics-service';
   selector: 'app-email-provider-detail-pane',
   imports: [Button, TrackClick],
   templateUrl: './email-provider-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './email-provider-detail-pane.scss',
 })
 export class EmailProviderDetailPane {
@@ -17,7 +18,7 @@ export class EmailProviderDetailPane {
   public showPassword = signal<boolean>(false);
   private analyticsService = inject(AnalyticsService);
   public toggleShowPassword(): void {
-    this.showPassword.set(!this.showPassword())
-    this.analyticsService.logEvent('toggle_smtp_password', { visible: this.showPassword()});
+    this.showPassword.set(!this.showPassword());
+    this.analyticsService.logEvent('toggle_smtp_password', { visible: this.showPassword() });
   }
 }

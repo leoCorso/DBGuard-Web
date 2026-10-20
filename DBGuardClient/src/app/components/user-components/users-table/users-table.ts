@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -19,45 +19,77 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-users-table',
   imports: [TableModule, DatePipe, Button, RouterModule, FilterItem, Tag, TrackClick],
   templateUrl: './users-table.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './users-table.scss',
 })
 export class UsersTable extends PreviewTable<UserDTO> implements OnInit {
   public override columns: Column[] = [
     { field: 'id', header: 'Id', sortable: true },
-    {field: 'username', header: 'Username', sortable: true},
-    {field: 'isActive', header: 'Is active', sortable: true},
-    {field: 'createdByUsername', header: 'Created by', sortable: true},
-    {field: 'createDate', header: 'Created on', sortable: true},
-    {field: 'lastEdited', header: 'Last edited', sortable: true}
+    { field: 'username', header: 'Username', sortable: true },
+    { field: 'isActive', header: 'Is active', sortable: true },
+    { field: 'createdByUsername', header: 'Created by', sortable: true },
+    { field: 'createDate', header: 'Created on', sortable: true },
+    { field: 'lastEdited', header: 'Last edited', sortable: true },
   ];
-  public override defaultSort: SortValue[] = [
-    {field: 'username', order: 1}
-  ];
+  public override defaultSort: SortValue[] = [{ field: 'username', order: 1 }];
   public override fetchUrl: string = [environment.api.uri, 'User', 'GetUsers'].join('/');
   public override filters = signal<Map<string, FilterValue> | undefined>(undefined);
   public override filtersConfig: FilterConfig[] = [];
   private entityChangeService = inject(EntityChangeService);
 
   ngOnInit(): void {
-    merge(this.entityChangeService.userCreated, this.entityChangeService.userEdited).pipe(takeUntil(this.destroy)).subscribe({
-      next: () => {
-        const event = this.viewItemsTable.createLazyLoadMetadata();
-        this.loadPreviewData(event);
-      }
-    })
+    merge(this.entityChangeService.userCreated, this.entityChangeService.userEdited)
+      .pipe(takeUntil(this.destroy))
+      .subscribe({
+        next: () => {
+          const event = this.viewItemsTable.createLazyLoadMetadata();
+          this.loadPreviewData(event);
+        },
+      });
     this.configureFilters();
   }
-  protected override initFilterInputs(): void {
-    
-  }
+  protected override initFilterInputs(): void {}
   protected override configureFilters(): void {
     this.filtersConfig = [
-      {field: 'id', label: 'Id', type: 'text', isTableFilter: true, placeholder: 'Filter by id'},
-      {field: 'username', label: 'Username', type: 'text', isTableFilter: true, placeholder: 'Filter by username'},
-      {field: 'isActive', label: 'Is active', type: 'trivalue', isTableFilter: true, options: [{label: 'active', value: true}, {label: 'inactive', value: false}]},
-      {field: 'createdByUsername', label: 'Created by', type: 'text', isTableFilter: true, placeholder: 'Filter by creator username'},
-      {field: 'createDate', label: 'Created on', type: 'datetime', isTableFilter: true, placeholder: 'Filter by creation date'},
-      {field: 'lastEdited', label: 'Last edited', type: 'datetime', isTableFilter: true, placeholder: 'Filter by last edit date'}
+      { field: 'id', label: 'Id', type: 'text', isTableFilter: true, placeholder: 'Filter by id' },
+      {
+        field: 'username',
+        label: 'Username',
+        type: 'text',
+        isTableFilter: true,
+        placeholder: 'Filter by username',
+      },
+      {
+        field: 'isActive',
+        label: 'Is active',
+        type: 'trivalue',
+        isTableFilter: true,
+        options: [
+          { label: 'active', value: true },
+          { label: 'inactive', value: false },
+        ],
+      },
+      {
+        field: 'createdByUsername',
+        label: 'Created by',
+        type: 'text',
+        isTableFilter: true,
+        placeholder: 'Filter by creator username',
+      },
+      {
+        field: 'createDate',
+        label: 'Created on',
+        type: 'datetime',
+        isTableFilter: true,
+        placeholder: 'Filter by creation date',
+      },
+      {
+        field: 'lastEdited',
+        label: 'Last edited',
+        type: 'datetime',
+        isTableFilter: true,
+        placeholder: 'Filter by last edit date',
+      },
     ];
   }
 }

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AuthService } from '../../../services/auth-service';
@@ -12,6 +12,7 @@ import { AnalyticsService } from '../../../services/analytics-service';
   selector: 'app-notification-providers-wrapper',
   imports: [RouterOutlet, NotificationProviderToolbar],
   templateUrl: './notification-providers-wrapper.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-providers-wrapper.scss',
 })
 export class NotificationProvidersWrapper implements OnDestroy {
@@ -30,14 +31,14 @@ export class NotificationProvidersWrapper implements OnDestroy {
       draggable: true,
       closable: true,
       resizable: true,
-      maximizable: true
+      maximizable: true,
     });
     this.createProviderDialog?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (provider: NotificationProviderDTO | null) => {
-        if(!provider){
+        if (!provider) {
           this.analyticsService.logEvent('create_provider_cancelled');
         }
-      }
-    })
+      },
+    });
   }
 }

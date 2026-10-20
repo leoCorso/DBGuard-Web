@@ -1,4 +1,11 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -15,7 +22,8 @@ import { ThemeService } from './services/theme-service';
   selector: 'app-root',
   imports: [RouterOutlet, Sidebar, TopNavbar, Toast, Message],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrl: './app.scss',
 })
 export class App implements OnInit {
   public authService = inject(AuthService);
@@ -26,7 +34,7 @@ export class App implements OnInit {
   private router = inject(Router);
   private themeService = inject(ThemeService);
   protected readonly title = signal('DBGuardClient');
-  
+
   ngOnInit(): void {
     this.themeService.initThemeMode();
     this.configureNotificationPermissions();
@@ -34,29 +42,32 @@ export class App implements OnInit {
     this.setupInactivityListeners();
   }
   public toggleLogin(): void {
-    if(this.authService.loggedIn()){
+    if (this.authService.loggedIn()) {
       this.authService.logout().subscribe();
-    }
-    else {
+    } else {
       this.router.navigate(['login']);
     }
   }
   private setupInactivityListeners(): void {
-    this.inactivityService.countdownStarted$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.dialogRef = this.dialogService.open(InactivityPrompt, {
-        header: 'Idle detected',
-        closable: false
+    this.inactivityService.countdownStarted$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.dialogRef = this.dialogService.open(InactivityPrompt, {
+          header: 'Idle detected',
+          closable: false,
+        });
       });
-    });
-    this.inactivityService.countdownStopped$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.dialogRef?.close());
+    this.inactivityService.countdownStopped$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.dialogRef?.close());
   }
   private configureNotificationPermissions(): void {
-    if(!("Notification" in window)){
-      console.log("Notifications are not supported in this environment");
+    if (!('Notification' in window)) {
+      console.log('Notifications are not supported in this environment');
       return;
     }
     Notification.requestPermission((result) => {
       console.log(`Notification permission request: ${result}`);
-    })
+    });
   }
 }

@@ -1,4 +1,12 @@
-import { Component, inject, model, output, QueryList, ViewChildren } from '@angular/core';
+import {
+  Component,
+  inject,
+  model,
+  output,
+  QueryList,
+  ViewChildren,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FilterConfig, FilterValue } from '../../../interfaces/filters';
 import { FilterItem } from '../filter-item/filter-item';
 import { AnalyticsService } from '../../../services/analytics-service';
@@ -7,6 +15,7 @@ import { AnalyticsService } from '../../../services/analytics-service';
   selector: 'app-filter-pane',
   imports: [],
   template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
 export abstract class FilterPane {
@@ -17,15 +26,14 @@ export abstract class FilterPane {
   @ViewChildren(FilterItem) protected filterItems!: QueryList<FilterItem>;
 
   public onFilterValueChanged(filter: FilterValue): void {
-    if(filter.value === '' || filter.value === null || filter.value.length === 0) {
-      this.filters.update(filters => {
+    if (filter.value === '' || filter.value === null || filter.value.length === 0) {
+      this.filters.update((filters) => {
         const next = new Map(filters);
         next.delete(filter.field);
         return next;
       });
-    }
-    else {
-      this.filters.update(filters => {
+    } else {
+      this.filters.update((filters) => {
         const next = new Map(filters);
         next?.set(filter.field, filter);
         return next;
@@ -35,7 +43,7 @@ export abstract class FilterPane {
   }
   public clearFilters(): void {
     this.filters()?.clear();
-    this.filterItems.forEach(filter => filter.initFilters());
+    this.filterItems.forEach((filter) => filter.initFilters());
     this.filterChanged.emit(undefined);
     this.analyticsService.logEvent('filter_cleared');
   }

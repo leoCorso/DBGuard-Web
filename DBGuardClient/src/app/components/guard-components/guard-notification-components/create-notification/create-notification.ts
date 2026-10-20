@@ -1,17 +1,18 @@
-import { Component, input, output } from "@angular/core";
-import { NotificationProviderDTO } from "../../../../interfaces/notification-provider-dto";
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 
 @Component({
   selector: 'app-create-notification',
   imports: [],
   template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: '',
 })
-export abstract class CreateNotification<CreateType, CreateTypeWIndex>{
-    public notificationAdded = output<CreateType>();
-    public notificationEdited = output<CreateTypeWIndex>();
-    public cancelForm = output<void>();
-    public notificationToEdit = input<CreateTypeWIndex>();
-    public notificationProvider = input.required<NotificationProviderDTO>();
-    public abstract saveNotification(): void;
+export abstract class CreateNotification<CreateType, CreateTypeWIndex> {
+  public notificationAdded = output<CreateType>();
+  public notificationEdited = output<CreateTypeWIndex>();
+  public cancelForm = output<void>();
+  public notificationToEdit = input<CreateTypeWIndex>();
+  public notificationProvider = input.required<NotificationProviderDTO>();
+  public abstract saveNotification(): void;
 }

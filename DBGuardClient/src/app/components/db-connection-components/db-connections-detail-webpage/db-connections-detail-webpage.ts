@@ -1,5 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -19,8 +26,18 @@ import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-db-connections-detail-webpage',
-  imports: [DbConnectionDetailPane, GuardsDetailTable, Card, ButtonGroup, Button, ConfirmPopup, TooltipModule, Toast],
+  imports: [
+    DbConnectionDetailPane,
+    GuardsDetailTable,
+    Card,
+    ButtonGroup,
+    Button,
+    ConfirmPopup,
+    TooltipModule,
+    Toast,
+  ],
   templateUrl: './db-connections-detail-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './db-connections-detail-webpage.scss',
 })
 export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
@@ -41,7 +58,6 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (!id) {
       this.router.navigate(['db-connections/view-all']);
-
     }
     this.dbConnectionId.set(parseInt(id!));
   }
@@ -57,9 +73,9 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
       draggable: true,
       closable: true,
       inputValues: {
-        dbConnectionToEditId: this.dbConnectionId()!
-      }
-    })
+        dbConnectionToEditId: this.dbConnectionId()!,
+      },
+    });
   }
   public onDeleteConnection(event: Event): void {
     this.analyticsService.logEvent('delete_db_connection_click');
@@ -70,14 +86,16 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
       rejectButtonProps: {
         label: 'Cancel',
         severity: 'secondary',
-        outlined: true
+        outlined: true,
       },
       acceptButtonProps: {
         label: 'Delete',
-        severity: 'danger'
+        severity: 'danger',
       },
       accept: () => this.deleteConnection(),
-      reject: () => {return}
+      reject: () => {
+        return;
+      },
     });
   }
   private deleteConnection(): void {
@@ -85,21 +103,32 @@ export class DbConnectionsDetailWebpage implements OnInit, OnDestroy {
     this.deletingConnection.set(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'DeleteDatabaseConnection'].join('/');
     const params = new HttpParams().set('connectionId', this.dbConnectionId()!);
-    this.httpClient.delete(url, { params: params }).pipe(finalize(() => this.deletingConnection.set(false))).subscribe({
-      next: () => {
-        this.router.navigate(['/db-connections/view-all']);
-      }
-    });
+    this.httpClient
+      .delete(url, { params: params })
+      .pipe(finalize(() => this.deletingConnection.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/db-connections/view-all']);
+        },
+      });
   }
   public testDatabaseConnection(): void {
     this.analyticsService.logEvent('test_db_connection_click');
     this.testingConnection.set(true);
     const url = [environment.api.uri, 'DatabaseConnection', 'TestDatabaseConnection'].join('/');
     const params = new HttpParams().set('connectionId', this.dbConnectionId()!);
-    this.httpClient.post(url, {}, {params: params}).pipe(finalize(() => this.testingConnection.set(false))).subscribe({
-      next: () => {
-        this.messageService.add({summary: 'Healthy', detail: 'Database connection is healthy', severity: 'success', key: 'test-db-toast'});
-      }
-    })
+    this.httpClient
+      .post(url, {}, { params: params })
+      .pipe(finalize(() => this.testingConnection.set(false)))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            summary: 'Healthy',
+            detail: 'Database connection is healthy',
+            severity: 'success',
+            key: 'test-db-toast',
+          });
+        },
+      });
   }
 }

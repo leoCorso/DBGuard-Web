@@ -1,5 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -22,8 +29,19 @@ import { NotificationProviderDetailPane } from '../notification-provider-detail-
 
 @Component({
   selector: 'app-notification-provider-detail-webpage',
-  imports: [NotificationProviderDetailPane, Card, GuardNotificationsTable, Button, ButtonGroup, ConfirmPopup, TooltipModule, Toast, ProgressSpinner],
+  imports: [
+    NotificationProviderDetailPane,
+    Card,
+    GuardNotificationsTable,
+    Button,
+    ButtonGroup,
+    ConfirmPopup,
+    TooltipModule,
+    Toast,
+    ProgressSpinner,
+  ],
   templateUrl: './notification-provider-detail-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-provider-detail-webpage.scss',
 })
 export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
@@ -44,7 +62,7 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-    if(id === null){
+    if (id === null) {
       this.router.navigate(['/providers/view-all']);
     }
     this.providerId.set(parseInt(id!));
@@ -61,23 +79,28 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
       rejectButtonProps: {
         label: 'Cancel',
         severity: 'secondary',
-        outlined: true
+        outlined: true,
       },
       acceptButtonProps: {
         label: 'Delete',
-        severity: 'danger'
+        severity: 'danger',
       },
       accept: () => this.deleteProvider(),
-      reject: () => {return}
+      reject: () => {
+        return;
+      },
     });
   }
   private deleteProvider(): void {
     this.deletingProvider.set(true);
     const url = [environment.api.uri, 'NotificationProviders', 'DeleteProvider'].join('/');
     const params = new HttpParams().set('providerId', this.providerId()!);
-    this.httpClient.delete(url, { params: params }).pipe(finalize(() => this.deletingProvider.set(false))).subscribe(() => {
-      this.router.navigate(['/providers/view-all']);
-    });
+    this.httpClient
+      .delete(url, { params: params })
+      .pipe(finalize(() => this.deletingProvider.set(false)))
+      .subscribe(() => {
+        this.router.navigate(['/providers/view-all']);
+      });
   }
   public editProvider(): void {
     this.editProviderDialog = this.dialogService.open(CreateNotificationProvider, {
@@ -86,27 +109,44 @@ export class NotificationProviderDetailWebpage implements OnInit, OnDestroy {
       closable: true,
       maximizable: true,
       inputValues: {
-        notificationProviderIdToEdit: this.providerId()
-      }
+        notificationProviderIdToEdit: this.providerId(),
+      },
     });
   }
   public testProvider(): void {
     this.testingProvider.set(true);
-    const url = [environment.api.uri, 'NotificationProviders', 'TestNotificationProvider'].join('/');
+    const url = [environment.api.uri, 'NotificationProviders', 'TestNotificationProvider'].join(
+      '/',
+    );
     const params = new HttpParams().set('providerId', this.providerId()!);
-    this.httpClient.post(url, {}, { params: params }).pipe(finalize(() => this.testingProvider.set(false))).subscribe({
-      next: () => {
-        this.messageService.add({summary: 'Provider working', detail: 'The provider is working and can be used to send notifications', key: 'provider-toast', severity: 'success'});
-      }
-    })
+    this.httpClient
+      .post(url, {}, { params: params })
+      .pipe(finalize(() => this.testingProvider.set(false)))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            summary: 'Provider working',
+            detail: 'The provider is working and can be used to send notifications',
+            key: 'provider-toast',
+            severity: 'success',
+          });
+        },
+      });
   }
   private loadProviderDetail(): void {
-    const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
+    const url = [
+      environment.api.uri,
+      'NotificationProviders',
+      'GetNotificationProviderDetail',
+    ].join('/');
     const params = new HttpParams().set('id', this.providerId()!);
-    this.httpClient.get<NotificationProviderDTO>(url, { params: params }).pipe(withDelayedLoading((val) => this.loadingProvider.set(val))).subscribe({
-      next: (providerInfo: NotificationProviderDTO) => {
-        this.notificationProvider.set(providerInfo);
-      }
-    })
+    this.httpClient
+      .get<NotificationProviderDTO>(url, { params: params })
+      .pipe(withDelayedLoading((val) => this.loadingProvider.set(val)))
+      .subscribe({
+        next: (providerInfo: NotificationProviderDTO) => {
+          this.notificationProvider.set(providerInfo);
+        },
+      });
   }
 }

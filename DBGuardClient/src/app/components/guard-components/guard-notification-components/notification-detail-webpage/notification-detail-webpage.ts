@@ -1,5 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -14,7 +21,10 @@ import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { withDelayedLoading } from '../../../../custom-operators/delayed-loading';
 import { GuardDetailDTO } from '../../../../interfaces/guard-dto';
-import { GuardNotificationDTO, NotificationDetailDTO } from '../../../../interfaces/notification-dto';
+import {
+  GuardNotificationDTO,
+  NotificationDetailDTO,
+} from '../../../../interfaces/notification-dto';
 import { NotificationProviderDTO } from '../../../../interfaces/notification-provider-dto';
 import { AuthService } from '../../../../services/auth-service';
 import { EntityChangeService } from '../../../../services/entity-change-service';
@@ -27,9 +37,22 @@ import { AnalyticsService } from '../../../../services/analytics-service';
 
 @Component({
   selector: 'app-notification-detail-webpage',
-  imports: [NotificationDetailPane, Card, RouterModule, GuardNotificationTransactionsTable, 
-    NotificationProviderDetailPane, ButtonGroup, Button, TooltipModule, Toast, ConfirmPopup, ProgressSpinner, GuardDetailPane],
+  imports: [
+    NotificationDetailPane,
+    Card,
+    RouterModule,
+    GuardNotificationTransactionsTable,
+    NotificationProviderDetailPane,
+    ButtonGroup,
+    Button,
+    TooltipModule,
+    Toast,
+    ConfirmPopup,
+    ProgressSpinner,
+    GuardDetailPane,
+  ],
   templateUrl: './notification-detail-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-detail-webpage.scss',
 })
 export class NotificationDetailWebpage implements OnInit, OnDestroy {
@@ -52,36 +75,40 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
   public notificationProvider = signal<NotificationProviderDTO | null>(null);
 
   ngOnInit(): void {
-      const id = this.activatedRoute.snapshot.paramMap.get('id');
-      if(!id){
-        this.router.navigate(['/guards/configured-notifications']);
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate(['/guards/configured-notifications']);
+    }
+    this.notificationConfigId.set(Number(id));
+    this.entityChangeService.guardEdited.subscribe((guardId) => {
+      if (this.notificationDetail()?.guardId === guardId) {
+        this.loadInitialData();
       }
-      this.notificationConfigId.set(Number(id));
-      this.entityChangeService.guardEdited.subscribe(guardId => {
-        if(this.notificationDetail()?.guardId === guardId){
-          this.loadInitialData();
-        }
-      })
-      this.loadInitialData();
+    });
+    this.loadInitialData();
   }
   ngOnDestroy(): void {
     this.editGuardDialog?.close();
   }
   private loadInitialData(): void {
     const url = [environment.api.uri, 'Notifications', 'GetNotificationConfigDetail'].join('/');
-    const params = new HttpParams()
-      .set('notificationId', this.notificationConfigId()!);
+    const params = new HttpParams().set('notificationId', this.notificationConfigId()!);
 
-      this.httpClient.get<GuardNotificationDTO>(url, { params: params }).pipe(withDelayedLoading((val) => this.loadingNotificationTransaction.set(val))).subscribe({
+    this.httpClient
+      .get<GuardNotificationDTO>(url, { params: params })
+      .pipe(withDelayedLoading((val) => this.loadingNotificationTransaction.set(val)))
+      .subscribe({
         next: (notificationInfo: GuardNotificationDTO) => {
           this.notificationDetail.set(notificationInfo);
           this.getGuardDetails();
           this.loadProviderDetail();
-        }
-      })
+        },
+      });
   }
   public editGuardNotification(): void {
-    this.analyticsService.logEvent('edit_notification_click', { type: this.notificationDetail()?.notificationType });
+    this.analyticsService.logEvent('edit_notification_click', {
+      type: this.notificationDetail()?.notificationType,
+    });
     this.editGuardDialog = this.dialogService.open(CreateGuard, {
       header: 'Edit guard',
       draggable: true,
@@ -89,65 +116,91 @@ export class NotificationDetailWebpage implements OnInit, OnDestroy {
       closable: true,
       maximizable: true,
       inputValues: {
-        guardToEditId: this.notificationDetail()?.guardId
-      }
+        guardToEditId: this.notificationDetail()?.guardId,
+      },
     });
   }
   public deleteClicked(event: Event): void {
-    this.analyticsService.logEvent('delete_notification_click', { type: this.notificationDetail()?.notificationType });
+    this.analyticsService.logEvent('delete_notification_click', {
+      type: this.notificationDetail()?.notificationType,
+    });
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
       message: 'Are you sure you want to delete the notification for this guard?',
       icon: 'pi pi-info-circle',
       rejectButtonProps: {
         outlined: true,
-        severity: 'secondary'
+        severity: 'secondary',
       },
       acceptButtonProps: {
-        severity: 'danger'
+        severity: 'danger',
       },
       reject: () => {},
-      accept: () => this.deleteNotification()
-    })
+      accept: () => this.deleteNotification(),
+    });
   }
   private deleteNotification(): void {
     this.deletingNotification.set(true);
     const url = [environment.api.uri, 'Notifications', 'DeleteGuardNotification'].join('/');
     const params = new HttpParams().set('notificationId', this.notificationConfigId()!);
-    this.httpClient.delete(url, {params: params}).pipe(finalize(() => this.deletingNotification.set(false))).subscribe({
-      next: () => {
-        this.router.navigate(['/guards/configured-notifications']);
-        this.analyticsService.logEvent('notification_delete_submit', {type: this.notificationDetail()?.notificationType});
-      }
-    })
+    this.httpClient
+      .delete(url, { params: params })
+      .pipe(finalize(() => this.deletingNotification.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/guards/configured-notifications']);
+          this.analyticsService.logEvent('notification_delete_submit', {
+            type: this.notificationDetail()?.notificationType,
+          });
+        },
+      });
   }
   public testNotification(): void {
-    this.analyticsService.logEvent('test_notification_click', { type: this.notificationDetail()?.notificationType });
+    this.analyticsService.logEvent('test_notification_click', {
+      type: this.notificationDetail()?.notificationType,
+    });
     this.testingNotification.set(true);
     const url = [environment.api.uri, 'Notifications', 'TestGuardNotification'].join('/');
     const params = new HttpParams().set('notificationId', this.notificationConfigId()!);
-    this.httpClient.post(url, {}, { params: params }).pipe(finalize(() => this.testingNotification.set(false))).subscribe({
-      next: () => {
-        this.messageService.add({summary: 'Notification sent', detail: 'The notification was processed and should be received', key: 'notification-toast', severity: 'success'})
-      }
-    });
+    this.httpClient
+      .post(url, {}, { params: params })
+      .pipe(finalize(() => this.testingNotification.set(false)))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            summary: 'Notification sent',
+            detail: 'The notification was processed and should be received',
+            key: 'notification-toast',
+            severity: 'success',
+          });
+        },
+      });
   }
   private getGuardDetails(): void {
     // Called if change has a guard id
-    const url =   [environment.api.uri, 'Guards', 'GetGuardDetail', this.notificationDetail()!.guardId].join('/');
+    const url = [
+      environment.api.uri,
+      'Guards',
+      'GetGuardDetail',
+      this.notificationDetail()!.guardId,
+    ].join('/');
     this.httpClient.get<GuardDetailDTO>(url).subscribe({
       next: (guardDetail: GuardDetailDTO) => {
         this.guardDetail.set(guardDetail);
-      }
-    })
+      },
+    });
   }
   private loadProviderDetail(): void {
-    const url = [environment.api.uri, 'NotificationProviders', 'GetNotificationProviderDetail'].join('/');
+    const url = [
+      environment.api.uri,
+      'NotificationProviders',
+      'GetNotificationProviderDetail',
+    ].join('/');
     const params = new HttpParams().set('id', this.notificationDetail()?.notificationProviderId!);
     this.httpClient.get<NotificationProviderDTO>(url, { params: params }).subscribe({
       next: (providerInfo: NotificationProviderDTO) => {
         this.notificationProvider.set(providerInfo);
-      }
-    })
+      },
+    });
   }
 }

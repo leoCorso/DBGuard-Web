@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, computed, inject, ViewChild } from '@angular/core';
+import { Component, computed, inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment.development';
   selector: 'app-sidebar',
   imports: [Menu, Button],
   templateUrl: './sidebar.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
@@ -24,34 +25,34 @@ export class Sidebar {
         {
           label: 'Dashboard',
           icon: 'pi pi-home',
-          routerLink: '/'
-        }
-      ]
+          routerLink: '/',
+        },
+      ],
     },
     {
       label: 'Guards',
       items: [
         {
           label: 'View guards',
-        icon: 'pi pi-shield',
-          routerLink: 'guards/view-all'
+          icon: 'pi pi-shield',
+          routerLink: 'guards/view-all',
         },
         {
           label: 'Change history',
           icon: 'pi pi-history',
-          routerLink: 'guards/change-history'
+          routerLink: 'guards/change-history',
         },
         {
           label: 'Notifications transactions',
           icon: 'pi pi-envelope',
-          routerLink: 'guards/notification-transactions'
+          routerLink: 'guards/notification-transactions',
         },
         {
           label: 'Configured notifications',
           icon: 'pi pi-file',
-          routerLink: 'guards/configured-notifications'
-        }
-      ]
+          routerLink: 'guards/configured-notifications',
+        },
+      ],
     },
     {
       label: 'DB Connections',
@@ -59,9 +60,9 @@ export class Sidebar {
         {
           label: 'View connections',
           icon: 'pi pi-database',
-          routerLink: 'db-connections/view-all'
-        }
-      ]
+          routerLink: 'db-connections/view-all',
+        },
+      ],
     },
     {
       label: 'Notification providers',
@@ -69,9 +70,9 @@ export class Sidebar {
         {
           label: 'View providers',
           icon: 'pi pi-send',
-          routerLink: 'providers/view-all'
-        }
-      ]
+          routerLink: 'providers/view-all',
+        },
+      ],
     },
     {
       label: 'Misc',
@@ -80,22 +81,21 @@ export class Sidebar {
           label: 'Users',
           icon: 'pi pi-users',
           visible: this.authService.hasRoles(['Admin']),
-          routerLink: 'users/view-all'
+          routerLink: 'users/view-all',
         },
         {
           label: 'Settings',
           icon: 'pi pi-cog',
-          routerLink: 'settings'
-        }
-      ]
+          routerLink: 'settings',
+        },
+      ],
     },
     {
-      separator: true
-    }
+      separator: true,
+    },
   ];
   private bpObserver = inject(BreakpointObserver);
   private bpResult = toSignal(this.bpObserver.observe([Breakpoints.Handset, Breakpoints.Small]));
   public isMobile = computed(() => this.bpResult()?.matches ?? false);
   @ViewChild('menu') public sidebarMenu?: Menu;
-
 }

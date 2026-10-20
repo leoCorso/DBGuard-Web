@@ -1,4 +1,4 @@
-import { Component, input, OnInit, output } from '@angular/core';
+import { Component, input, OnInit, output, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
@@ -13,31 +13,42 @@ import { CreateEmailNotificationProviderDTO } from '../../../../interfaces/notif
 
 @Component({
   selector: 'app-email-provider-form',
-  imports: [InputText, InputNumber, FloatLabel, ReactiveFormsModule, Message, Password, Button, Checkbox, TooltipModule],
+  imports: [
+    InputText,
+    InputNumber,
+    FloatLabel,
+    ReactiveFormsModule,
+    Message,
+    Password,
+    Button,
+    Checkbox,
+    TooltipModule,
+  ],
   templateUrl: './email-provider-form.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './email-provider-form.scss',
 })
 export class EmailProviderForm implements OnInit {
   public emailProviderToEdit = input<CreateEmailNotificationProviderDTO>();
   public createEmailProvider = output<CreateEmailNotificationProviderDTO>();
   public savingProvider = input.required<boolean>();
-  
+
   public emailProviderForm = new FormGroup({
     smtpServer: new FormControl<string | null>(null, [Validators.required]),
     port: new FormControl<number>(587, [Validators.required]),
     username: new FormControl<string | null>(null, Validators.required),
     password: new FormControl<string | null>(null, [Validators.required]),
     senderEmail: new FormControl<string | null>(null, [Validators.required, Validators.email]),
-    verifyProvider: new FormControl<boolean>(true)
+    verifyProvider: new FormControl<boolean>(true),
   });
   ngOnInit(): void {
-    if(this.emailProviderToEdit()){
+    if (this.emailProviderToEdit()) {
       this.emailProviderForm.patchValue(this.emailProviderToEdit()!);
     }
   }
   public addEmailProvider(): void {
     const values = this.emailProviderForm.value;
-    if(!values){
+    if (!values) {
       return;
     }
     const provider: CreateEmailNotificationProviderDTO = {
@@ -48,7 +59,7 @@ export class EmailProviderForm implements OnInit {
       password: values.password!,
       providerType: NotificationType.Email,
       senderEmail: values.senderEmail!,
-      verifyProvider: values.verifyProvider!
+      verifyProvider: values.verifyProvider!,
     };
     this.createEmailProvider.emit(provider);
   }

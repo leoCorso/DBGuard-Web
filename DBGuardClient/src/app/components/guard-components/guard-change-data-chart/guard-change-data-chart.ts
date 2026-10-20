@@ -1,5 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ChangeDetectorRef, Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
@@ -14,6 +23,7 @@ import { AnalyticsService } from '../../../services/analytics-service';
   selector: 'app-guard-change-data-chart',
   imports: [ReactiveFormsModule, DatePicker, ChartModule, FloatLabel],
   templateUrl: './guard-change-data-chart.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guard-change-data-chart.scss',
 })
 export class GuardChangeDataChart implements OnInit {
@@ -32,7 +42,7 @@ export class GuardChangeDataChart implements OnInit {
       if (data.length > 0) {
         this.loadChart();
       }
-    })
+    });
   }
   ngOnInit(): void {
     this.getData();
@@ -41,52 +51,60 @@ export class GuardChangeDataChart implements OnInit {
       next: (selection) => {
         if (selection) {
           this.getData();
-          this.analyticsService.logEvent('guard_changes_chart_year_change', { change_year: selection.getFullYear() });
+          this.analyticsService.logEvent('guard_changes_chart_year_change', {
+            change_year: selection.getFullYear(),
+          });
         }
-      }
+      },
     });
   }
   private getData(): void {
     const url = [environment.api.uri, 'Guards', 'GetMonthlyGuardChangeData'].join('/');
-    const params = new HttpParams()
-      .set('yearSelection', this.yearSelection.value!.toDateString());
+    const params = new HttpParams().set('yearSelection', this.yearSelection.value!.toDateString());
 
     this.httpClient.get<GuardChangeItemDTO[]>(url, { params: params }).subscribe({
       next: (result: GuardChangeItemDTO[]) => {
         this.changeData.set(result);
-      }
-    })
+      },
+    });
   }
   private loadChart(): void {
     if (!this.changeData()) {
       return;
     }
     this.data = {
-      labels: [...new Set(this.changeData().map(item => item.month))],
+      labels: [...new Set(this.changeData().map((item) => item.month))],
       datasets: [
         {
           label: 'Unknown guard states',
-          data: this.changeData().filter(item => item.guardState == GuardState.Unknown).map(item => item.count),
-          backgroundColor: '#5e7cff'
+          data: this.changeData()
+            .filter((item) => item.guardState == GuardState.Unknown)
+            .map((item) => item.count),
+          backgroundColor: '#5e7cff',
         },
         {
           label: 'Triggered guards',
-          data: this.changeData().filter(item => item.guardState == GuardState.Triggered).map(item => item.count),
-          backgroundColor: '#fff75e'
+          data: this.changeData()
+            .filter((item) => item.guardState == GuardState.Triggered)
+            .map((item) => item.count),
+          backgroundColor: '#fff75e',
         },
         {
           label: 'Error guard states',
-          data: this.changeData().filter(item => item.guardState == GuardState.Error).map(item => item.count),
-          backgroundColor: '#ff5e5e'
-
+          data: this.changeData()
+            .filter((item) => item.guardState == GuardState.Error)
+            .map((item) => item.count),
+          backgroundColor: '#ff5e5e',
         },
         {
           label: 'Clear guards',
-          data: this.changeData().filter(item => item.guardState == GuardState.Clear).map(item => item.count),
-          backgroundColor: '#5eff74'
-        }
-      ]
-    }
+          data: this.changeData()
+            .filter((item) => item.guardState == GuardState.Clear)
+            .map((item) => item.count),
+          backgroundColor: '#5eff74',
+        },
+      ],
+    };
     this.options = {
       maintainAspectRatio: false,
       aspectRatio: 0.8,
@@ -96,9 +114,9 @@ export class GuardChangeDataChart implements OnInit {
             stepSize: 1,
             beginAtZero: true,
           },
-        }
-      }
-    }
+        },
+      },
+    };
     this.cd.markForCheck();
   }
 }

@@ -1,48 +1,69 @@
 @if (loadingUser()) {
-    <div class="loading-container">
-        <p-progressspinner></p-progressspinner>
-        <em>Loading user info</em>
-    </div>
-}
-@else {
-    <div class="user-details">
-        <span class="user-key">Id:</span>
-        <span class="user-value">
-            <p-button appTrackClick eventName="user_detail_click" [eventData]="{ source: 'user_details_pane'}" [label]="userDetails()?.id?.toString()" [routerLink]="['/users/detail', userDetails()?.id]" [outlined]="true" severity="contrast"></p-button>
-        </span>
-        <span class="user-key">Username:</span>
-        <span class="user-value">{{ userDetails()?.username }}</span>
-        <span class="user-key">Status</span>
-        <span class="user-value">
-            <p-tag [value]="userDetails()?.isActive ? 'Active' : 'Inactive'" [severity]="userDetails()?.isActive ? 'success' : 'danger'"></p-tag>
-        </span>
-        <span class="user-key">Created At:</span>
-        <span class="user-value">{{ userDetails()?.createDate | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
-        <span class="user-key">Last edited:</span>
-        <span class="user-value">{{ userDetails()?.lastEdited | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
-        <span class="user-key">Created by:</span>
-        <span class="user-value">
-        
-        <!-- If is default admin -->
-        @if(userDetails()?.username === 'admin'){
-            <p-tag value="System" severity="info"></p-tag>
+  <div class="loading-container">
+    <p-progressspinner></p-progressspinner>
+    <em>Loading user info</em>
+  </div>
+} @else {
+  <div class="user-details">
+    <span class="user-key">Id:</span>
+    <span class="user-value">
+      <p-button
+        appTrackClick
+        eventName="user_detail_click"
+        [eventData]="{ source: 'user_details_pane' }"
+        [label]="$safeNavigationMigration(userDetails()?.id?.toString())"
+        [routerLink]="['/users/detail', $safeNavigationMigration(userDetails()?.id)]"
+        [outlined]="true"
+        severity="contrast"
+      ></p-button>
+    </span>
+    <span class="user-key">Username:</span>
+    <span class="user-value">{{ userDetails()?.username }}</span>
+    <span class="user-key">Status</span>
+    <span class="user-value">
+      <p-tag
+        [value]="userDetails()?.isActive ? 'Active' : 'Inactive'"
+        [severity]="userDetails()?.isActive ? 'success' : 'danger'"
+      ></p-tag>
+    </span>
+    <span class="user-key">Created At:</span>
+    <span class="user-value">{{
+      $safeNavigationMigration(userDetails()?.createDate) | date: 'MM/dd/yyyy hh:mm:ss a'
+    }}</span>
+    <span class="user-key">Last edited:</span>
+    <span class="user-value">{{
+      $safeNavigationMigration(userDetails()?.lastEdited) | date: 'MM/dd/yyyy hh:mm:ss a'
+    }}</span>
+    <span class="user-key">Created by:</span>
+    <span class="user-value">
+      <!-- If is default admin -->
+      @if (userDetails()?.username === 'admin') {
+        <p-tag value="System" severity="info"></p-tag>
+      }
+      <!-- If created by id is null show removed -->
+      @else if (!userDetails()?.createdByUserId) {
+        <p-tag value="Deleted" severity="danger"></p-tag>
+      }
+      <!-- Else show created by user info -->
+      @else {
+        <p-button
+          appTrackClick
+          eventName="created_by_user_detail_click"
+          [eventData]="{ source: 'user_details_pane' }"
+          [label]="$safeNavigationMigration(userDetails()?.createdByUsername)"
+          [routerLink]="['/users/detail', $safeNavigationMigration(userDetails()?.createdByUserId)]"
+          [outlined]="true"
+          severity="contrast"
+        ></p-button>
+      }
+    </span>
+    <span class="user-key">Roles:</span>
+    <span class="user-value">
+      <div style="display: flex; gap: 0.2rem">
+        @for (role of userDetails()?.roles; track $index) {
+          <p-tag [rounded]="true" [value]="role"></p-tag>
         }
-        <!-- If created by id is null show removed -->
-        @else if (!userDetails()?.createdByUserId) {
-            <p-tag value="Deleted" severity="danger"></p-tag>
-        }
-        <!-- Else show created by user info -->
-        @else {
-            <p-button appTrackClick eventName="created_by_user_detail_click" [eventData]="{ source: 'user_details_pane' }" [label]="userDetails()?.createdByUsername" [routerLink]="['/users/detail', userDetails()?.createdByUserId]" [outlined]="true" severity="contrast"></p-button>
-        }
-        </span>
-        <span class="user-key">Roles:</span>
-        <span class="user-value">
-            <div style="display: flex;gap: .2rem;">
-                @for (role of userDetails()?.roles; track $index) {
-                    <p-tag [rounded]="true" [value]="role"></p-tag>
-                }
-            </div>
-        </span>
-    </div>
+      </div>
+    </span>
+  </div>
 }

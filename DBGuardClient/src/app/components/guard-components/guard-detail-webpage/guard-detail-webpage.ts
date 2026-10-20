@@ -1,5 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -29,13 +36,25 @@ import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-guard-detail-webpage',
-  imports: [Card, GuardDetailPane, Button, ButtonGroup, GuardChangeHistoryTable, GuardNotificationTransactionsTable, 
-    DbConnectionDetailPane, GuardNotificationsTable, ProgressSpinner, ConfirmPopup, TooltipModule, Toast],
+  imports: [
+    Card,
+    GuardDetailPane,
+    Button,
+    ButtonGroup,
+    GuardChangeHistoryTable,
+    GuardNotificationTransactionsTable,
+    DbConnectionDetailPane,
+    GuardNotificationsTable,
+    ProgressSpinner,
+    ConfirmPopup,
+    TooltipModule,
+    Toast,
+  ],
   templateUrl: './guard-detail-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guard-detail-webpage.scss',
 })
 export class GuardDetailWebpage implements OnInit, OnDestroy {
-  
   private httpClient = inject(HttpClient);
   private dialogService = inject(DialogService);
   private analyticsService = inject(AnalyticsService);
@@ -57,22 +76,25 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     const guardId = this.activatedRoute.snapshot.paramMap.get('id');
     this.entityChangeService.guardEdited.pipe(takeUntil(this.destroy)).subscribe({
       next: (guardId: number) => {
-        if(this.guardId() === guardId){
+        if (this.guardId() === guardId) {
           this.loadDetails();
         }
-      }
-    })
+      },
+    });
     this.guardId.set(Number(guardId!));
     this.loadDetails();
   }
   private loadDetails(): void {
-    const url =   [environment.api.uri, 'Guards', 'GetGuardDetail', this.guardId()].join('/');
-    this.httpClient.get<GuardDetailDTO>(url).pipe(withDelayedLoading((val) => this.loadingGuardDetail.set(val))).subscribe({
-      next: (guardDetail: GuardDetailDTO) => {
-        this.guardDetail.set(guardDetail);
-      },
-      error: () => this.router.navigate(['/guards/view-all'])
-    });
+    const url = [environment.api.uri, 'Guards', 'GetGuardDetail', this.guardId()].join('/');
+    this.httpClient
+      .get<GuardDetailDTO>(url)
+      .pipe(withDelayedLoading((val) => this.loadingGuardDetail.set(val)))
+      .subscribe({
+        next: (guardDetail: GuardDetailDTO) => {
+          this.guardDetail.set(guardDetail);
+        },
+        error: () => this.router.navigate(['/guards/view-all']),
+      });
   }
   ngOnDestroy(): void {
     this.destroy.next();
@@ -88,12 +110,12 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
       resizable: true,
       maximizable: true,
       inputValues: {
-        guardToEditId: this.guardDetail()!.id
-      }
+        guardToEditId: this.guardDetail()!.id,
+      },
     });
   }
   public onDeleteGuard(event: Event): void {
-    this.analyticsService.logEvent('delete_guard_click')
+    this.analyticsService.logEvent('delete_guard_click');
     this.confirmationService.confirm({
       target: event.currentTarget as EventTarget,
       message: 'Are you sure you want to delete this guard? You can pause them if needed.',
@@ -101,14 +123,16 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
       rejectButtonProps: {
         label: 'Cancel',
         severity: 'secondary',
-        outlined: true
+        outlined: true,
       },
       acceptButtonProps: {
         label: 'Delete',
-        severity: 'danger'
+        severity: 'danger',
       },
       accept: () => this.deleteGuard(),
-      reject: () => {return;}
+      reject: () => {
+        return;
+      },
     });
   }
   private deleteGuard(): void {
@@ -116,23 +140,34 @@ export class GuardDetailWebpage implements OnInit, OnDestroy {
     this.deletingGuard.set(true);
     const url = [environment.api.uri, 'Guards', 'DeleteGuard'].join('/');
     const params = new HttpParams().set('guardId', this.guardId()!);
-    this.httpClient.delete<void>(url, { params: params }).pipe(finalize(() => this.deletingGuard.set(false))).subscribe({
-      next: () => {
-        this.entityChangeService.guardDeleted.next(this.guardId()!);
-        this.router.navigate(['/guards/view-all']);
-      }
-    })
+    this.httpClient
+      .delete<void>(url, { params: params })
+      .pipe(finalize(() => this.deletingGuard.set(false)))
+      .subscribe({
+        next: () => {
+          this.entityChangeService.guardDeleted.next(this.guardId()!);
+          this.router.navigate(['/guards/view-all']);
+        },
+      });
   }
   public runGuard(): void {
     this.analyticsService.logEvent('guard_manual_run_click');
     this.testingGuard.set(true);
     const url = [environment.api.uri, 'Guards', 'RunGuardManually'].join('/');
     const params = new HttpParams().set('guardId', this.guardId()!);
-    this.httpClient.post<GuardState>(url, {}, { params: params }).pipe(finalize(() => this.testingGuard.set(false))).subscribe({
-      next: (guardState: GuardState) => {
-        this.entityChangeService.guardEdited.next(this.guardId()!);
-        this.messageService.add({summary: 'Guard finished', detail: `Guard state: ${getEnumLabel(GuardState, guardState)}`, severity: getGuardStateSeverityTwo(guardState), key: 'guard-run-toast'});
-      }
-    })
+    this.httpClient
+      .post<GuardState>(url, {}, { params: params })
+      .pipe(finalize(() => this.testingGuard.set(false)))
+      .subscribe({
+        next: (guardState: GuardState) => {
+          this.entityChangeService.guardEdited.next(this.guardId()!);
+          this.messageService.add({
+            summary: 'Guard finished',
+            detail: `Guard state: ${getEnumLabel(GuardState, guardState)}`,
+            severity: getGuardStateSeverityTwo(guardState),
+            key: 'guard-run-toast',
+          });
+        },
+      });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { EmailNotificationTransactionDTO } from '../../../../interfaces/notification-dto';
 import { TrackClick } from '../../../../directives/track-click';
 
@@ -6,6 +6,7 @@ import { TrackClick } from '../../../../directives/track-click';
   selector: 'app-email-transaction-detail-pane',
   imports: [TrackClick],
   templateUrl: './email-transaction-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './email-transaction-detail-pane.scss',
 })
 export class EmailTransactionDetailPane {

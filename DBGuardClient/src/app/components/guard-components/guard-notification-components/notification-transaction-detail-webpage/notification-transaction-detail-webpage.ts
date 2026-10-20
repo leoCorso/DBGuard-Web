@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Card } from 'primeng/card';
@@ -15,10 +15,10 @@ import { NotificationTransactionDetailPane } from '../notification-transaction-d
   selector: 'app-notification-transaction-detail-webpage',
   imports: [NotificationTransactionDetailPane, Card, GuardChangeDetailPane, ProgressSpinner],
   templateUrl: './notification-transaction-detail-webpage.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-transaction-detail-webpage.scss',
 })
 export class NotificationTransactionDetailWebpage implements OnInit {
-
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private httpClient = inject(HttpClient);
@@ -31,41 +31,52 @@ export class NotificationTransactionDetailWebpage implements OnInit {
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-    if(!id){
+    if (!id) {
       this.router.navigate(['/guards/notification-transactions']);
-    }  
+    }
     this.notificationTransactionId.set(parseInt(id!));
     this.loadDetails();
   }
   private loadDetails(): void {
     this.loadingTransactions.set(true);
-    const url = [environment.api.uri, 'NotificationTransactions', 'GetNotificationTransactionDetail'].join('/');
+    const url = [
+      environment.api.uri,
+      'NotificationTransactions',
+      'GetNotificationTransactionDetail',
+    ].join('/');
     const params = new HttpParams().set('transactionId', this.notificationTransactionId()!);
     this.httpClient.get<NotificationTransactionDTO>(url, { params: params }).subscribe({
       next: (details: NotificationTransactionDTO) => {
         this.notificationTransactionInfo.set(details);
         this.loadingTransactions.set(false);
         this.getGuardChangeDetails();
-      }
-    })
+      },
+    });
   }
   private getGuardChangeDetails(): void {
     this.loadingGuardChange.set(true);
     const url = [environment.api.uri, 'Guards', 'GetGuardChangeTransactions'].join('/');
     const params = new HttpParams()
-    .set('filters', `id==${this.notificationTransactionInfo()!.guardChangeTransactionId}`)
-    .set('page', 1)
-    .set('pageSize', 1);
-    this.httpClient.get<PagedResponse<GuardChangeTransactionDTO>>(url, { params: params }).subscribe({
-      next: (data: PagedResponse<GuardChangeTransactionDTO>) => {
-        if(data.totalItems !== 1 || data.pageNumber !== 1 || data.pageSize !== 1){
-          this.messageService.add({summary: 'Error', detail: 'Invalid response while getting guard transaction', severity: 'danger', key: 'request-error'});
-          this.router.navigate(['/guards/change-history']);
-        }
-        const changeHistoryDetail = data.dataItems[0];
-        this.guardChangeTransaction.set(changeHistoryDetail);
-        this.loadingGuardChange.set(false);
-      }
-    })
+      .set('filters', `id==${this.notificationTransactionInfo()!.guardChangeTransactionId}`)
+      .set('page', 1)
+      .set('pageSize', 1);
+    this.httpClient
+      .get<PagedResponse<GuardChangeTransactionDTO>>(url, { params: params })
+      .subscribe({
+        next: (data: PagedResponse<GuardChangeTransactionDTO>) => {
+          if (data.totalItems !== 1 || data.pageNumber !== 1 || data.pageSize !== 1) {
+            this.messageService.add({
+              summary: 'Error',
+              detail: 'Invalid response while getting guard transaction',
+              severity: 'danger',
+              key: 'request-error',
+            });
+            this.router.navigate(['/guards/change-history']);
+          }
+          const changeHistoryDetail = data.dataItems[0];
+          this.guardChangeTransaction.set(changeHistoryDetail);
+          this.loadingGuardChange.set(false);
+        },
+      });
   }
 }

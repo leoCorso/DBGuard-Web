@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
@@ -20,8 +20,19 @@ import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-create-user',
-  imports: [ReactiveFormsModule, FloatLabel, InputText, Password, MultiSelect, Button, Message, FormControlError, Checkbox],
+  imports: [
+    ReactiveFormsModule,
+    FloatLabel,
+    InputText,
+    Password,
+    MultiSelect,
+    Button,
+    Message,
+    FormControlError,
+    Checkbox,
+  ],
   templateUrl: './create-user.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-user.scss',
 })
 export class CreateUser implements OnInit {
@@ -33,16 +44,28 @@ export class CreateUser implements OnInit {
   public userIdToEdit = input<string>();
   public userToEdit = signal<CreateUserDTO | null>(null);
   public savingUser = signal<boolean>(false);
-  public userForm = new FormGroup({
-    username: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(255)]),
-    password: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)]),
-    confirmPassword: new FormControl<string | null>(null, [Validators.required, Validators.pattern(passwordRequirementsRegex)]),
-    roles: new FormControl<string[]>([], [Validators.required]),
-    isActive: new FormControl<boolean>(true, [Validators.required])
-  }, [passwordMatchValidator()]);
+  public userForm = new FormGroup(
+    {
+      username: new FormControl<string | null>(null, [
+        Validators.required,
+        Validators.maxLength(255),
+      ]),
+      password: new FormControl<string | null>(null, [
+        Validators.required,
+        Validators.pattern(passwordRequirementsRegex),
+      ]),
+      confirmPassword: new FormControl<string | null>(null, [
+        Validators.required,
+        Validators.pattern(passwordRequirementsRegex),
+      ]),
+      roles: new FormControl<string[]>([], [Validators.required]),
+      isActive: new FormControl<boolean>(true, [Validators.required]),
+    },
+    [passwordMatchValidator()],
+  );
   ngOnInit(): void {
     this.getReferenceData();
-    if(this.userIdToEdit()){
+    if (this.userIdToEdit()) {
       this.getUserToEdit();
     }
   }
@@ -51,7 +74,7 @@ export class CreateUser implements OnInit {
     this.httpClient.get<CreateUserReferenceData>(url).subscribe({
       next: (refData: CreateUserReferenceData) => {
         this.referenceData.set(refData);
-      }
+      },
     });
   }
   private getUserToEdit(): void {
@@ -61,8 +84,8 @@ export class CreateUser implements OnInit {
       next: (userToEdit: CreateUserDTO) => {
         this.userToEdit.set(userToEdit);
         this.userForm.patchValue(userToEdit);
-      }
-    })
+      },
+    });
   }
   public saveUser(): void {
     this.savingUser.set(true);
@@ -74,21 +97,25 @@ export class CreateUser implements OnInit {
       password: userValues.password!,
       confirmPassword: userValues.confirmPassword!,
       roles: userValues.roles ?? [],
-      isActive: userValues.isActive!
+      isActive: userValues.isActive!,
     };
     this.userToEdit() ? url.push('PutUser') : url.push('PostUser');
-    const request = this.userToEdit() ? this.httpClient.put<UserDTO>(url.join('/'), user) : this.httpClient.post<UserDTO>(url.join('/'), user);
-    this.analyticsService.logEvent(this.userIdToEdit() ? 'edit_user_submit' : 'create_user_submit', { roles: userValues.roles, is_active: userValues.isActive });
+    const request = this.userToEdit()
+      ? this.httpClient.put<UserDTO>(url.join('/'), user)
+      : this.httpClient.post<UserDTO>(url.join('/'), user);
+    this.analyticsService.logEvent(
+      this.userIdToEdit() ? 'edit_user_submit' : 'create_user_submit',
+      { roles: userValues.roles, is_active: userValues.isActive },
+    );
     request.pipe(finalize(() => this.savingUser.set(true))).subscribe({
       next: (user: UserDTO) => {
-        if(this.userIdToEdit()){
+        if (this.userIdToEdit()) {
           this.entityChangeService.userEdited.next(user.id);
-        }
-        else {
+        } else {
           this.entityChangeService.userCreated.next(user.id);
         }
         this.dialogRef.close(user);
-      }
-    })
+      },
+    });
   }
 }

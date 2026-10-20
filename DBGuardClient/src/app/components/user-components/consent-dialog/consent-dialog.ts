@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from 'primeng/button';
 import { ButtonGroup } from 'primeng/buttongroup';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -7,6 +7,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
   selector: 'app-consent-dialog',
   imports: [Button, ButtonGroup],
   templateUrl: './consent-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './consent-dialog.scss',
 })
 export class ConsentDialog {

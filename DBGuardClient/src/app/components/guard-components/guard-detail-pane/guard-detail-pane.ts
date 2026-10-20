@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, input } from '@angular/core';
-import { RouterLink, RouterModule } from "@angular/router";
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { RouterLink, RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { GuardOperator } from '../../../enums/guard-operator';
@@ -15,6 +15,7 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-guard-detail-pane',
   imports: [Tag, FormatRunPeriodPipe, DatePipe, Button, RouterLink, RouterModule, TrackClick],
   templateUrl: './guard-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guard-detail-pane.scss',
 })
 export class GuardDetailPane {
@@ -24,5 +25,4 @@ export class GuardDetailPane {
   public getGuardStateSeverity = getGuardStateSeverity;
   public guardStates = GuardState;
   public guardOperators = GuardOperator;
-
 }

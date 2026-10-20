@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
@@ -15,6 +15,7 @@ import { TrackClick } from '../../../directives/track-click';
   selector: 'app-guard-change-detail-pane',
   imports: [Button, RouterModule, RouterLink, Tag, DatePipe, TrackClick],
   templateUrl: './guard-change-detail-pane.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guard-change-detail-pane.scss',
 })
 export class GuardChangeDetailPane {

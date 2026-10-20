@@ -1,6 +1,20 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { Checkbox } from 'primeng/checkbox';
@@ -20,8 +34,15 @@ import { environment } from '../../../../environments/environment';
 import { DatabaseEngine } from '../../../enums/database-engines';
 import { GuardOperator } from '../../../enums/guard-operator';
 import { enumToOptions, getEnumLabel } from '../../../helpers/enum-helper';
-import { DatabaseConnectionDTO, SimpleDatabaseConnectionDTO } from '../../../interfaces/database-connection-dto';
-import { CreateGuardDTO, CreateGuardReferenceData, SimpleGuardDTO } from '../../../interfaces/guard-dto';
+import {
+  DatabaseConnectionDTO,
+  SimpleDatabaseConnectionDTO,
+} from '../../../interfaces/database-connection-dto';
+import {
+  CreateGuardDTO,
+  CreateGuardReferenceData,
+  SimpleGuardDTO,
+} from '../../../interfaces/guard-dto';
 import { CreateGuardNotificationDTO } from '../../../interfaces/notification-dto';
 import { NotificationProviderDTO } from '../../../interfaces/notification-provider-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
@@ -33,13 +54,31 @@ import { AnalyticsService } from '../../../services/analytics-service';
 
 @Component({
   selector: 'app-create-guard',
-  imports: [Card, ReactiveFormsModule, InputText, Textarea, Select, Message, FloatLabel, InputNumber, 
-    ToggleSwitch, Button, TooltipModule, InputGroup, InputGroupAddon, CreateNotificationControl, FormsModule, Checkbox, CodeText, DatePicker],
+  imports: [
+    Card,
+    ReactiveFormsModule,
+    InputText,
+    Textarea,
+    Select,
+    Message,
+    FloatLabel,
+    InputNumber,
+    ToggleSwitch,
+    Button,
+    TooltipModule,
+    InputGroup,
+    InputGroupAddon,
+    CreateNotificationControl,
+    FormsModule,
+    Checkbox,
+    CodeText,
+    DatePicker,
+  ],
   templateUrl: './create-guard.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-guard.scss',
 })
 export class CreateGuard implements OnInit, OnDestroy {
-
   public guardToEditId = input<number>();
   public guardToEdit = signal<CreateGuardDTO | null>(null);
 
@@ -65,7 +104,9 @@ export class CreateGuard implements OnInit, OnDestroy {
     triggerColumn: new FormControl<string | null>(null, [Validators.required]),
     triggerOperator: new FormControl<GuardOperator | null>(null, [Validators.required]),
     triggerValue: new FormControl<number | null>(null, [Validators.required]),
-    databaseConnection: new FormControl<SimpleDatabaseConnectionDTO | null>(null, [Validators.required]),
+    databaseConnection: new FormControl<SimpleDatabaseConnectionDTO | null>(null, [
+      Validators.required,
+    ]),
     isActive: new FormControl<boolean>(true, [Validators.required]),
     notifyOnClear: new FormControl<boolean>(true, [Validators.required]),
     notifyOnError: new FormControl<boolean>(true, [Validators.required]),
@@ -73,13 +114,12 @@ export class CreateGuard implements OnInit, OnDestroy {
     runPeriodInMinutes: new FormControl<number>(5, [Validators.required, Validators.min(1)]),
     runAfter: new FormControl<Date | null>(null),
     notifications: new FormControl<CreateGuardNotificationDTO[]>([]),
-    validateGuard: new FormControl<boolean>(true)
+    validateGuard: new FormControl<boolean>(true),
   });
-
 
   ngOnInit(): void {
     this.getCreateGuardReferenceData();
-    if(this.guardToEditId()){
+    if (this.guardToEditId()) {
       this.getGuardToEdit();
     }
   }
@@ -95,33 +135,35 @@ export class CreateGuard implements OnInit, OnDestroy {
       next: (referenceData: CreateGuardReferenceData) => {
         this.databaseConnections.set(referenceData.databaseConnections);
         this.notificationProviders.set(referenceData.notificationProviders);
-      }
+      },
     });
   }
   public addDatabaseConnection(): void {
-    this.analyticsService.logEvent('add_database_connection_click', { source: 'create_guard_form'});
+    this.analyticsService.logEvent('add_database_connection_click', {
+      source: 'create_guard_form',
+    });
     this.createDbConnectionRef = this.dialogService.open(CreateDbConnection, {
       header: 'Create new database connection',
       closable: true,
       resizable: true,
       draggable: true,
-      maximizable: true
+      maximizable: true,
     });
     this.createDbConnectionRef?.onClose.pipe(takeUntil(this.destroy)).subscribe({
       next: (newConnection: DatabaseConnectionDTO | undefined) => {
-        if(newConnection){
-          this.databaseConnections.update(conns => [...conns, newConnection]);
+        if (newConnection) {
+          this.databaseConnections.update((conns) => [...conns, newConnection]);
           this.guardFormGroup.patchValue({
-            databaseConnection: newConnection
-          })
+            databaseConnection: newConnection,
+          });
         }
-      }
+      },
     });
   }
   public addGuard(): void {
     this.creatingGuard.set(true);
     const values = this.guardFormGroup.value;
-    if(!values){
+    if (!values) {
       return;
     }
     let guard: CreateGuardDTO = {
@@ -140,31 +182,45 @@ export class CreateGuard implements OnInit, OnDestroy {
       runPeriodInMinutes: values.runPeriodInMinutes!,
       runAfter: values.runAfter ?? undefined,
       notifications: values.notifications!,
-      validateGuard: values.validateGuard!
-    };    
+      validateGuard: values.validateGuard!,
+    };
     const url = [environment.api.uri, 'Guards'];
     this.guardToEdit() ? url.push('PutGuard') : url.push('PostGuard');
     const urlString = url.join('/');
-    const request = this.guardToEdit() ? this.httpClient.put<SimpleGuardDTO>(urlString, guard) : this.httpClient.post<SimpleGuardDTO>(urlString, guard);    
-    this.analyticsService.logEvent(this.guardToEdit() ? 'guard_edit_submit' : 'guard_create_submit', { trigger_operator: guard.triggerOperator, trigger_value: guard.triggerValue, run_period: guard.runPeriodInMinutes, run_after_date: guard.runAfter ? true : false, database_engine: guard.databaseConnection.databaseEngine, notifications: guard.notifications.map(n => n.notificationType), notify_on_clear: guard.notifyOnClear, notify_on_error: guard.notifyOnError, notify_on_trigger: guard.notifyOnTrigger, validate_guard: guard.validateGuard})
+    const request = this.guardToEdit()
+      ? this.httpClient.put<SimpleGuardDTO>(urlString, guard)
+      : this.httpClient.post<SimpleGuardDTO>(urlString, guard);
+    this.analyticsService.logEvent(
+      this.guardToEdit() ? 'guard_edit_submit' : 'guard_create_submit',
+      {
+        trigger_operator: guard.triggerOperator,
+        trigger_value: guard.triggerValue,
+        run_period: guard.runPeriodInMinutes,
+        run_after_date: guard.runAfter ? true : false,
+        database_engine: guard.databaseConnection.databaseEngine,
+        notifications: guard.notifications.map((n) => n.notificationType),
+        notify_on_clear: guard.notifyOnClear,
+        notify_on_error: guard.notifyOnError,
+        notify_on_trigger: guard.notifyOnTrigger,
+        validate_guard: guard.validateGuard,
+      },
+    );
     request.pipe(finalize(() => this.creatingGuard.set(false))).subscribe({
       next: (newGuard: SimpleGuardDTO) => {
-        if(this.guardToEdit()){
+        if (this.guardToEdit()) {
           this.guardService.guardEdited.next(newGuard.id);
-        }
-        else {
+        } else {
           this.guardService.guardCreated.next(newGuard.id);
-
         }
         this.dialogRef.close(newGuard);
-      }
+      },
     });
   }
   private getGuardToEdit(): void {
     // Get data
     const url = [environment.api.uri, 'Guards', 'GetGuardToEdit'].join('/');
     const params = new HttpParams().set('guardId', this.guardToEditId()!);
-    this.httpClient.get<CreateGuardDTO>(url, {params: params}).subscribe({
+    this.httpClient.get<CreateGuardDTO>(url, { params: params }).subscribe({
       next: (guardToEdit: CreateGuardDTO) => {
         this.guardToEdit.set(guardToEdit);
         const guard = this.guardToEdit()!;
@@ -181,9 +237,9 @@ export class CreateGuard implements OnInit, OnDestroy {
           notifyOnTrigger: guard.notifyOnTrigger,
           runPeriodInMinutes: guard.runPeriodInMinutes,
           notifications: guard.notifications,
-          runAfter: guard.runAfter ? new Date(guard.runAfter) : null
+          runAfter: guard.runAfter ? new Date(guard.runAfter) : null,
         });
-      }
+      },
     });
   }
 }
