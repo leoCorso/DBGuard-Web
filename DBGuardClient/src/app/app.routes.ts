@@ -39,110 +39,34 @@ export const routes: Routes = [
     },
     {
         path: 'guards',
-        component: GuardsSectionWrapper,
+        loadComponent: () => import('./components/guard-components/guards-section-wrapper/guards-section-wrapper').then(c => c.GuardsSectionWrapper),
+        loadChildren: () => import('./components/guard-components/guard.routes').then(g => g.GUARD_ROUTES),
         canActivate: [loggedInGuard],
-        children: [
-            {
-                path: 'view-all',
-                component: ViewGuardsWebpage,
-                title: 'DBGuard - View guards'
-            },
-            {
-                path: 'detail/:id',
-                component: GuardDetailWebpage,
-                title: 'DBGuard - Guard detail'
-            },
-            {
-                path: 'change-history',
-                component: GuardsChangeHistoryWebpage,
-                title: 'DBGuard - View guard changes'
-            },
-            {
-                path: 'history-detail/:id',
-                component: GuardChangeDetailWebpage,
-                title: 'DBGuard - Guard change detail'
-            },
-            {
-                path: 'notification-transactions',
-                component: NotificationTransactionsWebpage,
-                title: 'DBGuard - Notification transactions'
-            },
-            {
-                path: 'notification-transaction-detail/:id',
-                component: NotificationTransactionDetailWebpage,
-                title: 'DBGuard - Notification transaction detail'
-            },
-            {
-                path: 'configured-notifications',
-                component: GuardNotificationsWebpage,
-                title: 'DBGuard - Configured notifications'
-            },
-            {
-                path: 'notification-config-detail/:id',
-                component: NotificationDetailWebpage,
-                title: 'DBGuard - Notification details'
-            }
-        ],
     },
     {
         path: 'providers',
-        component: NotificationProvidersWrapper,
+        loadComponent: () => import('./components/notification-provider-components/notification-providers-wrapper/notification-providers-wrapper').then(p => p.NotificationProvidersWrapper),
+        loadChildren: () => import('./components/notification-provider-components/provider.routes').then(p => p.PROVIDER_ROUTES),
         canActivate: [loggedInGuard],
-        children: [
-            {
-                path: 'view-all',
-                component: NotificationProvidersWebpage,
-                title: 'DBGuard - View notification providers'
-            },
-            {
-                path: 'detail/:id',
-                component: NotificationProviderDetailWebpage,
-                title: 'DBGuard - Notification details'
-            }
-        ]
     },
     {
         path: 'db-connections',
-        component: DbConnectionsWrapper,
+        loadComponent: () => import('./components/db-connection-components/db-connections-wrapper/db-connections-wrapper').then(d => d.DbConnectionsWrapper),
         canActivate: [loggedInGuard],
-        children: [
-            {
-                path: 'view-all',
-                component: DbConnectionsWebpage,
-                title: 'DBGuard - View database connections'
-            },
-            {
-                path: 'detail/:id',
-                component: DbConnectionsDetailWebpage,
-                title: 'DBGuard - Database connection details'
-            }
-        ]
+        loadChildren: () => import('./components/db-connection-components/db-connection.routes').then(d => d.DB_CONNECTION_ROUTES),
     },
     {
         path: 'users',
-        component: UsersWrapper,
+        loadComponent: () => import('./components/user-components/users-wrapper/users-wrapper').then(u => u.UsersWrapper),
+        loadChildren: () => import('./components/user-components/user.routes').then(u => u.USER_ROUTES),
         canActivate: [loggedInGuard, isAdminGuardGuard],
-        children: [
-            {
-                path: 'view-all',
-                component: UsersWebpage,
-                title: 'DBGuard - View users'
-            },
-            {
-                path: 'detail/:id',
-                component: UserDetailsWebpage,
-                title: 'DBGuard - User details'
-            }
-        ]
     },
     {
         path: 'settings',
-        component: SettingsWebpage,
+        loadComponent: () => import('./components/setting-components/settings-webpage/settings-webpage').then(s => s.SettingsWebpage),
         canActivate: [loggedInGuard],
         title: 'DBGuard - Settings'
     },
-
-
     // Fallback route
     {
         path: '**',
