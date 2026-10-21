@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { TrackUser } from '@leonardocodes/user-away';
 import { environment } from '../../environments/environment';
-import { switchMap, tap } from 'rxjs';
+import { Subscription, switchMap, tap } from 'rxjs';
 import { ThemeService } from './theme-service';
 @Service()
 export class InactivityService {
@@ -13,15 +13,27 @@ export class InactivityService {
     // Idle trackers
     public idleTracker = new TrackUser(this.idleSeconds * 1000);
     public warningTracker = new TrackUser(this.warningSeconds * 1000);
+    private sub = new Subscription();
 
     public start(): void {
-        this.idleTracker.startIdleTracking().pipe(
-        switchMap(() => this.warningTracker.startIdleTracking()),
-        ).subscribe(() => {
-            this.sendIdleNotification();            
-        })
+        this.stop();
+        this.idleTracker.startIdleTracking();
+
+        this.sub.add(
+            this.idleTracker.inactive$.subscribe(() => {
+                this.sendIdleNotification();
+                this.warningTracker.startIdleTracking();
+            })
+        );
+        this.sub.add(
+            this.warningTracker.idleStopped$.subscribe(() => {
+                this.warningTracker.stopIdleTracking();
+            })
+        );
     }
     public stop(): void {
+        this.sub.unsubscribe();
+        this.sub = new Subscription();
         this.idleTracker.stopIdleTracking();
         this.warningTracker.stopIdleTracking();
     }
