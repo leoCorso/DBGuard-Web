@@ -24,8 +24,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public bool NotifyOnTrigger { get; set; }
         public int TotalErrors { get; set; }
         public int TotalTriggers { get; set; }
-        public double RunPeriodInMinutes { get; set; }
-        public DateTimeOffset? RunAfter { get; set; }
+        public required string CronSchedule { get; set; }
         public int DatabaseConnectionId { get; set; }
     }
 }

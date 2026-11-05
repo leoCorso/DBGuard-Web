@@ -40,8 +40,6 @@ namespace DBGuardAPI.Data.Views
         [Sieve(CanSort = true, CanFilter = true)]
         public int TotalTriggers { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public double RunPeriodInMinutes { get; set; }
-        [Sieve(CanSort = true, CanFilter = true)]
-        public DateTimeOffset? RunAfter { get; set; }
+        public required string CronSchedule { get; set; }
     }
 }

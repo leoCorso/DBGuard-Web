@@ -1,6 +1,7 @@
 ﻿using DBGuardAPI.Data.DTOs.DatabaseConnectionDTOs;
 using DBGuardAPI.Data.DTOs.NotificationsDTOs;
 using DBGuardAPI.Data.Enums;
+using DBGuardAPI.Helpers;
 
 namespace DBGuardAPI.Data.DTOs.GuardDTOs
 {
@@ -18,8 +19,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         public bool NotifyOnClear { get; set; }
         public bool NotifyOnError { get; set; }
         public bool NotifyOnTrigger { get; set; }
-        public double RunPeriodInMinutes { get; set; }
-        public DateTimeOffset? RunAfter { get; set; }
+        public required string CronSchedule { get; set; }
         public bool ValidateGuard { get; set; } = true;
         public List<CreateNotificationDTO> Notifications { get; set; } = [];
     }

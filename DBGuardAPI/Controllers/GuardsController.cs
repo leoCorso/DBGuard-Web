@@ -126,8 +126,7 @@ namespace DBGuardAPI.Controllers
                     NotifyOnTrigger = guard.NotifyOnTrigger,
                     TotalErrors = guard.TotalErrors,
                     TotalTriggers = guard.TotalTriggers,
-                    RunPeriodInMinutes = guard.RunPeriodInMinutes,
-                    RunAfter = guard.RunAfter,
+                    CronSchedule = guard.CronSchedule.Expression,
                     DatabaseConnectionId = guard.DatabaseConnectionId
                 })
             .Where(guard => guard.Id == id)
@@ -178,8 +177,7 @@ namespace DBGuardAPI.Controllers
                     IsActive = g.IsActive,
                     TotalErrors = g.TotalErrors,
                     TotalTriggers = g.TotalTriggers,
-                    RunPeriodInMinutes = g.RunPeriodInMinutes,
-                    RunAfter = g.RunAfter
+                    CronSchedule = g.CronSchedule.Expression
                 })
                 .AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardView>(sieveParams, query);
@@ -220,7 +218,7 @@ namespace DBGuardAPI.Controllers
                 NotifyOnTrigger = guard.NotifyOnTrigger,
                 TotalErrors = guard.TotalErrors,
                 TotalTriggers = guard.TotalTriggers,
-                RunPeriodInMinutes = guard.RunPeriodInMinutes,
+                CronSchedule = guard.CronSchedule.Expression,
                 DatabaseConnectionId = guard.DatabaseConnectionId
             }).AsQueryable();
             return await _entityViewGetter.GetPagedResponseAsync<GuardDTO>(sieveParams, query);
@@ -295,8 +293,7 @@ namespace DBGuardAPI.Controllers
                     NotifyOnClear = guard.NotifyOnClear,
                     NotifyOnError = guard.NotifyOnError,
                     NotifyOnTrigger = guard.NotifyOnTrigger,
-                    RunPeriodInMinutes = guard.RunPeriodInMinutes,
-                    RunAfter = guard.RunAfter,
+                    CronSchedule = guard.CronSchedule.Expression,
                     DatabaseConnection = new SimpleDatabaseConnectionDTO
                     {
                         Id = guard.DatabaseConnection!.Id,
@@ -446,8 +443,7 @@ namespace DBGuardAPI.Controllers
                     NotifyOnClear = newGuard.NotifyOnClear,
                     NotifyOnError = newGuard.NotifyOnError,
                     NotifyOnTrigger = newGuard.NotifyOnTrigger,
-                    RunPeriodInMinutes = newGuard.RunPeriodInMinutes,
-                    RunAfter = newGuard.RunAfter,
+                    CronSchedule = new CronSchedule(newGuard.CronSchedule),
                     GuardNotifications = newGuard.Notifications.Select(notification => GuardNotificationHelper.MapToEntity(notification, user.Id)).ToList()
                 };
                 await context.Guards.AddAsync(guard);
@@ -571,8 +567,7 @@ namespace DBGuardAPI.Controllers
             guard.NotifyOnClear = guardEdits.NotifyOnClear;
             guard.NotifyOnError = guardEdits.NotifyOnError;
             guard.NotifyOnTrigger = guardEdits.NotifyOnTrigger;
-            guard.RunPeriodInMinutes = guardEdits.RunPeriodInMinutes;
-            guard.RunAfter = guardEdits.RunAfter;
+            guard.CronSchedule = new CronSchedule(guardEdits.CronSchedule);
 
             // Remove notifications not in guard
             List<GuardNotification> notificationToRemove = guard.GuardNotifications

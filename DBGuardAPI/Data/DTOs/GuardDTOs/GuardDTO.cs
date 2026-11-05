@@ -42,7 +42,7 @@ namespace DBGuardAPI.Data.DTOs.GuardDTOs
         [Sieve(CanSort = true, CanFilter = true)]
         public int TotalTriggers { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
-        public double RunPeriodInMinutes { get; set; }
+        public required string CronSchedule { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public int DatabaseConnectionId { get; set; }
     }
