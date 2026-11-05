@@ -19,7 +19,7 @@ namespace DBGuardAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -131,6 +131,11 @@ namespace DBGuardAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("created_by_user_id");
 
+                    b.Property<string>("CronSchedule")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("cron_schedule");
+
                     b.Property<int>("DatabaseConnectionId")
                         .HasColumnType("integer")
                         .HasColumnName("database_connection_id");
@@ -170,14 +175,6 @@ namespace DBGuardAPI.Migrations
                     b.Property<bool>("NotifyOnTrigger")
                         .HasColumnType("boolean")
                         .HasColumnName("notify_on_trigger");
-
-                    b.Property<DateTimeOffset?>("RunAfter")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("run_after");
-
-                    b.Property<double>("RunPeriodInMinutes")
-                        .HasColumnType("double precision")
-                        .HasColumnName("run_period_in_minutes");
 
                     b.Property<int>("TotalErrors")
                         .HasColumnType("integer")
@@ -580,95 +577,6 @@ namespace DBGuardAPI.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("DBGuardAPI.Data.Views.GuardView", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreateDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("create_date");
-
-                    b.Property<string>("CreatedByUserId")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by_user_id");
-
-                    b.Property<int>("DatabaseConnectionId")
-                        .HasColumnType("integer")
-                        .HasColumnName("database_connection_id");
-
-                    b.Property<int>("DatabaseEngine")
-                        .HasColumnType("integer")
-                        .HasColumnName("database_engine");
-
-                    b.Property<string>("DatabaseName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("database_name");
-
-                    b.Property<string>("EndPoint")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("end_point");
-
-                    b.Property<string>("GuardName")
-                        .HasColumnType("text")
-                        .HasColumnName("guard_name");
-
-                    b.Property<int>("GuardState")
-                        .HasColumnType("integer")
-                        .HasColumnName("guard_state");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_active");
-
-                    b.Property<DateTimeOffset?>("LastRun")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_run");
-
-                    b.Property<DateTimeOffset?>("RunAfter")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("run_after");
-
-                    b.Property<double>("RunPeriodInMinutes")
-                        .HasColumnType("double precision")
-                        .HasColumnName("run_period_in_minutes");
-
-                    b.Property<int>("TotalErrors")
-                        .HasColumnType("integer")
-                        .HasColumnName("total_errors");
-
-                    b.Property<int>("TotalTriggers")
-                        .HasColumnType("integer")
-                        .HasColumnName("total_triggers");
-
-                    b.Property<string>("TriggerColumn")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("trigger_column");
-
-                    b.Property<int>("TriggerOperator")
-                        .HasColumnType("integer")
-                        .HasColumnName("trigger_operator");
-
-                    b.Property<int>("TriggerValue")
-                        .HasColumnType("integer")
-                        .HasColumnName("trigger_value");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("text")
-                        .HasColumnName("user_name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_guard_view");
-
-                    b.ToTable((string)null);
-
-                    b.ToView("guard_view", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -40,15 +40,9 @@
     <div class="third-pane">
         <div class="third-top">
             <div style="display: flex;justify-content: center;align-items: center;">
-                <label style="margin-right: .5rem;" for="run-period">Run period:</label>
-                <p-tag [value]="guardData().runPeriodInMinutes | formatRunPeriod" severity="contrast"></p-tag>
+                <label style="margin-right: .5rem;" for="cron-schedule">Schedule:</label>
+                <p-tag [value]="guardData().cronSchedule | cronText" severity="contrast"></p-tag>
             </div>
-            @if (guardData().runAfter) {
-                <div style="display: flex;justify-content: center;align-items: center;">
-                    <label style="margin-right: .5rem;" for="run-after">Run after:</label>
-                    <span id="run-after">{{ guardData().runAfter | date: 'MM/dd/yyyy hh:mm:ss a' }}</span>
-                </div>
-            }
             <div style="display: flex;justify-content: center;align-items: center;">
                 <p-tag [value]="guardData().isActive ? 'Active' : 'Inactive'" [severity]="guardData().isActive ? 'info' : 'contrast'"></p-tag>
             </div>

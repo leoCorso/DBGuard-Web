@@ -51,6 +51,7 @@ import { CreateNotificationControl } from '../guard-notification-components/crea
 import { CodeText } from '../../../directives/code-text';
 import { DatePicker } from 'primeng/datepicker';
 import { AnalyticsService } from '../../../services/analytics-service';
+import { CronTextPipe } from '../../../pipes/cron-text-pipe';
 
 @Component({
   selector: 'app-create-guard',
@@ -73,6 +74,7 @@ import { AnalyticsService } from '../../../services/analytics-service';
     Checkbox,
     CodeText,
     DatePicker,
+    CronTextPipe
   ],
   templateUrl: './create-guard.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -111,8 +113,7 @@ export class CreateGuard implements OnInit, OnDestroy {
     notifyOnClear: new FormControl<boolean>(true, [Validators.required]),
     notifyOnError: new FormControl<boolean>(true, [Validators.required]),
     notifyOnTrigger: new FormControl<boolean>(true, [Validators.required]),
-    runPeriodInMinutes: new FormControl<number>(5, [Validators.required, Validators.min(1)]),
-    runAfter: new FormControl<Date | null>(null),
+    cronSchedule: new FormControl<string>('* * * * *', { validators: [Validators.required], nonNullable: true }),
     notifications: new FormControl<CreateGuardNotificationDTO[]>([]),
     validateGuard: new FormControl<boolean>(true),
   });
@@ -179,8 +180,7 @@ export class CreateGuard implements OnInit, OnDestroy {
       notifyOnClear: values.notifyOnClear!,
       notifyOnError: values.notifyOnError!,
       notifyOnTrigger: values.notifyOnTrigger!,
-      runPeriodInMinutes: values.runPeriodInMinutes!,
-      runAfter: values.runAfter ?? undefined,
+      cronSchedule: values.cronSchedule!,
       notifications: values.notifications!,
       validateGuard: values.validateGuard!,
     };
@@ -195,8 +195,7 @@ export class CreateGuard implements OnInit, OnDestroy {
       {
         trigger_operator: guard.triggerOperator,
         trigger_value: guard.triggerValue,
-        run_period: guard.runPeriodInMinutes,
-        run_after_date: guard.runAfter ? true : false,
+        cron_schedule: guard.cronSchedule,
         database_engine: guard.databaseConnection.databaseEngine,
         notifications: guard.notifications.map((n) => n.notificationType),
         notify_on_clear: guard.notifyOnClear,
@@ -235,9 +234,8 @@ export class CreateGuard implements OnInit, OnDestroy {
           notifyOnClear: guard.notifyOnClear,
           notifyOnError: guard.notifyOnError,
           notifyOnTrigger: guard.notifyOnTrigger,
-          runPeriodInMinutes: guard.runPeriodInMinutes,
+          cronSchedule: guard.cronSchedule,
           notifications: guard.notifications,
-          runAfter: guard.runAfter ? new Date(guard.runAfter) : null,
         });
       },
     });

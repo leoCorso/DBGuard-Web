@@ -13,10 +13,11 @@ import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardView } from '../../../interfaces/guard-dto';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
 import { TrackClick } from '../../../directives/track-click';
+import { CronTextPipe } from '../../../pipes/cron-text-pipe';
 
 @Component({
   selector: 'app-view-guard-item',
-  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button, TrackClick],
+  imports: [Tag, DatePipe, Badge, Card, FormatRunPeriodPipe, RouterLink, Button, TrackClick, CronTextPipe],
   templateUrl: './view-guard-item.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './view-guard-item.scss',

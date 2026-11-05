@@ -20,15 +20,8 @@
     </span>
     <span class="guard-key">Last edited:</span>
     <span class="guard-value">{{ guardDetail().lastEditedDate | date: 'MM/dd/yyyy hh:mm:ss a'}}</span>
-    <span class="guard-key">Run after:</span>
-    <span class="guard-value">
-        @if (guardDetail().runAfter) {
-            {{ guardDetail().runAfter | date: 'MM/dd/yyyy hh:mm:ss a' }}
-        }
-        @else {
-            <p-tag value="Not set" severity="info"></p-tag>
-        }
-    </span>
+    <span class="guard-key">Cron schedule:</span>
+    <span class="guard-value">{{ guardDetail().cronSchedule + " (" + (guardDetail().cronSchedule | cronText) + ")" }}</span>
     <span class="guard-key">Trigger query:</span>
     <span class="guard-value trigger-query-view">{{ guardDetail().triggerQuery }}</span>
     <span class="guard-key">Trigger column:</span>
@@ -45,8 +38,6 @@
         <p-tag [value]="guardDetail().isActive ? 'Active' : 'Disabled'"
             [severity]="guardDetail().isActive ? 'info' : 'danger'"></p-tag>
     </div>
-    <span class="guard-key">Run period in minutes</span>
-    <span>{{ guardDetail()!.runPeriodInMinutes | formatRunPeriod}}</span>
     <span class="guard-key">Notify on clear:</span>
     <span class="guard-value">{{ guardDetail().notifyOnClear ? 'yes' : 'no' }}</span>
     <span class="guard-key">Notify on error:</span>

@@ -26,7 +26,7 @@ namespace DBGuardAPI.Data.Models
         public int TotalErrors { get; set; } = 0;
         public int TotalTriggers { get; set; } = 0;
         public DateTimeOffset? LastRun { get; set; }
-        public CronSchedule CronSchedule { get; set; } = new CronSchedule("* * * * * *"); // Default to run every minute
+        public CronSchedule CronSchedule { get; set; } = new CronSchedule("* * * * *"); // Default to run every minute
         public User? CreatedByUser { get; set; }
         public DatabaseConnection? DatabaseConnection { get; set; }
         public ICollection<NotificationTransaction> NotificationTransactions { get; set; } = [];

@@ -137,11 +137,11 @@ export class GuardFilters extends FilterPane {
       placeholder: 'Filter by trigger count',
     },
     {
-      field: 'runPeriodInMinutes',
-      label: 'Run period (minutes)',
+      field: 'cronSchedule',
+      label: 'Cron schedule',
       isTableFilter: false,
-      placeholder: 'Filter by run period',
-      type: 'numeric',
+      placeholder: 'Filter by cron schedule',
+      type: 'text',
     },
   ];
 }

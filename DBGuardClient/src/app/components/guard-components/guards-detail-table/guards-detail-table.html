@@ -70,7 +70,7 @@
                         [severity]="guard.notifyOnTrigger ? 'info': 'danger'"></p-tag></td>
                 <td>{{ guard.totalErrors }}</td>
                 <td>{{ guard.totalTriggers }}</td>
-                <td>{{ guard.runPeriodInMinutes }}</td>
+                <td>{{ guard.cronSchedule }}</td>
                 <td>
                     <p-button appTrackClick eventName="db_connection_detail_click" [eventData]="{ source: 'guard_detail_table'}" [link]="true" [label]="guard.databaseConnectionId"
                         [routerLink]="['/db-connections/dfetail', guard.databaseConnectionId]"></p-button>

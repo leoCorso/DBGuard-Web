@@ -10,10 +10,11 @@ import { getGuardStateSeverity } from '../../../helpers/guard-state-helper';
 import { GuardDetailDTO } from '../../../interfaces/guard-dto';
 import { FormatRunPeriodPipe } from '../../../pipes/format-run-period-pipe';
 import { TrackClick } from '../../../directives/track-click';
+import { CronTextPipe } from '../../../pipes/cron-text-pipe';
 
 @Component({
   selector: 'app-guard-detail-pane',
-  imports: [Tag, FormatRunPeriodPipe, DatePipe, Button, RouterLink, RouterModule, TrackClick],
+  imports: [Tag, FormatRunPeriodPipe, DatePipe, Button, RouterLink, RouterModule, TrackClick, CronTextPipe],
   templateUrl: './guard-detail-pane.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './guard-detail-pane.scss',
