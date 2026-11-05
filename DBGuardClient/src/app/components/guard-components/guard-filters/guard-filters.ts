@@ -135,13 +135,6 @@ export class GuardFilters extends FilterPane {
       type: 'numeric',
       isTableFilter: false,
       placeholder: 'Filter by trigger count',
-    },
-    {
-      field: 'cronSchedule',
-      label: 'Cron schedule',
-      isTableFilter: false,
-      placeholder: 'Filter by cron schedule',
-      type: 'text',
-    },
+    }
   ];
 }

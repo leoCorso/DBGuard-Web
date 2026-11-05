@@ -1,4 +1,4 @@
-<form class="db-conn-form" [formGroup]="dbConnectionForm" (ngSubmit)="saveConnectionForm()">
+<form id="db-connection-form" class="db-conn-form" [formGroup]="dbConnectionForm" (ngSubmit)="saveConnectionForm()">
     <div>
         <p-floatlabel variant="on">
             <label for="endpoint">Endpoint</label>
@@ -43,6 +43,6 @@
 <div class="bottom-section">
     <p-buttongroup>
         <button pButton (click)="cancelDbCreation()" severity="secondary">Cancel</button>
-        <button pButton type="submit" pButtonIcon="pi pi-save" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine">{{ dbConnectionToEditId() ? 'Save' : 'Add' }}</button>
+        <button form="db-connection-form" pButton type="submit" pButtonIcon="pi pi-save" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine">{{ dbConnectionToEditId() ? 'Save' : 'Add' }}</button>
     </p-buttongroup>
 </div>

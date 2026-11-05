@@ -399,7 +399,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A post guard request was received with a non-existing database connection {DBConnectionId}", newGuard.DatabaseConnection.Id);
                 return NotFound(new { Message = $"No database connection exists with the specified id (${newGuard.DatabaseConnection.Id})" });
             }
-            if(string.IsNullOrWhiteSpace(newGuard.TriggerQuery) || string.IsNullOrWhiteSpace(newGuard.TriggerColumn))
+            if(string.IsNullOrWhiteSpace(newGuard.TriggerQuery) || string.IsNullOrWhiteSpace(newGuard.TriggerColumn) || string.IsNullOrWhiteSpace(newGuard.CronSchedule))
             {
                 return BadRequest();
             }
@@ -516,7 +516,7 @@ namespace DBGuardAPI.Controllers
                 _logger.LogError("A guard edit was attempted with non-existing guard id {GuardId}", guardEdits.Id);
                 return NotFound();
             }
-            if (string.IsNullOrWhiteSpace(guardEdits.TriggerQuery) || string.IsNullOrWhiteSpace(guardEdits.TriggerColumn))
+            if (string.IsNullOrWhiteSpace(guardEdits.TriggerQuery) || string.IsNullOrWhiteSpace(guardEdits.TriggerColumn) || string.IsNullOrWhiteSpace(guardEdits.CronSchedule))
             {
                 return BadRequest();
             }

@@ -1,9 +1,9 @@
-## What is DBGuard?
-DBGuard is an application that periodically checks the state of your databases and sends notifications when specific conditions are met. It is useful for catching bad or unexpected data that can cause applications to crash, or for alerting a team when data meets any criteria that warrants attention.
+﻿## What is DBGuard?
+DBGuard is an application that checks the state of your databases on a set schedule and sends notifications when specific conditions are met. It is useful for catching bad or unexpected data that can cause applications to crash, or for alerting a team when data meets any criteria that warrants attention.
 
 DBGuard supports multiple database engines including **SQL Server, PostgreSQL, SQLite, and MySQL.**
 
-Monitoring is performed through Guards — each Guard runs a user-defined SQL query on a periodic schedule and compares the result to a user-defined expression. Since the core logic and business rules are written in SQL, the application remains decoupled and simple to configure.
+Monitoring is performed through Guards — each Guard runs a user-defined SQL query on a schedule set by a [Cron expression](https://en.wikipedia.org/wiki/Cron), comparing the result to a user-defined expression. Since the core logic and business rules are written in SQL, the application remains decoupled and simple to configure.
 
 When a Guard's expression evaluates to true, it can trigger zero or more notifications via **SMTP** (email) or **HTTP** (webhooks to other applications or APIs). DBGuard also includes a built-in SPA web application for configuring, testing, and auditing Guards and their execution history.
 
@@ -43,7 +43,7 @@ You can use the following docker compose file to get DBGuard running quickly:
         environment:
           ASPNETCORE_ENVIRONMENT:  Production
           ASPNETCORE_URLS:  http://+:8080
-          APP_HOST:  10.55.47.124
+          APP_HOST:  <IP of your server>
           APP_PORT:  8080
           #AppDataPath:                    # Default is /app/data)
           #DATABASE_HOST:                  # Default is postgres (Used to overwrite connection string host)
@@ -64,7 +64,7 @@ You can use the following docker compose file to get DBGuard running quickly:
       app_data:
 
 ## Guards
-A guard is a single query against a single database that evaluates the result to a user defined expression. The guard is created and run at specific intervals as some guards may only need to run once a week, while others multiple times an hour.  A guard can be in one of four states:
+A guard is a single query against a single database that evaluates the result to a user defined expression. Each guard can bet set to run at different intervals using a Cron expression.  A guard can be in one of four states:
 
  - **Unknown**: The initial state of the guard. Indicates the scan has not yet run.
  - **Error**: The guard ran into one of various errors such as it could not connect to the database, the query is invalid, the result column it’s defined to look at does not exist in the result set, or any other error which can occur when a query is ran from a local or remote application against a database.
@@ -93,14 +93,14 @@ A database connection is used by the guard to connect to a database. The databas
  - **Trigger column**: This is the name of the column in our queries result record that is used in the expression. Its value should be a 32-bit integer as it will be used in the expression to evaluate the guard state.
  - **Trigger operator**: The operator for the expression. Supports *equals, not equals, greater than, less than, greater than or equal to, less than or equal to.*
  - **Trigger value**: A 32-bit integer value for our expression.
+ - **Cron schedule**: A [Cron expression ](https://devhints.io/cron) in standard format.
  - **Database connection**: A connection and login if required to our database.
- - **Run period**: How often in minutes the guard will be run.
  - **Notifications**: The notifications for the guard.
  - **Notify on clear, error, triggered**: Whether the guard should notify using its configured notifications when it goes into the clear,  error, or triggered state respectively.
  - **Validate guard**: Whether to validate the guard before creation to  ensure it can connect to the database, the query is valid and the trigger column exists in the result set. Will return an error with failure if it is invalid.
    
 **Example guard**
-For example, let’s say we want to be notified once a day if there are any customers in our database who have a debt that is more than $10.50. This is a good example to show that although the guard trigger column value is a 32-bit integer, it can support monitoring decimals, dates, strings and many other data types since the logic is stored in the SQL query, and the application simply checks a trigger value. 
+For example, let’s say we want to create a guard that checks every Monday - Friday at 8AM UTC to verify if there are any customers in our database who have a debt that is more than $10.50. This is a good example to show that although the guard trigger column value is a 32-bit integer, it can support monitoring decimals, dates, strings and many other data types since the logic is stored in the SQL query, and the application simply checks a trigger value. 
 
 Our trigger query may look something like this:
 
@@ -115,7 +115,7 @@ The query uses **>** so our trigger operator will be **greater than or equal to*
 
 > Trigger guard when **HighDebt** column in query result is greater than 1.
 
-Since we want it to run once a day, we will set the run period in minutes to 1440, so it runs every 24 hours.
+Since we want it to run Monday through Friday at 8AM UTC we can use powerful Cron expressions which allow us to do just that. Cron expressions are extensive and you can find cheat sheets and more detailed breakdowns online. For our use case the pattern will be: *0 8 * * 1-5*
 ![enter image description here](https://raw.githubusercontent.com/leoCorso/DBGuard-Web/refs/heads/master/Documentation/screenshots/create-guard-form-filled.png)
 
 **View guards**

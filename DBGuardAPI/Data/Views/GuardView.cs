@@ -39,7 +39,6 @@ namespace DBGuardAPI.Data.Views
         public int TotalErrors { get; set; }
         [Sieve(CanSort = true, CanFilter = true)]
         public int TotalTriggers { get; set; }
-        [Sieve(CanSort = true, CanFilter = true)]
         public required string CronSchedule { get; set; }
     }
 }

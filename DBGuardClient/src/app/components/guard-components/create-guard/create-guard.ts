@@ -74,7 +74,7 @@ import { CronTextPipe } from '../../../pipes/cron-text-pipe';
     Checkbox,
     CodeText,
     DatePicker,
-    CronTextPipe
+    CronTextPipe,
   ],
   templateUrl: './create-guard.html',
   changeDetection: ChangeDetectionStrategy.Eager,

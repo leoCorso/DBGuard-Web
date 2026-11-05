@@ -6,9 +6,9 @@
         <div class="other-settings">
             <p-button [rounded]="true" [outlined]="true" label="Toggle dark mode"
                 (onClick)="toggleDarkMode()"></p-button>
-            <div style="display: flex; flex-direction: column;">
+            <div style="display: flex; align-items: center; gap: .5rem;">
                 <label>Current consent: <p-tag [value]="analyticsService.consentStatus() ? 'Granted' : 'Denied'" [severity]="analyticsService.consentStatus() ? 'success' : 'danger'"></p-tag></label>
-                <p-button appTrackClick eventName="analytics_consent_dialog_click" (onClick)="analyticsService.getConsent()" label="Show consent banner"></p-button>
+                <button pButton appTrackClick eventName="analytics_consent_dialog_click" (click)="analyticsService.getConsent()" variant="outlined">Show consent banner</button>
             </div>
         </div>
     </p-card>

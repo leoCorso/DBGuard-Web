@@ -1,6 +1,12 @@
-# Change log
+﻿# Change log
 
-
+## 2.0.0
+* Migrated to Angular 22
+* Added Lazy loading for components
+* Updated to timestamp based activity detection
+* Replaced primeng charts with chart.js
+* Updated guard schedule to use Cron expressions
+* 
 
 ## 1.2.0
 

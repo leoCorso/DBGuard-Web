@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Button } from 'primeng/button';
+import { Button, ButtonDirective, ButtonModule } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { ThemeService } from '../../../services/theme-service';
 import { EditSelf } from '../../user-components/edit-self/edit-self';
@@ -9,7 +9,7 @@ import { TrackClick } from '../../../directives/track-click';
 
 @Component({
   selector: 'app-settings-webpage',
-  imports: [Button, Card, EditSelf, Tag, TrackClick],
+  imports: [ButtonModule, Card, EditSelf, Tag, TrackClick, ButtonDirective],
   templateUrl: './settings-webpage.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './settings-webpage.scss',
