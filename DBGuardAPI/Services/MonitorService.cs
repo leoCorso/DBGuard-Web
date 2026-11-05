@@ -2,6 +2,7 @@
 using System.Data.Common;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
+using Cronos;
 using Dapper;
 using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models;
@@ -47,11 +48,35 @@ namespace DBGuardAPI.Services
         private async Task<List<int>> GetGuardsToProcessAsync(CancellationToken stoppingToken)
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
-            List<int> guardIds = await context.Guards
-                .Where(guard => guard.LastRun == null || (DateTimeOffset.UtcNow - guard.LastRun.Value).TotalMinutes >= guard.RunPeriodInMinutes && (guard.RunAfter == null || DateTimeOffset.UtcNow >= guard.RunAfter)) // Guard is ready to process only if it hasnt ran or time has elapsed and there is no run after time or run after time is in the past
-                .Select(guard => guard.Id)
-                .ToListAsync(stoppingToken);
-            return guardIds;
+            var guards = await context
+                .Guards
+                .AsNoTracking()
+                .Select(g => new { g.Id, g.CronSchedule, g.LastRun })
+                .ToListAsync();
+            List<int> guardsToProcess = [];
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+
+            foreach (var guard in guards)
+            {
+                if(!CronExpression.TryParse(guard.CronSchedule.Expression, CronFormat.Standard, out var cron))
+                {
+                    _logger.LogError("{GuardId} has an invalid cron expression: {CronExpression}", guard.Id, guard.CronSchedule.Expression);
+                    continue;
+                }
+                if(guard.LastRun is null)
+                {
+                    guardsToProcess.Add(guard.Id);
+                    continue;
+                }
+
+                DateTimeOffset? next = cron!.GetNextOccurrence(guard.LastRun.Value, TimeZoneInfo.Utc);
+                if(next is not null && next <= now)
+                {
+                    guardsToProcess.Add(guard.Id);
+                }
+               
+            }
+            return guardsToProcess;
         }
         private async Task ProcessGuardWithThrottleAsync(int guardId, CancellationToken stoppingToken) 
         {

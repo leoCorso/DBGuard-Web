@@ -80,6 +80,8 @@ namespace DBGuardAPI.Data.Models
                     .WithOne(gnt => gnt.Guard)
                     .HasForeignKey(gnt => gnt.GuardId)
                     .OnDelete(DeleteBehavior.SetNull);
+                guard.Property(g => g.CronSchedule)
+                    .HasConversion(v => v.Expression, v => new Helpers.CronSchedule(v));
             });
             builder.Entity<NotificationTransaction>(notificationTransactions =>
             {

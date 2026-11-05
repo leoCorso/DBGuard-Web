@@ -1,6 +1,7 @@
 ﻿using DBGuardAPI.Data.Enums;
 using DBGuardAPI.Data.Models.GuardNotifications;
 using DBGuardAPI.Data.Models.NotificationTransactions;
+using DBGuardAPI.Helpers;
 
 namespace DBGuardAPI.Data.Models
 {
@@ -25,8 +26,7 @@ namespace DBGuardAPI.Data.Models
         public int TotalErrors { get; set; } = 0;
         public int TotalTriggers { get; set; } = 0;
         public DateTimeOffset? LastRun { get; set; }
-        public double RunPeriodInMinutes { get; set; } = 1;
-        public DateTimeOffset? RunAfter { get; set; } // Guard will only be ran if the current time is after specified time or its null
+        public CronSchedule CronSchedule { get; set; } = new CronSchedule("* * * * * *"); // Default to run every minute
         public User? CreatedByUser { get; set; }
         public DatabaseConnection? DatabaseConnection { get; set; }
         public ICollection<NotificationTransaction> NotificationTransactions { get; set; } = [];
