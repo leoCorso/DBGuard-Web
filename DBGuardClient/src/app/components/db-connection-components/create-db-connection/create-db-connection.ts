@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, inject, input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Button } from 'primeng/button';
+import { Button, ButtonDirective, ButtonIcon } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -19,7 +19,6 @@ import {
   DatabaseConnectionDTO,
 } from '../../../interfaces/database-connection-dto';
 import { EntityChangeService } from '../../../services/entity-change-service';
-import { TrackClick } from '../../../directives/track-click';
 import { AnalyticsService } from '../../../services/analytics-service';
 import { ButtonGroup } from 'primeng/buttongroup';
 
@@ -32,12 +31,13 @@ import { ButtonGroup } from 'primeng/buttongroup';
     Select,
     Message,
     Password,
-    Button,
+    ButtonDirective,
     TooltipModule,
     Checkbox,
-    TrackClick,
     ButtonGroup,
-  ],
+    ButtonDirective,
+    ButtonIcon
+],
   templateUrl: './create-db-connection.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-db-connection.scss',

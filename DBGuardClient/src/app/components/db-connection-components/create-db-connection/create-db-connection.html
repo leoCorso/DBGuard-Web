@@ -38,11 +38,11 @@
         <p-checkbox [binary]="true" inputId="validate-conn" formControlName="validateConnection" pTooltip="When selected it will ensure connection is valid"></p-checkbox>
     </div>
 
-    <div class="bottom-section">
-        <p-buttongroup>
-            <p-button  label="Cancel" severity="secondary" (onClick)="cancelDbCreation()"></p-button>            
-            <p-button [loading]="savingConnection()" type="submit" icon="pi pi-save" [label]="dbConnectionToEditId() ? 'Save' : 'Add'" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine"></p-button>
-        </p-buttongroup>
-    </div>
-
+    
 </form>
+<div class="bottom-section">
+    <p-buttongroup>
+        <button pButton (click)="cancelDbCreation()" severity="secondary">Cancel</button>
+        <button pButton type="submit" pButtonIcon="pi pi-save" [disabled]="dbConnectionForm.invalid || dbConnectionToEditId() && dbConnectionForm.pristine">{{ dbConnectionToEditId() ? 'Save' : 'Add' }}</button>
+    </p-buttongroup>
+</div>

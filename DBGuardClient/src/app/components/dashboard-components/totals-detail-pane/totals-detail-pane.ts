@@ -7,7 +7,6 @@ import { environment } from '../../../../environments/environment';
   selector: 'app-totals-detail-pane',
   imports: [],
   templateUrl: './totals-detail-pane.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './totals-detail-pane.scss',
 })
 export class TotalsDetailPane implements OnInit {
